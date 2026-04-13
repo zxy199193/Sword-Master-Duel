@@ -96,6 +96,7 @@ MonoBehaviour:
   extraHpText: {fileID: 3907497164421772578}
   staminaSlider: {fileID: 7468102807727521222}
   staminaText: {fileID: 3658459219634221117}
+  hpToWidthMultiplier: 15
   statusContainer: {fileID: 842454347716914527}
   statusIconPrefab: {fileID: 1485404362420935437, guid: d8a15a4cfed32f0439db1f6133163ddb, type: 3}
   statusDatabase: {fileID: 11400000, guid: 68a378700ebe8f54baa0937148251005, type: 2}

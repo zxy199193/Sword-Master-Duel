@@ -75,7 +75,7 @@ public class BattleManager : MonoBehaviour
 
         // TODO: AI 决策层 (目前为随机抽取主技能)
         currentEnemySkill = null;
-        var enemySkills = enemyEntity.roleData.equippedSkills;
+        var enemySkills = enemyEntity.runtimeSkills;
         if (enemySkills != null && enemySkills.Count > 0)
         {
             currentEnemySkill = enemySkills[Random.Range(0, enemySkills.Count)];
@@ -185,7 +185,8 @@ public class BattleManager : MonoBehaviour
             foreach (var effect in skill.effects)
             {
                 if (effect == null) continue;
-                effect.Execute(user, target, this);
+                // 【核心修复】：加上 skill.skillLevel 参数
+                effect.Execute(user, target, this, skill.skillLevel);
             }
         }
     }

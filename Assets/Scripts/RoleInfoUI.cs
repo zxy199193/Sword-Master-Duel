@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 /// <summary>
-/// 角色战斗信息面板 UI，负责血量、护盾、体力及状态栏的表现层更新
+/// 角色信息面板UI：负责血量、护盾与体力的数值显示，并动态同步血条的物理长度
 /// </summary>
 public class RoleInfoUI : MonoBehaviour
 {
@@ -22,76 +22,83 @@ public class RoleInfoUI : MonoBehaviour
     public Slider staminaSlider;
     public Text staminaText;
 
-    [Header("UI References - Status System")]
+    [Header("Layout Settings")]
+    [Tooltip("1点生命值对应的像素长度。比如填1，则100HP对应100宽")]
+    public float hpToWidthMultiplier = 1f;
+
+    [Header("Status System")]
     public Transform statusContainer;
     public GameObject statusIconPrefab;
     public StatusDatabase statusDatabase;
 
-    // ==========================================
-    // 运行时状态 (Runtime State)
-    // ==========================================
     private BattleEntity targetEntity;
 
     // ==========================================
-    // Unity 生命周期 (Lifecycle)
+    // 公共接口
     // ==========================================
 
-    private void OnDestroy()
-    {
-        // 严谨注销事件监听，防止切换场景或销毁UI时引发内存泄漏
-        if (targetEntity != null)
-        {
-            targetEntity.OnHpChanged -= UpdateHpUI;
-            targetEntity.OnStaminaChanged -= UpdateStaminaUI;
-            targetEntity.OnStatusChanged -= UpdateStatusUI;
-        }
-    }
-
-    // ==========================================
-    // 公共接口 (Public API)
-    // ==========================================
-
-    /// <summary>
-    /// 绑定战斗实体，并初始化面板极值与事件订阅
-    /// </summary>
     public void BindEntity(BattleEntity entity)
     {
         targetEntity = entity;
 
         if (roleNameText != null) roleNameText.text = entity.roleData.roleName;
 
-        // 初始化进度条上限
+        // 初始化基础数值
         basicHpSlider.maxValue = entity.roleData.maxBasicLife;
         staminaSlider.maxValue = entity.roleData.maxStamina;
-        extraHpSlider.maxValue = Mathf.Max(entity.currentExtraLife, 1f); // 防除零保护
 
-        // 核心解耦：订阅实体数值与状态变化事件
+        // 订阅事件
         entity.OnHpChanged += UpdateHpUI;
         entity.OnStaminaChanged += UpdateStaminaUI;
         entity.OnStatusChanged += UpdateStatusUI;
 
-        // 初始画面强制刷新
+        // 初始刷新
         UpdateHpUI();
         UpdateStaminaUI();
         UpdateStatusUI();
     }
 
     // ==========================================
-    // 内部私有逻辑 (Private Methods)
+    // 核心 UI 同步逻辑
     // ==========================================
 
     private void UpdateHpUI()
     {
+        // 1. 处理基础血条 (Basic HP)
+        float basicWidth = targetEntity.roleData.maxBasicLife * hpToWidthMultiplier;
+        SetRectWidth(basicHpSlider.GetComponent<RectTransform>(), basicWidth);
+
         basicHpSlider.value = targetEntity.currentBasicLife;
         if (basicHpText != null) basicHpText.text = targetEntity.currentBasicLife.ToString();
 
-        extraHpSlider.value = targetEntity.currentExtraLife;
-        if (extraHpText != null) extraHpText.text = targetEntity.currentExtraLife.ToString();
-
-        // 护盾归零时的视觉隐藏逻辑
-        if (extraHpSlider != null)
+        // 2. 处理额外血条 (Extra HP / Shield)
+        if (targetEntity.currentExtraLife > 0)
         {
-            extraHpSlider.gameObject.SetActive(targetEntity.currentExtraLife > 0);
+            extraHpSlider.gameObject.SetActive(true);
+
+            float extraWidth = targetEntity.currentExtraLife * hpToWidthMultiplier;
+            SetRectWidth(extraHpSlider.GetComponent<RectTransform>(), extraWidth);
+
+            extraHpSlider.maxValue = targetEntity.currentExtraLife;
+            extraHpSlider.value = targetEntity.currentExtraLife;
+
+            if (extraHpText != null) extraHpText.text = targetEntity.currentExtraLife.ToString();
+        }
+        else
+        {
+            extraHpSlider.gameObject.SetActive(false);
+        }
+
+        // ==========================================
+        // 【核心修复】：强制刷新父节点的布局排版，消除缝隙
+        // ==========================================
+        if (basicHpSlider.transform.parent != null)
+        {
+            RectTransform layoutGroupRect = basicHpSlider.transform.parent.GetComponent<RectTransform>();
+            if (layoutGroupRect != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroupRect);
+            }
         }
     }
 
@@ -101,19 +108,26 @@ public class RoleInfoUI : MonoBehaviour
         if (staminaText != null) staminaText.text = targetEntity.currentStamina.ToString();
     }
 
+    // ==========================================
+    // 内部工具逻辑
+    // ==========================================
+
+    /// <summary>
+    /// 安全修改 RectTransform 的宽度，保持高度和中心点不变
+    /// </summary>
+    private void SetRectWidth(RectTransform rt, float width)
+    {
+        if (rt == null) return;
+        Vector2 size = rt.sizeDelta;
+        size.x = width;
+        rt.sizeDelta = size;
+    }
+
     private void UpdateStatusUI()
     {
         if (statusContainer == null || statusIconPrefab == null || statusDatabase == null) return;
+        foreach (Transform child in statusContainer) { Destroy(child.gameObject); }
 
-        // 1. 清空旧图标
-        foreach (Transform child in statusContainer)
-        {
-            Destroy(child.gameObject);
-        }
-
-        if (targetEntity.activeStatuses == null) return;
-
-        // 2. 遍历并生成最新状态图标
         foreach (var kvp in targetEntity.activeStatuses)
         {
             StatusData data = statusDatabase.GetStatus(kvp.Key);
@@ -121,11 +135,17 @@ public class RoleInfoUI : MonoBehaviour
 
             GameObject go = Instantiate(statusIconPrefab, statusContainer);
             StatusIconUI iconUI = go.GetComponent<StatusIconUI>();
+            if (iconUI != null) iconUI.Setup(data.icon, kvp.Value);
+        }
+    }
 
-            if (iconUI != null)
-            {
-                iconUI.Setup(data.icon, kvp.Value);
-            }
+    private void OnDestroy()
+    {
+        if (targetEntity != null)
+        {
+            targetEntity.OnHpChanged -= UpdateHpUI;
+            targetEntity.OnStaminaChanged -= UpdateStaminaUI;
+            targetEntity.OnStatusChanged -= UpdateStatusUI;
         }
     }
 }

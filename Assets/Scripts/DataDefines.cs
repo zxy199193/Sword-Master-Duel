@@ -7,7 +7,7 @@ using System;
 public enum SkillType { Attack, Defend, Dodge, Special, Item }
 public enum SectionLevel { Level0, Level1, Level2, Level3, Level4, Level5, Level6, Level99 }
 public enum StatusType { Tension, Focus }
-public enum AttributeType { Strength, Mentality, Stamina } // [整理]：从下方移至顶部统一管理
+public enum AttributeType { Strength, Mentality, Stamina }
 
 // ==========================================
 // 核心数据结构 (Structs)
@@ -38,42 +38,47 @@ public struct HitBarConfig
 }
 
 // ==========================================
-// 多态技能特效 (Skill Effects)
+// 多态技能特效 (Skill Effects) - 已升级为动态等级数组版
 // ==========================================
 
 [Serializable]
 public abstract class SkillEffect
 {
-    [Tooltip("效果持续回合数 (0表示瞬发/一次性效果)")]
-    public int duration;
-
-    public abstract void Execute(BattleEntity caster, BattleEntity target, BattleManager manager);
+    // 【核心改动】：所有特效的执行方法现在必须接收 skillLevel 参数
+    public abstract void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel);
 }
 
 [Serializable]
 public class HealEffect : SkillEffect
 {
-    [Tooltip("回复的生命值")]
-    public int healAmount;
+    [Tooltip("各等级下回复的生命值 (请填入3个值)")]
+    public int[] healAmounts = new int[3];
 
-    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager)
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
-        caster.currentBasicLife = Mathf.Min(caster.roleData.maxBasicLife, caster.currentBasicLife + healAmount);
-        manager.SpawnDamagePopup(caster.transform.position, $"+{healAmount} HP", 1);
+        // 动态根据等级获取数值，如果是道具默认拿第1个
+        int idx = Mathf.Clamp(skillLevel - 1, 0, healAmounts.Length - 1);
+        int finalHeal = healAmounts.Length > 0 ? healAmounts[idx] : 0;
+
+        caster.currentBasicLife = Mathf.Min(caster.roleData.maxBasicLife, caster.currentBasicLife + finalHeal);
+        manager.SpawnDamagePopup(caster.transform.position, $"+{finalHeal} HP", 1);
     }
 }
 
 [Serializable]
 public class DirectDamageEffect : SkillEffect
 {
-    [Tooltip("直接造成的伤害值")]
-    public int damageAmount;
+    [Tooltip("各等级下直接造成的伤害值 (请填入3个值)")]
+    public int[] damageAmounts = new int[3];
 
-    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager)
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
-        target.TakeDamage(damageAmount);
+        int idx = Mathf.Clamp(skillLevel - 1, 0, damageAmounts.Length - 1);
+        int finalDamage = damageAmounts.Length > 0 ? damageAmounts[idx] : 0;
+
+        target.TakeDamage(finalDamage);
         target.PlayHitAnim();
-        manager.SpawnDamagePopup(target.transform.position, damageAmount.ToString(), 2);
+        manager.SpawnDamagePopup(target.transform.position, finalDamage.ToString(), 2);
 
         if (target.currentBasicLife <= 0) target.PlayDieAnim();
     }
@@ -83,12 +88,15 @@ public class DirectDamageEffect : SkillEffect
 public class AttributeModifierEffect : SkillEffect
 {
     public AttributeType targetAttribute;
-    [Tooltip("增加或减少的数值 (负数为Debuff)")]
-    public int modifierValue;
+    [Tooltip("各等级下增加或减少的数值 (负数为Debuff，请填入3个值)")]
+    public int[] modifierValues = new int[3];
 
-    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager)
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
-        Debug.Log($"[SkillEffect] 触发属性修改: {targetAttribute} {(modifierValue > 0 ? "+" : "")}{modifierValue}");
+        int idx = Mathf.Clamp(skillLevel - 1, 0, modifierValues.Length - 1);
+        int finalValue = modifierValues.Length > 0 ? modifierValues[idx] : 0;
+
+        Debug.Log($"[SkillEffect] 触发属性修改: {targetAttribute} {(finalValue > 0 ? "+" : "")}{finalValue}");
         // TODO: 具体的属性加减逻辑
     }
 }
@@ -96,12 +104,15 @@ public class AttributeModifierEffect : SkillEffect
 [Serializable]
 public class HitBarInterferenceEffect : SkillEffect
 {
-    [Tooltip("缩小对方命中区间的宽度")]
-    public float reduceWidthAmount;
+    [Tooltip("各等级下缩小对方命中区间的宽度 (请填入3个值)")]
+    public float[] reduceWidthAmounts = new float[3];
 
-    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager)
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
-        Debug.Log($"[SkillEffect] 触发打击条干扰: 对方判定区间减少 {reduceWidthAmount}");
+        int idx = Mathf.Clamp(skillLevel - 1, 0, reduceWidthAmounts.Length - 1);
+        float finalWidth = reduceWidthAmounts.Length > 0 ? reduceWidthAmounts[idx] : 0;
+
+        Debug.Log($"[SkillEffect] 触发打击条干扰: 对方判定区间减少 {finalWidth}");
         // TODO: 具体的干扰逻辑
     }
 }
@@ -111,16 +122,20 @@ public class ApplyStatusEffect : SkillEffect
 {
     [Tooltip("要施加的状态类型")]
     public StatusType statusType;
-    [Tooltip("基础持续回合数")]
-    public int baseDuration;
+    [Tooltip("各等级下的基础持续回合数 (请填入3个值)")]
+    public int[] baseDurations = new int[3];
     [Tooltip("是否作用于自己？(勾选加给自己，否则加给目标)")]
     public bool applyToSelf;
 
-    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager)
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
+        // 动态获取当前等级的持续回合数
+        int idx = Mathf.Clamp(skillLevel - 1, 0, baseDurations.Length - 1);
+        int currentBaseDuration = baseDurations.Length > 0 ? baseDurations[idx] : 0;
+
         // 持续时间算法：基础持续时间 + 向下取整(释放者精神力/6)，保底1回合
         int extraDuration = Mathf.FloorToInt(caster.roleData.mentality / 6f);
-        int finalDuration = Mathf.Max(1, baseDuration + extraDuration);
+        int finalDuration = Mathf.Max(1, currentBaseDuration + extraDuration);
 
         BattleEntity actualTarget = applyToSelf ? caster : target;
         actualTarget.AddStatus(statusType, finalDuration);

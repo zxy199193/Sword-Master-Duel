@@ -31,18 +31,21 @@ public class HitBarActionState : BattleState
         float speedMultiplier = attacker.GetHitBarSpeedMultiplier();
         float statusWidthModifier = attacker.GetHitBarWidthModifier();
 
-        // 深拷贝打击条配置，注入实战修正数据
+        // 【核心修复】：获取升档后的配置
+        HitBarConfig leveledConfig = attackSkill.GetLeveledHitBarConfig();
+
+        // 深拷贝打击条配置，全部读取 leveledConfig 的数据
         HitBarConfig finalConfig = new HitBarConfig
         {
-            baseSpeed = attackSkill.hitBarConfig.baseSpeed * speedMultiplier,
-            baseSlowdown = attackSkill.hitBarConfig.baseSlowdown,
-            actionTime = attackSkill.hitBarConfig.actionTime,
-            sections = new HitSection[attackSkill.hitBarConfig.sections.Length]
+            baseSpeed = leveledConfig.baseSpeed * speedMultiplier,
+            baseSlowdown = leveledConfig.baseSlowdown,
+            actionTime = leveledConfig.actionTime,
+            sections = new HitSection[leveledConfig.sections.Length]
         };
 
         for (int i = 0; i < finalConfig.sections.Length; i++)
         {
-            HitSection original = attackSkill.hitBarConfig.sections[i];
+            HitSection original = leveledConfig.sections[i];
             finalConfig.sections[i] = new HitSection
             {
                 level = original.level,
@@ -62,9 +65,6 @@ public class HitBarActionState : BattleState
     // 回调逻辑 (Callbacks)
     // ==========================================
 
-    /// <summary>
-    /// 玩家打击条操作结束后的回调 (正常结束或超时)
-    /// </summary>
     private void OnHitComplete(List<HitSection?> results, bool isTimeout)
     {
         battleManager.currentHitResults = results;

@@ -16,7 +16,7 @@ MonoBehaviour:
   roleModel: {fileID: 0}
   maxBasicLife: 30
   maxStamina: 20
-  strength: 1
+  strength: 5
   mentality: 1
   staminaRecoverPerTurn: 3
   equippedSkills:

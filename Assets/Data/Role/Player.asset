@@ -15,9 +15,9 @@ MonoBehaviour:
   roleName: Dabbido
   roleModel: {fileID: 0}
   maxBasicLife: 20
-  maxStamina: 10
-  strength: 1
-  mentality: 1
+  maxStamina: 20
+  strength: 3
+  mentality: 3
   staminaRecoverPerTurn: 3
   equippedSkills:
   - {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
@@ -32,4 +32,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
   - {fileID: 11400000, guid: f17287398bf6a46469bca1bd08f0976b, type: 2}
   - {fileID: 11400000, guid: c22af5460d2101f4d922e5f7fe0642fd, type: 2}
-  hitBarDeviation: {x: -5, y: 5}
+  hitBarDeviation: {x: 0, y: 0}

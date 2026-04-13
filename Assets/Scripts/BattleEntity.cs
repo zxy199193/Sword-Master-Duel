@@ -13,6 +13,9 @@ public class BattleEntity : MonoBehaviour
     public int currentExtraLife;
     public int currentStamina;
 
+    [HideInInspector]
+    public List<SkillData> runtimeSkills = new List<SkillData>(); // 运行时专属技能库
+
     [Header("Turn Temporary Data")]
     public float tempDamageReduction = 0;
     public float tempHitWidthModifier = 0;
@@ -22,6 +25,7 @@ public class BattleEntity : MonoBehaviour
 
     [Header("Component References")]
     public Animator animator;
+
 
     // ==========================================
     // Events / Delegates
@@ -42,8 +46,27 @@ public class BattleEntity : MonoBehaviour
         isPlayer = playerFlag;
 
         currentBasicLife = roleData.maxBasicLife;
-        currentExtraLife = 10; // TODO: 后期接入装备系统后修改
+        currentExtraLife = 20; // TODO: 后期接入装备系统后修改
         currentStamina = roleData.maxStamina / 2;
+
+        // ==========================================
+        // 【核心新增】：基于配置表，动态克隆并生成运行时专属技能库
+        // ==========================================
+        runtimeSkills.Clear();
+        if (roleData != null && roleData.equippedSkills != null)
+        {
+            foreach (var slot in roleData.equippedSkills)
+            {
+                if (slot.skillData == null) continue;
+
+                // 实例化一个内存中的独立 ScriptableObject，防止污染原始资产
+                SkillData inst = Instantiate(slot.skillData);
+                // 盖上该角色专属的等级印章！
+                inst.skillLevel = slot.level;
+
+                runtimeSkills.Add(inst);
+            }
+        }
 
         OnHpChanged?.Invoke();
         OnStaminaChanged?.Invoke();

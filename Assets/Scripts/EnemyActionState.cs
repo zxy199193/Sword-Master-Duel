@@ -34,21 +34,24 @@ public class EnemyActionState : BattleState
         // 读取玩家身上的防守Buff对打击条宽度的修正
         float widthModifier = battleManager.playerEntity.tempHitWidthModifier;
 
+        // 【核心修复】：获取升档后的配置
+        HitBarConfig leveledConfig = chosenSkill.GetLeveledHitBarConfig();
+
         HitBarConfig finalConfig = new HitBarConfig
         {
-            baseSpeed = chosenSkill.hitBarConfig.baseSpeed,
-            baseSlowdown = chosenSkill.hitBarConfig.baseSlowdown,
-            actionTime = chosenSkill.hitBarConfig.actionTime,
-            sections = new HitSection[chosenSkill.hitBarConfig.sections.Length]
+            baseSpeed = leveledConfig.baseSpeed,
+            baseSlowdown = leveledConfig.baseSlowdown,
+            actionTime = leveledConfig.actionTime,
+            sections = new HitSection[leveledConfig.sections.Length]
         };
 
         // 深拷贝并注入宽度修正
         for (int i = 0; i < finalConfig.sections.Length; i++)
         {
-            HitSection original = chosenSkill.hitBarConfig.sections[i];
+            HitSection original = leveledConfig.sections[i];
             finalConfig.sections[i] = new HitSection
             {
-                level = original.level,
+                level = original.level, // 此时已经是升档后的颜色等级了
                 axisPosition = original.axisPosition,
                 width = Mathf.Max(1f, original.width + widthModifier) // 确保宽度不小于1
             };
@@ -65,9 +68,6 @@ public class EnemyActionState : BattleState
     // 回调逻辑
     // ==========================================
 
-    /// <summary>
-    /// AI 打击条完成后的回调
-    /// </summary>
     private void OnHitComplete(List<HitSection?> results, bool isTimeout)
     {
         battleManager.currentHitResults = results;
