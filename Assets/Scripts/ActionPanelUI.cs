@@ -83,7 +83,8 @@ public class ActionPanelUI : MonoBehaviour
             availableStamina -= selectedMainAction.staminaCost;
         }
 
-        skillListUI.OpenList(playerSkills, availableStamina, (chosenSkill) =>
+        // 【核心修复就在这里！】：增加了 battleManager.playerEntity 作为第二个参数传入
+        skillListUI.OpenList(playerSkills, battleManager.playerEntity, availableStamina, (chosenSkill) =>
         {
             if (chosenSkill.skillType == SkillType.Attack ||
                 chosenSkill.skillType == SkillType.Defend ||

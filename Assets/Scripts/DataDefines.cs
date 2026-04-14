@@ -167,4 +167,17 @@ public static class GlobalBattleRules
             default: return 1.0f;
         }
     }
+    public static Color GetSectionColor(SectionLevel level)
+    {
+        switch (level)
+        {
+            case SectionLevel.Level1: return new Color(1f, 0.8f, 0.2f); // »Æ
+            case SectionLevel.Level2: return new Color(0.4f, 1f, 0.4f); // ÂÌ
+            case SectionLevel.Level3: return new Color(0.2f, 0.8f, 1f); // À¶
+            case SectionLevel.Level4: return new Color(1f, 0.4f, 0.4f); // ºì
+            case SectionLevel.Level5: return new Color(0.8f, 0.2f, 1f); // ×Ï
+            case SectionLevel.Level6: return Color.white;               // °×
+            default: return new Color(0.3f, 0.3f, 0.3f);                // »Ò
+        }
+    }
 }

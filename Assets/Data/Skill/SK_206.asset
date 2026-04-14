@@ -16,12 +16,21 @@ MonoBehaviour:
   description: 
   skillIcon: {fileID: 0}
   skillType: 0
-  skillLevel: 1
+  skillLevel: 3
   animationTriggerName: Attack_206
-  staminaCost: 15
-  basicDamage: 3
-  basicDefend: 0
-  hitAmend: 0
+  staminaCosts: 0f0000000e0000000c000000
+  basicDamages:
+  - 3
+  - 4
+  - 6
+  basicDefends:
+  - 0
+  - 0
+  - 0
+  hitAmends:
+  - 0
+  - 0
+  - 0
   quantity: 0
   isConsumable: 0
   hitTimes: 6

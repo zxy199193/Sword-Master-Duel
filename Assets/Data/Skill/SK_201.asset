@@ -18,10 +18,19 @@ MonoBehaviour:
   skillType: 0
   skillLevel: 1
   animationTriggerName: Attack
-  staminaCost: 7
-  basicDamage: 7
-  basicDefend: 0
-  hitAmend: 0
+  staminaCosts: 070000000700000006000000
+  basicDamages:
+  - 7
+  - 9
+  - 12
+  basicDefends:
+  - 0
+  - 0
+  - 0
+  hitAmends:
+  - 0
+  - 0
+  - 0
   quantity: 0
   isConsumable: 0
   hitTimes: 1

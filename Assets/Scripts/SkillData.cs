@@ -48,7 +48,7 @@ public class SkillData : ScriptableObject
     public List<SkillEffect> effects = new List<SkillEffect>();
 
     // ==========================================
-    // 动态属性封装 (神奇的 C# Getter，让外部脚本无需任何修改！)
+    // 动态属性封装
     // ==========================================
 
     public int staminaCost
@@ -91,6 +91,22 @@ public class SkillData : ScriptableObject
         }
     }
 
+    public int GetBaseDuration()
+    {
+        if (effects == null || effects.Count == 0) return 0;
+
+        // 使用 LINQ 查找第一个施加状态的效果
+        var statusEffect = effects.OfType<ApplyStatusEffect>().FirstOrDefault();
+
+        if (statusEffect != null && statusEffect.baseDurations != null)
+        {
+            int idx = Mathf.Clamp(skillLevel - 1, 0, statusEffect.baseDurations.Length - 1);
+            return statusEffect.baseDurations[idx];
+        }
+
+        return 0;
+    }
+
     // ==========================================
     // 核心逻辑：获取进化后的打击条配置
     // ==========================================
@@ -98,24 +114,17 @@ public class SkillData : ScriptableObject
     {
         HitBarConfig leveledConfig = hitBarConfig;
 
-        // 如果是道具、等级为1，或者不是攻击招式，直接返回原配置
         if (skillType != SkillType.Attack || skillLevel <= 1 || hitBarConfig.sections == null)
             return leveledConfig;
 
-        // 深拷贝区间，防止污染原始数据资产
         leveledConfig.sections = new HitSection[hitBarConfig.sections.Length];
 
         for (int i = 0; i < hitBarConfig.sections.Length; i++)
         {
             HitSection section = hitBarConfig.sections[i];
-
-            // 区间等级进化：原始等级 + (当前技能等级 - 1)
             int newLevelInt = (int)section.level + (skillLevel - 1);
-
-            // 确保不会超标 (最高为Level6神级)
             newLevelInt = Mathf.Clamp(newLevelInt, 0, 6);
             section.level = (SectionLevel)newLevelInt;
-
             leveledConfig.sections[i] = section;
         }
 

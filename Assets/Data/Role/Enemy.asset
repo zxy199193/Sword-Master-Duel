@@ -20,6 +20,6 @@ MonoBehaviour:
   mentality: 1
   staminaRecoverPerTurn: 3
   equippedSkills:
-  - {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
-  - {fileID: 11400000, guid: c3eb73b81c6754c4094bccdb6132482b, type: 2}
+  - skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
+    level: 2
   hitBarDeviation: {x: -15, y: 15}

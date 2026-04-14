@@ -17,10 +17,22 @@ MonoBehaviour:
   skillIcon: {fileID: 0}
   skillType: 1
   skillLevel: 1
-  staminaCost: 2
-  basicDamage: 0
-  basicDefend: 4
-  hitAmend: 8
+  animationTriggerName: Attack
+  staminaCosts: 020000000200000001000000
+  basicDamages:
+  - 0
+  - 0
+  - 0
+  basicDefends:
+  - 4
+  - 6
+  - 9
+  hitAmends:
+  - 8
+  - 6
+  - 4
+  quantity: 0
+  isConsumable: 0
   hitTimes: 1
   hitBarConfig:
     baseSpeed: 0
