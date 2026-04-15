@@ -6,7 +6,7 @@ public class DamagePopup : MonoBehaviour
 {
     [Header("Animation Settings")]
     [SerializeField] private float moveSpeed = 2f;    // 向上飘的速度
-    [SerializeField] private float destroyTime = 1f;  // 存活/淡出时间
+    [SerializeField] private float destroyTime = 2f;  // 存活/淡出时间
 
     private Text popupText;
 

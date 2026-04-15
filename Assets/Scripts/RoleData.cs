@@ -33,4 +33,7 @@ public class RoleData : ScriptableObject
     [Header("AI 设定 (仅NPC有效)")]
     [Tooltip("打击条判定偏差范围，如 X:-5, Y:5 代表在正负5范围内波动")]
     public Vector2 hitBarDeviation = new Vector2(-5f, 5f);
+
+    [Tooltip("AI 多阶段配置 (请按血量百分比从高到低配置，例如阶段一填 1.0，阶段二填 0.5)")]
+    public List<AIPhaseConfig> aiPhases = new List<AIPhaseConfig>();
 }

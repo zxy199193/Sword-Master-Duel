@@ -44,6 +44,9 @@ public class SkillData : ScriptableObject
     public HitBarConfig hitBarConfig;
 
     [Header("Skill Effects")]
+    [Tooltip("释放该技能/道具时在自身播放的特效")]
+    public GameObject castEffectPrefab;
+
     [SerializeReference]
     public List<SkillEffect> effects = new List<SkillEffect>();
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// 伤害结算状态：监听动画事件并逐段结算多段攻击的伤害与表现
@@ -6,35 +7,33 @@ using UnityEngine;
 public class DamageSettleState : BattleState
 {
     private float stateTimer = 0f;
-    private int currentHitIndex = 0;  // 当前正在结算的多段攻击索引
-    private float animEndTime = 3.5f; // 动画演出保底超时时间，防止卡死
+    private int currentHitIndex = 0;
+    private float animEndTime = 3.5f;
+
+    // 【核心修复】：加一把防爆锁，防止 Update 每帧疯狂调用发牌器
+    private bool isFinished = false;
 
     public DamageSettleState(BattleManager manager) : base(manager) { }
-
-    // ==========================================
-    // 状态机生命周期 (State Lifecycle)
-    // ==========================================
 
     public override void Enter()
     {
         stateTimer = 0f;
         currentHitIndex = 0;
+        isFinished = false; // 进入状态时重置锁
 
-        // 订阅双方的动画命中事件
         battleManager.playerEntity.OnAnimHitPoint += ExecuteDamage;
         battleManager.enemyEntity.OnAnimHitPoint += ExecuteDamage;
 
         BattleEntity attacker = battleManager.isPlayerAttacking ? battleManager.playerEntity : battleManager.enemyEntity;
         SkillData attackSkill = battleManager.isPlayerAttacking ? battleManager.currentPlayerSkill : battleManager.currentEnemySkill;
 
-        // 检查超时未输入指令的情况
         if (battleManager.currentHitResults.Count == 0 && battleManager.currentAttackTimeout)
         {
             Debug.Log("[DamageSettleState] 攻击超时，未输入任何有效指令。");
+            // 超时没打出任何段数，直接给个 1秒 缓冲就结束，不用死等 3.5秒
+            battleManager.StartCoroutine(DelayFinish(1.0f));
         }
-
-        // 播放配置好的专属攻击动画
-        if (attacker != null && attackSkill != null)
+        else if (attacker != null && attackSkill != null)
         {
             attacker.PlayAnim(attackSkill.animationTriggerName);
         }
@@ -42,109 +41,93 @@ public class DamageSettleState : BattleState
 
     public override void Execute()
     {
+        if (isFinished) return; // 【锁上了就不准再进了！】
+
         stateTimer += Time.deltaTime;
 
-        // 超时保底机制：强制结束当前状态
+        // 超时保底机制：如果动画卡了，3.5秒强制结束
         if (stateTimer >= animEndTime)
         {
+            isFinished = true;
             FinishStateAndTurn();
         }
     }
 
     public override void Exit()
     {
-        // 严谨注销事件监听，防止内存泄漏
         battleManager.playerEntity.OnAnimHitPoint -= ExecuteDamage;
         battleManager.enemyEntity.OnAnimHitPoint -= ExecuteDamage;
     }
 
-    // ==========================================
-    // 核心伤害逻辑 (Core Damage Logic)
-    // ==========================================
-
-    /// <summary>
-    /// 动画事件触发时的回调：读取当前段数结果并应用伤害
-    /// </summary>
     private void ExecuteDamage()
     {
         var results = battleManager.currentHitResults;
         HitSection? currentHit = null;
 
-        // 若索引未越界，取出玩家实际打出的有效判定
         if (currentHitIndex < results.Count)
         {
             currentHit = results[currentHitIndex];
         }
-        // 若超出列表长度，说明后续段数因超时未点击，视为 Miss (null)
 
         ApplyDamageLogic(currentHit);
-        currentHitIndex++; // 指针推移到下一段
+        currentHitIndex++;
+
+        // 【体验神级优化】：如果已经结算完了所有的段数，不需要死等 3.5 秒保底！
+        if (currentHitIndex >= Mathf.Max(1, results.Count))
+        {
+            // 给 0.5 秒的缓冲时间让受击特效和动画播完，然后丝滑移交控制权
+            battleManager.StartCoroutine(DelayFinish(0.5f));
+        }
     }
 
-    /// <summary>
-    /// 结算单次命中判定，计算数值并触发表现层 (扣血、飘字、动画)
-    /// </summary>
+    // 协程：延迟结束当前状态
+    private IEnumerator DelayFinish(float delayTime)
+    {
+        yield return new WaitForSeconds(delayTime);
+        if (!isFinished)
+        {
+            isFinished = true;
+            FinishStateAndTurn();
+        }
+    }
+
     private void ApplyDamageLogic(HitSection? hit)
     {
         BattleEntity attacker = battleManager.isPlayerAttacking ? battleManager.playerEntity : battleManager.enemyEntity;
         BattleEntity defender = battleManager.isPlayerAttacking ? battleManager.enemyEntity : battleManager.playerEntity;
         SkillData skill = battleManager.isPlayerAttacking ? battleManager.currentPlayerSkill : battleManager.currentEnemySkill;
 
+        bool isPlayerTakingDamage = !battleManager.isPlayerAttacking;
+
         if (hit.HasValue)
         {
-            // 命中结算
             float multiplier = GlobalBattleRules.GetHitMultiplier(hit.Value.level);
             int rawDamage = Mathf.RoundToInt(multiplier * (skill.basicDamage + attacker.roleData.strength));
             int finalDamage = Mathf.Max(0, rawDamage - Mathf.RoundToInt(defender.tempDamageReduction));
 
             defender.TakeDamage(finalDamage);
 
-            // 飘字等级判定 (Level 3及以上为暴击红字)
-            int hitLevelTag = (int)hit.Value.level >= 3 ? 2 : 1;
-            battleManager.SpawnDamagePopup(defender.transform.position, finalDamage.ToString(), hitLevelTag);
+            // 1. 播放击中特效
+            battleManager.SpawnHitEffect(defender.transform);
 
+            // 2. 飘字 
+            int hitLevelTag = (int)hit.Value.level >= 3 ? 2 : 1;
+            battleManager.SpawnDamagePopup(isPlayerTakingDamage, finalDamage.ToString(), hitLevelTag);
+
+            // 3. 动画反馈
             if (defender.currentBasicLife <= 0) defender.PlayDieAnim();
             else defender.PlayHitAnim();
         }
         else
         {
-            // 挥空结算
             Debug.Log($"[DamageSettleState] {attacker.roleData.roleName} 的该段攻击 Miss！");
             defender.PlayMissAnim();
-            battleManager.SpawnDamagePopup(defender.transform.position, "MISS", 0);
+            battleManager.SpawnDamagePopup(isPlayerTakingDamage, "MISS", 0);
         }
     }
-
-    // ==========================================
-    // 状态流转控制 (State Transitions)
-    // ==========================================
 
     private void FinishStateAndTurn()
     {
-        if (battleManager.playerEntity.currentBasicLife <= 0 || battleManager.enemyEntity.currentBasicLife <= 0)
-        {
-            Debug.Log("<color=red>[Combat] 决斗分出胜负！</color>");
-        }
-        else
-        {
-            // 若玩家攻击完毕且敌人也有攻击意图，转交敌方回合
-            if (battleManager.isPlayerAttacking &&
-                battleManager.currentEnemySkill != null &&
-                battleManager.currentEnemySkill.skillType == SkillType.Attack)
-            {
-                battleManager.ChangeState(new EnemyActionState(battleManager));
-            }
-            else
-            {
-                EndFullTurn();
-            }
-        }
-    }
-
-    private void EndFullTurn()
-    {
-        battleManager.playerEntity.RecoverStamina();
-        battleManager.enemyEntity.RecoverStamina();
-        battleManager.ChangeState(new PreparationState(battleManager));
+        battleManager.ProceedNextAttack();
     }
 }

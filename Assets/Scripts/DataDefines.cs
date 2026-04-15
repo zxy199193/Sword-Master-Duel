@@ -1,5 +1,6 @@
-using UnityEngine;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 // ==========================================
 // 核心枚举 (Enums)
@@ -37,6 +38,33 @@ public struct HitBarConfig
     public HitSection[] sections;
 }
 
+[Serializable]
+public struct SkillWeight
+{
+    [Tooltip("要分配权重的技能/道具资产")]
+    public SkillData skill;
+    [Tooltip("被抽中的权重 (例如100和50，前者抽中概率是后者的两倍。0则不会被抽中)")]
+    public int weight;
+}
+
+[Serializable]
+public struct AIPhaseConfig
+{
+    [Tooltip("生命值低于此百分比时进入该阶段 (0.0~1.0，例如 0.5 代表半血以下)")]
+    [Range(0f, 1f)]
+    public float hpPercentageThreshold;
+
+    [Tooltip("该阶段使用副技能(道具/特殊技能)的基础概率 (0.0~1.0)")]
+    [Range(0f, 1f)]
+    public float subSkillProbability;
+
+    [Tooltip("该阶段的主技能(攻击/防守/闪避)权重池")]
+    public List<SkillWeight> mainSkillWeights;
+
+    [Tooltip("该阶段的副技能(道具/特殊)权重池")]
+    public List<SkillWeight> subSkillWeights;
+}
+
 // ==========================================
 // 多态技能特效 (Skill Effects) - 已升级为动态等级数组版
 // ==========================================
@@ -61,9 +89,39 @@ public class HealEffect : SkillEffect
         int finalHeal = healAmounts.Length > 0 ? healAmounts[idx] : 0;
 
         caster.currentBasicLife = Mathf.Min(caster.roleData.maxBasicLife, caster.currentBasicLife + finalHeal);
-        manager.SpawnDamagePopup(caster.transform.position, $"+{finalHeal} HP", 1);
+
+        // 【核心修复 1】：必须呼叫这个事件，左上角的血条 UI 才会跟着涨！
+        caster.OnHpChanged?.Invoke();
+
+        // 【核心修复 2】：使用最新的 bool 传参方法。如果是玩家用的，就飘在玩家头上。
+        manager.SpawnDamagePopup(caster.isPlayer, $"+{finalHeal}", 2);
     }
 }
+
+[Serializable]
+public class RecoverStaminaEffect : SkillEffect
+{
+    [Tooltip("各等级下回复的体力值 (请填入3个值)")]
+    public int[] staminaAmounts = new int[3];
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        int idx = Mathf.Clamp(skillLevel - 1, 0, staminaAmounts.Length - 1);
+        int finalStamina = staminaAmounts.Length > 0 ? staminaAmounts[idx] : 0;
+
+        // 核心逻辑：恢复体力并限制不超过最大上限
+        caster.currentStamina = Mathf.Min(caster.roleData.maxStamina, caster.currentStamina + finalStamina);
+
+        // 【关键】：呼叫体力改变事件，刷新 UI 面板上的体力条/数值
+        caster.OnStaminaChanged?.Invoke();
+
+        // 表现层：在头上飘字。这里用 <color> 标签把字变成了蓝色(SP常用的颜色)，以区分加血的绿字
+        manager.SpawnDamagePopup(caster.isPlayer, $"<color=#00FFFF>+{finalStamina} SP</color>", 1);
+
+        Debug.Log($"[RecoverStaminaEffect] {caster.roleData.roleName} 恢复了 {finalStamina} 点体力！");
+    }
+}
+
 
 [Serializable]
 public class DirectDamageEffect : SkillEffect
@@ -78,7 +136,9 @@ public class DirectDamageEffect : SkillEffect
 
         target.TakeDamage(finalDamage);
         target.PlayHitAnim();
-        manager.SpawnDamagePopup(target.transform.position, finalDamage.ToString(), 2);
+
+        // 【核心修复】：如果是敌人被打，就在敌人头上飘字
+        manager.SpawnDamagePopup(target.isPlayer, finalDamage.ToString(), 2);
 
         if (target.currentBasicLife <= 0) target.PlayDieAnim();
     }
@@ -129,11 +189,9 @@ public class ApplyStatusEffect : SkillEffect
 
     public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
-        // 动态获取当前等级的持续回合数
         int idx = Mathf.Clamp(skillLevel - 1, 0, baseDurations.Length - 1);
         int currentBaseDuration = baseDurations.Length > 0 ? baseDurations[idx] : 0;
 
-        // 持续时间算法：基础持续时间 + 向下取整(释放者精神力/6)，保底1回合
         int extraDuration = Mathf.FloorToInt(caster.roleData.mentality / 6f);
         int finalDuration = Mathf.Max(1, currentBaseDuration + extraDuration);
 
@@ -141,7 +199,11 @@ public class ApplyStatusEffect : SkillEffect
         actualTarget.AddStatus(statusType, finalDuration);
 
         string statusName = statusType == StatusType.Tension ? "紧张" : "集中";
-        manager.SpawnDamagePopup(actualTarget.transform.position, $"[{statusName}]", 1);
+
+        // 【核心修复】：呼叫状态UI刷新，并修正飘字位置
+        actualTarget.OnStatusChanged?.Invoke();
+        manager.SpawnDamagePopup(actualTarget.isPlayer, $"[{statusName}]", 1);
+
         Debug.Log($"[SkillEffect] {caster.roleData.roleName} 施放状态：{actualTarget.roleData.roleName} 获得 [{statusName}] ({finalDuration}回合)");
     }
 }

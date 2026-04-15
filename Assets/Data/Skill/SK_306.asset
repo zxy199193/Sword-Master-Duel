@@ -13,15 +13,24 @@ MonoBehaviour:
   m_Name: SK_306
   m_EditorClassIdentifier: 
   skillName: "\u72EE\u5B50\u65A9"
-  description: 
-  skillIcon: {fileID: 0}
+  description: "\u5A01\u529B\u5F88\u9AD8\uFF0C\u547D\u4E2D\u7387\u9AD8"
+  skillIcon: {fileID: 21300000, guid: 38d513935403092408d114a995fcfa42, type: 3}
   skillType: 0
   skillLevel: 1
   animationTriggerName: Attack_306
-  staminaCost: 12
-  basicDamage: 25
-  basicDefend: 0
-  hitAmend: 0
+  staminaCosts: 0c0000000b0000000a000000
+  basicDamages:
+  - 10
+  - 12
+  - 15
+  basicDefends:
+  - 0
+  - 0
+  - 0
+  hitAmends:
+  - 0
+  - 0
+  - 0
   quantity: 0
   isConsumable: 0
   hitTimes: 1

@@ -14,12 +14,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roleName: Rival
   roleModel: {fileID: 0}
-  maxBasicLife: 30
-  maxStamina: 20
+  maxBasicLife: 35
+  maxStamina: 30
   strength: 5
   mentality: 1
   staminaRecoverPerTurn: 3
   equippedSkills:
   - skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
-    level: 2
-  hitBarDeviation: {x: -15, y: 15}
+    level: 1
+  - skillData: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
+    level: 1
+  hitBarDeviation: {x: -30, y: 30}
+  aiPhases:
+  - hpPercentageThreshold: 1
+    subSkillProbability: 0.3
+    mainSkillWeights:
+    - skill: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
+      weight: 50
+    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
+      weight: 50
+    subSkillWeights:
+    - skill: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
+      weight: 100
+    - skill: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
+      weight: 0
+  - hpPercentageThreshold: 0.35
+    subSkillProbability: 0.5
+    mainSkillWeights:
+    - skill: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
+      weight: 30
+    - skill: {fileID: 11400000, guid: c3eb73b81c6754c4094bccdb6132482b, type: 2}
+      weight: 50
+    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
+      weight: 20
+    subSkillWeights:
+    - skill: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
+      weight: 40
+    - skill: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
+      weight: 30
+    - skill: {fileID: 11400000, guid: f17287398bf6a46469bca1bd08f0976b, type: 2}
+      weight: 30

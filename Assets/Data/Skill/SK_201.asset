@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: SK_201
   m_EditorClassIdentifier: 
   skillName: "\u4E00\u5B57\u65A9"
-  description: 
-  skillIcon: {fileID: 0}
+  description: "\u5A01\u529B\u4E2D\uFF0C\u547D\u4E2D\u7387\u4E2D"
+  skillIcon: {fileID: 21300000, guid: 9b3f523b8b3decd45a63011c6494579d, type: 3}
   skillType: 0
   skillLevel: 1
   animationTriggerName: Attack

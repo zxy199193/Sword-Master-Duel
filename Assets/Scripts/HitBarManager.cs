@@ -10,14 +10,23 @@ using System.Linq;
 public class HitBarManager : MonoBehaviour
 {
     [Header("UI References")]
+    public GameObject backgroundMask;  // 【新增】：黑色半透明遮罩
     public RectTransform baseBarRect;
     public RectTransform sliderRect;
     public Button slashButton;
     public Text countdownText;
 
+    public Text titleText;
+    public SkillItemUI skillInfoUI;
+
     [Header("Hit Section Generator")]
-    public GameObject sectionPrefab;  // 命中区间色块预制体
-    public Transform sectionsRoot;    // 挂载色块的容器节点
+    public GameObject sectionPrefab;
+    public Transform sectionsRoot;
+
+    private float aiPerfectTarget;
+    private float aiReactionTimeError;
+    private int aiTargetBounces = 0;  // 决定这次要看几次
+    private int aiCurrentBounces = 0; // 当前已经看了几次
 
     // ==========================================
     // 运行时状态 (Runtime State)
@@ -29,15 +38,13 @@ public class HitBarManager : MonoBehaviour
     private float currentSliderPos;
     private float currentSpeed;
     private float timeRemaining;
-    private int moveDirection = 1;    // 1向右，-1向左
+    private int moveDirection = 1;
 
-    // 连击与回调状态
     private int targetHitCount;
     private int currentHitCount;
     private List<HitSection?> accumulatedHits = new List<HitSection?>();
     private Action<List<HitSection?>, bool> onHitComplete;
 
-    // AI 托管状态
     private bool isAIPlay = false;
     private float aiTargetPosition;
 
@@ -56,33 +63,38 @@ public class HitBarManager : MonoBehaviour
     {
         if (currentState == HitBarState.Idle || currentState == HitBarState.Finished) return;
 
-        // 1. 全局倒计时逻辑
         timeRemaining -= Time.deltaTime;
         if (countdownText != null) countdownText.text = timeRemaining.ToString("F1") + "s";
 
         if (timeRemaining <= 0)
         {
-            FinishHit(true); // 超时强制结算
+            FinishHit(true);
             return;
         }
 
-        // 2. AI 托管逻辑 (自动触发点击)
         if (currentState == HitBarState.Moving && isAIPlay)
         {
             ProcessAILogic();
         }
 
-        // 3. 滑块运动逻辑
         if (currentState == HitBarState.Moving || currentState == HitBarState.Stopping)
         {
             currentSliderPos += currentSpeed * moveDirection * Time.deltaTime;
 
-            // 触碰边缘反弹
-            if (currentSliderPos >= 100f) { currentSliderPos = 100f; moveDirection = -1; }
-            else if (currentSliderPos <= 0f) { currentSliderPos = 0f; moveDirection = 1; }
+            if (currentSliderPos >= 100f)
+            {
+                currentSliderPos = 100f;
+                moveDirection = -1;
+                if (isAIPlay) aiCurrentBounces++; // 【新增】：撞到右边墙了，计数+1
+            }
+            else if (currentSliderPos <= 0f)
+            {
+                currentSliderPos = 0f;
+                moveDirection = 1;
+                if (isAIPlay) aiCurrentBounces++; // 【新增】：撞到左边墙了，计数+1
+            }
         }
 
-        // 4. 减速停止逻辑
         if (currentState == HitBarState.Stopping)
         {
             currentSpeed = currentConfig.baseSlowdown > 0 ? currentSpeed - (currentConfig.baseSlowdown * Time.deltaTime) : 0;
@@ -94,7 +106,6 @@ public class HitBarManager : MonoBehaviour
             }
         }
 
-        // 5. 更新表现层
         UpdateSliderUI();
     }
 
@@ -102,15 +113,9 @@ public class HitBarManager : MonoBehaviour
     // 公共接口 (Public API)
     // ==========================================
 
-    /// <summary>
-    /// 启动打击条系统
-    /// </summary>
-    /// <param name="config">打击条配置数据</param>
-    /// <param name="hitTimes">连击次数</param>
-    /// <param name="onComplete">完成回调 (返回判定结果集与是否超时)</param>
-    /// <param name="isAI">是否由 AI 接管</param>
-    /// <param name="deviation">AI预判偏移量 (冗余参数暂留)</param>
-    public void StartHitBar(HitBarConfig config, int hitTimes, Action<List<HitSection?>, bool> onComplete, bool isAI = false, Vector2 deviation = default)
+    public void StartHitBar(HitBarConfig config, int hitTimes, Action<List<HitSection?>, bool> onComplete,
+                            BattleEntity caster, SkillData skill,
+                            bool isAI = false, Vector2 deviation = default)
     {
         currentConfig = config;
         onHitComplete = onComplete;
@@ -119,6 +124,30 @@ public class HitBarManager : MonoBehaviour
         targetHitCount = hitTimes;
         currentHitCount = 0;
         accumulatedHits.Clear();
+
+        // ------------------------------------------
+        // 【新增】：显示半透明遮罩
+        // ------------------------------------------
+        if (backgroundMask != null) backgroundMask.SetActive(true);
+
+        if (titleText != null && caster != null)
+        {
+            titleText.text = $"{caster.roleData.roleName} 的攻击";
+        }
+
+        if (skillInfoUI != null && skill != null && caster != null)
+        {
+            skillInfoUI.Init(skill, caster, null);
+            if (skillInfoUI.miniHitBarRoot != null)
+            {
+                skillInfoUI.miniHitBarRoot.SetActive(false);
+            }
+        }
+
+        if (slashButton != null)
+        {
+            slashButton.gameObject.SetActive(!isAIPlay);
+        }
 
         CreateSectionsUI();
         ResetSliderForNextHit();
@@ -140,30 +169,50 @@ public class HitBarManager : MonoBehaviour
 
         if (slashButton != null) slashButton.interactable = true;
 
-        // AI 每次连击重新锁定最高价值区间
         if (isAIPlay && currentConfig.sections != null && currentConfig.sections.Length > 0)
         {
             var bestSection = currentConfig.sections.OrderByDescending(s => s.level).FirstOrDefault();
-            aiTargetPosition = bestSection.axisPosition;
+            aiPerfectTarget = bestSection.axisPosition;
+
+            float aiDifficultyTolerance = 0.2f;
+            aiReactionTimeError = UnityEngine.Random.Range(-aiDifficultyTolerance, aiDifficultyTolerance);
+
+            // 【新增】：重置计数器，并随机决定观察 1~3 次（撞墙折返次数）
+            aiCurrentBounces = 0;
+            aiTargetBounces = UnityEngine.Random.Range(1, 4); // 1, 2, 或者 3
+
+            Debug.Log($"<color=#FF8C00>[AI 决策] 完美点:{aiPerfectTarget}, 误差:{aiReactionTimeError:F3}秒, 打算观察 {aiTargetBounces} 次再出手</color>");
         }
     }
 
     private void ProcessAILogic()
     {
-        // 安全防除0处理计算刹车距离
-        float stopDistance = currentConfig.baseSlowdown > 0 ? (currentSpeed * currentSpeed) / (2f * currentConfig.baseSlowdown) : 0;
-        float predictedStopPos = currentSliderPos + (stopDistance * moveDirection);
+        // 还没看够折返次数，按兵不动
+        if (aiCurrentBounces < aiTargetBounces) return;
 
-        // 预测滑块停止位置，到达目标点时触发自动点击
+        // 1. 算出物理刹车距离
+        float stopDistance = currentConfig.baseSlowdown > 0 ? (currentSpeed * currentSpeed) / (2f * currentConfig.baseSlowdown) : 0;
+
+        // 2. 计算理想按键位置 (完美中心点 - 刹车提前量 + 误差偏移)
+        float idealClickPos = aiPerfectTarget - (stopDistance * moveDirection) + (currentSpeed * aiReactionTimeError * moveDirection);
+
+        // 3. 【核心修复】：物理学防作弊检查！
+        // 如果想按的位置在墙外（比如 -45），说明在这个方向上根本不可能“提早按”
+        if (idealClickPos < 0f || idealClickPos > 100f)
+        {
+            // 既然不能提早按，那就强行变成“晚按”（反转误差符号）！
+            // 绝对不能让它卡在边缘 0 处按，否则又会刚好滑到正中心！
+            idealClickPos = aiPerfectTarget - (stopDistance * moveDirection) - (currentSpeed * aiReactionTimeError * moveDirection);
+
+            // 钳制在屏幕内，防止二次越界
+            idealClickPos = Mathf.Clamp(idealClickPos, 0f, 100f);
+        }
+
         bool shouldClick = false;
-        if (moveDirection == 1 && currentSliderPos < aiTargetPosition && predictedStopPos >= aiTargetPosition)
-        {
-            shouldClick = true;
-        }
-        else if (moveDirection == -1 && currentSliderPos > aiTargetPosition && predictedStopPos <= aiTargetPosition)
-        {
-            shouldClick = true;
-        }
+
+        // 4. 严格判定：只有当滑块真正“跨过”理想按键点时才触发
+        if (moveDirection == 1 && currentSliderPos >= idealClickPos) shouldClick = true;
+        if (moveDirection == -1 && currentSliderPos <= idealClickPos) shouldClick = true;
 
         if (shouldClick)
         {
@@ -204,7 +253,6 @@ public class HitBarManager : MonoBehaviour
         accumulatedHits.Add(bestHit);
         currentHitCount++;
 
-        // 判定是否达到总段数
         if (currentHitCount >= targetHitCount)
         {
             FinishHit(false);
@@ -218,7 +266,13 @@ public class HitBarManager : MonoBehaviour
     private void FinishHit(bool isTimeout)
     {
         currentState = HitBarState.Finished;
+
+        // ------------------------------------------
+        // 【新增】：判定结束时，隐藏遮罩和自身
+        // ------------------------------------------
+        if (backgroundMask != null) backgroundMask.SetActive(false);
         gameObject.SetActive(false);
+
         if (slashButton != null) slashButton.interactable = true;
 
         onHitComplete?.Invoke(accumulatedHits, isTimeout);
@@ -230,8 +284,16 @@ public class HitBarManager : MonoBehaviour
 
     private void UpdateSliderUI()
     {
+        if (sliderRect == null || baseBarRect == null) return;
+
+        sliderRect.anchorMin = new Vector2(0.5f, sliderRect.anchorMin.y);
+        sliderRect.anchorMax = new Vector2(0.5f, sliderRect.anchorMax.y);
+
         float width = baseBarRect.rect.width;
         float anchoredX = (currentSliderPos / 100f) * width - (width / 2f);
+
+        anchoredX = Mathf.Clamp(anchoredX, -width / 2f, width / 2f);
+
         sliderRect.anchoredPosition = new Vector2(anchoredX, sliderRect.anchoredPosition.y);
     }
 
@@ -245,8 +307,6 @@ public class HitBarManager : MonoBehaviour
         if (currentConfig.sections == null) return;
 
         float totalWidth = baseBarRect.rect.width;
-
-        // 强制按等级排序渲染，确保高等级色块置于最上层
         var sortedSections = currentConfig.sections.OrderBy(s => s.level).ToList();
 
         foreach (var section in sortedSections)
@@ -255,7 +315,6 @@ public class HitBarManager : MonoBehaviour
             RectTransform rt = go.GetComponent<RectTransform>();
             Image img = go.GetComponent<Image>();
 
-            // 锚点设置：Y轴自适应拉伸
             rt.anchorMin = new Vector2(0.5f, 0f);
             rt.anchorMax = new Vector2(0.5f, 1f);
             rt.pivot = new Vector2(0.5f, 0.5f);
@@ -274,15 +333,15 @@ public class HitBarManager : MonoBehaviour
     {
         switch (level)
         {
-            case SectionLevel.Level1: return new Color(1f, 0.8f, 0.2f); // 黄
-            case SectionLevel.Level2: return new Color(0.4f, 1f, 0.4f); // 绿
-            case SectionLevel.Level3: return new Color(0.2f, 0.8f, 1f); // 蓝
-            case SectionLevel.Level4: return new Color(1f, 0.4f, 0.4f); // 红
-            case SectionLevel.Level5: return new Color(0.8f, 0.2f, 1f); // 紫
-            case SectionLevel.Level6: return Color.white;               // 白
+            case SectionLevel.Level1: return new Color(1f, 0.8f, 0.2f);
+            case SectionLevel.Level2: return new Color(0.4f, 1f, 0.4f);
+            case SectionLevel.Level3: return new Color(0.2f, 0.8f, 1f);
+            case SectionLevel.Level4: return new Color(1f, 0.4f, 0.4f);
+            case SectionLevel.Level5: return new Color(0.8f, 0.2f, 1f);
+            case SectionLevel.Level6: return Color.white;
             case SectionLevel.Level0:
             case SectionLevel.Level99:
-            default: return new Color(0.3f, 0.3f, 0.3f);                // 灰 (无效)
+            default: return new Color(0.3f, 0.3f, 0.3f);
         }
     }
 }

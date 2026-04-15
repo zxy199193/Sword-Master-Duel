@@ -147,7 +147,6 @@ public class ActionPanelUI : MonoBehaviour
 
     private void OnReadyClicked()
     {
-        gameObject.SetActive(false);
         battleManager.OnPlayerActionConfirmed(selectedMainAction, selectedSubAction);
     }
 }

@@ -8,10 +8,6 @@ public class HitBarActionState : BattleState
 {
     public HitBarActionState(BattleManager manager) : base(manager) { }
 
-    // ==========================================
-    // 状态机生命周期 (State Lifecycle)
-    // ==========================================
-
     public override void Enter()
     {
         Debug.Log("<color=cyan>[HitBarActionState] 玩家回合：发动攻击，进入打击条判定！</color>");
@@ -20,21 +16,12 @@ public class HitBarActionState : BattleState
         SkillData attackSkill = battleManager.currentPlayerSkill;
         BattleEntity attacker = battleManager.playerEntity;
 
-        // ==========================================
-        // 核心逻辑：组装配置并融合数值修正 (Buff/Debuff)
-        // ==========================================
-
-        // 读取防守方的干扰值
         float enemyModifier = battleManager.enemyEntity.tempHitWidthModifier;
-
-        // 读取攻击者自身的状态修饰值
         float speedMultiplier = attacker.GetHitBarSpeedMultiplier();
         float statusWidthModifier = attacker.GetHitBarWidthModifier();
 
-        // 【核心修复】：获取升档后的配置
         HitBarConfig leveledConfig = attackSkill.GetLeveledHitBarConfig();
 
-        // 深拷贝打击条配置，全部读取 leveledConfig 的数据
         HitBarConfig finalConfig = new HitBarConfig
         {
             baseSpeed = leveledConfig.baseSpeed * speedMultiplier,
@@ -50,27 +37,21 @@ public class HitBarActionState : BattleState
             {
                 level = original.level,
                 axisPosition = original.axisPosition,
-                // 最终宽度 = 基础宽度 + 防守方干扰修正 + 自身状态修正
                 width = Mathf.Max(1f, original.width + enemyModifier + statusWidthModifier)
             };
         }
 
         // ==========================================
-        // 启动玩家打击条
+        // 【核心修改】：传入 attacker (施法者) 和 attackSkill (技能数据)
         // ==========================================
-        battleManager.hitBarManager.StartHitBar(finalConfig, attackSkill.hitTimes, OnHitComplete);
+        battleManager.hitBarManager.StartHitBar(finalConfig, attackSkill.hitTimes, OnHitComplete, attacker, attackSkill);
     }
-
-    // ==========================================
-    // 回调逻辑 (Callbacks)
-    // ==========================================
 
     private void OnHitComplete(List<HitSection?> results, bool isTimeout)
     {
         battleManager.currentHitResults = results;
         battleManager.currentAttackTimeout = isTimeout;
 
-        // 结算交接
         battleManager.ChangeState(new DamageSettleState(battleManager));
     }
 }
