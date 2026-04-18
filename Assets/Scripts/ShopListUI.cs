@@ -10,8 +10,9 @@ public class ShopListUI : MonoBehaviour
     public Transform contentRoot;
 
     [Header("预制体引用 (双轨制)")]
-    public GameObject shopEquipPrefab; // 给装备用的简单 UI (挂载 ShopItemUI)
-    public GameObject shopSkillPrefab; // 给招式用的复杂 UI (挂载 RoleSkillItemUI)
+    // 【修改点】：现在这个坑位接收挂载了 EquipItemUI 的预制体了！
+    public GameObject shopEquipPrefab;
+    public GameObject shopSkillPrefab;
 
     public Button closeBtn;
 
@@ -37,9 +38,8 @@ public class ShopListUI : MonoBehaviour
     }
 
     // ==========================================
-    // 道场功能 (使用 shopSkillPrefab)
+    // 道场功能
     // ==========================================
-
     public void OpenLearnSkill()
     {
         gameObject.SetActive(true); titleText.text = "道场 - 招式学习"; ClearList();
@@ -49,7 +49,6 @@ public class ShopListUI : MonoBehaviour
         {
             if (HasSkill(skill, profile)) continue;
 
-            // 构建一个临时的 Slot 用于展示
             SkillSlot tempSlot = new SkillSlot { skillData = skill, level = 1, quantity = 1 };
             CreateSkillUI(tempSlot, skill.price, "学习", () =>
             {
@@ -73,14 +72,13 @@ public class ShopListUI : MonoBehaviour
         foreach (var slot in lv1Skills)
         {
             int cost = slot.skillData.price;
-            // 传给面板前，虚拟地把等级+1，让玩家看到升级后的属性！
             SkillSlot previewSlot = new SkillSlot { skillData = slot.skillData, level = 2, quantity = slot.quantity };
 
             CreateSkillUI(previewSlot, cost, "进阶", () =>
             {
                 if (profile.ConsumeGold(cost))
                 {
-                    slot.level = 2; // 修改真实数据
+                    slot.level = 2;
                     Debug.Log($"招式进阶成功: {slot.skillData.skillName} 升至 Lv.2");
                     OpenUpgradeSkill();
                     restUIManager.RefreshPlayerStatusUI();
@@ -114,9 +112,8 @@ public class ShopListUI : MonoBehaviour
     }
 
     // ==========================================
-    // 商店功能 (道具用 SkillPrefab, 装备用 EquipPrefab)
+    // 商店功能
     // ==========================================
-
     public void OpenBuyEquipment()
     {
         gameObject.SetActive(true); titleText.text = "商店 - 购买装备"; ClearList();
@@ -126,7 +123,8 @@ public class ShopListUI : MonoBehaviour
         {
             if (HasEquipment(equip, profile)) continue;
 
-            CreateEquipUI(equip.icon, equip.equipName, equip.description, equip.price, "购买", () =>
+            // 【修改点】：不再传杂七杂八的参数，直接传 EquipData 本体
+            CreateEquipUI(equip, "购买", () =>
             {
                 if (profile.ConsumeGold(equip.price))
                 {
@@ -146,7 +144,16 @@ public class ShopListUI : MonoBehaviour
 
         foreach (var item in currentConfig.availableItems)
         {
-            SkillSlot tempSlot = new SkillSlot { skillData = item, level = 1, quantity = 1 };
+            // 【核心修改】：购买前，先查查玩家现在身上有几个！
+            int ownedCount = 0;
+            if (profile.equippedItems != null)
+                ownedCount += profile.equippedItems.Where(s => s != null && s.skillData == item).Sum(s => s.quantity);
+            if (profile.storageSkillsAndItems != null)
+                ownedCount += profile.storageSkillsAndItems.Where(s => s != null && s.skillData == item).Sum(s => s.quantity);
+
+            // 把当前真实的持有量展示在商店 UI 里（格式会变成：x[拥有数量]）
+            SkillSlot tempSlot = new SkillSlot { skillData = item, level = 1, quantity = ownedCount };
+
             CreateSkillUI(tempSlot, item.price, "购买", () =>
             {
                 if (profile.ConsumeGold(item.price))
@@ -164,28 +171,28 @@ public class ShopListUI : MonoBehaviour
     // UI 生成器与数据查询
     // ==========================================
 
-    // 生成简单装备 UI
-    private void CreateEquipUI(Sprite icon, string name, string desc, int price, string btnText, System.Action onClick)
+    private void CreateEquipUI(EquipmentData equip, string btnText, System.Action onClick)
     {
         var go = Instantiate(shopEquipPrefab, contentRoot);
-        var ui = go.GetComponent<ShopItemUI>();
-        bool canAfford = GameManager.Instance.playerProfile.totalGold >= price;
-        ui.Setup(icon, name, desc, price, btnText, canAfford, onClick);
+        // 【核心修改】：获取刚升完级的 EquipItemUI
+        var ui = go.GetComponent<EquipItemUI>();
+        bool canAfford = GameManager.Instance.playerProfile.totalGold >= equip.price;
+
+        System.Action<EquipmentData> clickWrapper = (e) => onClick?.Invoke();
+        ui.SetupForShop(equip, equip.price, canAfford, btnText, clickWrapper);
     }
 
-    // 生成复杂招式/道具 UI
     private void CreateSkillUI(SkillSlot slot, int price, string btnText, System.Action onClick)
     {
         var go = Instantiate(shopSkillPrefab, contentRoot);
         var ui = go.GetComponent<RoleSkillItemUI>();
         bool canAfford = GameManager.Instance.playerProfile.totalGold >= price;
 
-        // 包装一层 Action 签名来适配 RoleSkillItemUI
         System.Action<SkillSlot> clickWrapper = (s) => onClick?.Invoke();
-
         ui.SetupForShop(slot, price, canAfford, btnText, clickWrapper);
     }
 
+    // ... 下方的 HasSkill, HasEquipment, GetOwnedSkillsOfLevel, GetAllSkillSlots, AddOrStackItem 方法保持不变
     private bool HasSkill(SkillData skillData, PlayerProfile profile)
     {
         var allSlots = GetAllSkillSlots(profile);

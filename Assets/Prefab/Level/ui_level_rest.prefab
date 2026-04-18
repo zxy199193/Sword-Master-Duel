@@ -1230,6 +1230,7 @@ MonoBehaviour:
   masterSkillBtn: {fileID: 776701420618628186}
   buyEquipBtn: {fileID: 6447597177112431256}
   buyItemBtn: {fileID: 4402927774160459325}
+  continueBtn: {fileID: 6477524352556322726}
 --- !u!1 &8838023208879553276
 GameObject:
   m_ObjectHideFlags: 0
@@ -2015,6 +2016,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6872512875542708576, guid: eb3fe737fffccdb45a36cc0fee88aa77, type: 3}
   m_PrefabInstance: {fileID: 1792824868818274820}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6477524352556322726 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4685343042724005282, guid: eb3fe737fffccdb45a36cc0fee88aa77, type: 3}
+  m_PrefabInstance: {fileID: 1792824868818274820}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2356972761190516710
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3282,7 +3294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   titleText: {fileID: 2118947507883304975}
   contentRoot: {fileID: 5598374672986169535}
-  shopEquipPrefab: {fileID: 892558997455490223, guid: 8748ccd222294db4ba63354fc6a64c63, type: 3}
+  shopEquipPrefab: {fileID: 3053984380044025534, guid: 32b008f05aa5b1e4fa9fa943cbf44fa3, type: 3}
   shopSkillPrefab: {fileID: 2452349099197704019, guid: 29d3465183ca61a4e94b687fa6b1b151, type: 3}
   closeBtn: {fileID: 1495895069165789698}
 --- !u!1001 &5475674191775724525

@@ -34,6 +34,9 @@ public class RestUIManager : MonoBehaviour
     public Button buyEquipBtn;
     public Button buyItemBtn;
 
+    [Header("UI 引用 - 流程控制")]
+    public Button continueBtn; // 继续下一关按钮
+
     private void Start()
     {
         RefreshPlayerStatusUI();
@@ -58,6 +61,8 @@ public class RestUIManager : MonoBehaviour
 
         if (buyEquipBtn) buyEquipBtn.onClick.AddListener(() => shopListUI.OpenBuyEquipment());
         if (buyItemBtn) buyItemBtn.onClick.AddListener(() => shopListUI.OpenBuyItem());
+
+        if (continueBtn) continueBtn.onClick.AddListener(OnContinueClicked);
     }
 
     // ==========================================
@@ -72,6 +77,14 @@ public class RestUIManager : MonoBehaviour
     public void ClosePanel()
     {
         gameObject.SetActive(false);
+    }
+    private void OnContinueClicked()
+    {
+        ClosePanel();
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AdvanceToNextMainLevel();
+        }
     }
 
     public void RefreshPlayerStatusUI()
