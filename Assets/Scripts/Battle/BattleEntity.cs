@@ -1,0 +1,231 @@
+using UnityEngine;
+using System;
+using System.Collections.Generic;
+
+public class BattleEntity : MonoBehaviour
+{
+    [Header("Core Data")]
+    public RoleData roleData;
+    public bool isPlayer;
+
+    [Header("Runtime Stats (Read Only)")]
+    public int currentBasicLife;
+    public int currentExtraLife;
+    public int currentStamina;
+
+    [HideInInspector]
+    public List<SkillSlot> runtimeSkills = new List<SkillSlot>();
+
+    [Header("Turn Temporary Data")]
+    public float tempDamageReduction = 0;
+    public float tempHitWidthModifier = 0;
+
+    [Header("Status System")]
+    public Dictionary<StatusType, int> activeStatuses = new Dictionary<StatusType, int>();
+
+    [Header("Component References")]
+    public Animator animator;
+
+    public Action OnAnimHitPoint;
+    public Action OnHpChanged;
+    public Action OnStaminaChanged;
+    public Action OnStatusChanged;
+    public Action OnDeath;
+
+    public void Initialize(RoleData data, bool playerFlag)
+    {
+        roleData = data;
+        isPlayer = playerFlag;
+
+        if (isPlayer && GameManager.Instance != null)
+        {
+            currentBasicLife = GameManager.Instance.playerProfile.currentHp;
+            currentStamina = GameManager.Instance.playerProfile.currentStamina;
+            if (GameManager.Instance.playerProfile.equippedArmor != null)
+                currentExtraLife = GameManager.Instance.playerProfile.equippedArmor.durability;
+            else
+                currentExtraLife = 0;
+        }
+        else
+        {
+            if (roleData != null)
+            {
+                currentBasicLife = roleData.maxBasicLife;
+                currentStamina = roleData.maxStamina / 2;
+                if (roleData.equippedArmor != null) currentExtraLife = roleData.equippedArmor.durability;
+                else currentExtraLife = 0;
+            }
+        }
+
+        runtimeSkills.Clear();
+
+        if (isPlayer && GameManager.Instance != null)
+        {
+            PlayerProfile profile = GameManager.Instance.playerProfile;
+            Action<List<SkillSlot>> AddSlotsToRuntime = (sourceList) =>
+            {
+                if (sourceList == null) return;
+                foreach (var slot in sourceList)
+                {
+                    if (slot == null || slot.skillData == null) continue;
+                    SkillData inst = Instantiate(slot.skillData);
+                    SkillSlot runtimeSlot = new SkillSlot { skillData = inst, level = slot.level, quantity = slot.quantity };
+                    runtimeSkills.Add(runtimeSlot);
+                }
+            };
+
+            AddSlotsToRuntime(profile.equippedAttackSkills);
+            AddSlotsToRuntime(profile.equippedDefendSkills);
+            AddSlotsToRuntime(profile.equippedSpecialSkills);
+            AddSlotsToRuntime(profile.equippedItems);
+        }
+        else
+        {
+            if (roleData != null && roleData.equippedSkills != null)
+            {
+                foreach (var slot in roleData.equippedSkills)
+                {
+                    if (slot == null || slot.skillData == null) continue;
+                    SkillData inst = Instantiate(slot.skillData);
+                    SkillSlot runtimeSlot = new SkillSlot { skillData = inst, level = slot.level, quantity = slot.quantity };
+                    runtimeSkills.Add(runtimeSlot);
+                }
+            }
+        }
+
+        OnHpChanged?.Invoke();
+        OnStaminaChanged?.Invoke();
+    }
+
+    // ==========================================
+    // 统一属性获取接口 (抹平敌我差异)
+    // ==========================================
+    public EquipmentData GetEquippedWeapon()
+    {
+        if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.equippedWeapon;
+        return roleData.equippedWeapon;
+    }
+
+    public int GetFinalStrength()
+    {
+        if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalStrength();
+        int finalStr = roleData.strength;
+        if (roleData.equippedWeapon != null) finalStr += roleData.equippedWeapon.bonusStrength;
+        if (roleData.equippedArmor != null) finalStr += roleData.equippedArmor.bonusStrength;
+        if (roleData.equippedAccessories != null)
+            foreach (var acc in roleData.equippedAccessories) if (acc != null) finalStr += acc.bonusStrength;
+        return finalStr;
+    }
+
+    public int GetFinalMentality()
+    {
+        if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalMentality();
+        int finalMen = roleData.mentality;
+        if (roleData.equippedWeapon != null) finalMen += roleData.equippedWeapon.bonusMentality;
+        if (roleData.equippedArmor != null) finalMen += roleData.equippedArmor.bonusMentality;
+        if (roleData.equippedAccessories != null)
+            foreach (var acc in roleData.equippedAccessories) if (acc != null) finalMen += acc.bonusMentality;
+        return finalMen;
+    }
+
+    // ==========================================
+    // 【核心新增】：打击条移动表现获取
+    // ==========================================
+    public float GetFinalHitBarSpeed(float globalBaseSpeed)
+    {
+        int mentality = GetFinalMentality();
+
+        // 公式：每有 1 点精神，速度减 2%。限制最多减速到 20% 防止不动了
+        float speedReduction = mentality * 0.02f;
+        float mentalMultiplier = Mathf.Max(0.2f, 1.0f - speedReduction);
+
+        // 叠加原有的状态效果(紧张/专注)
+        float statusMultiplier = 1.0f;
+        if (activeStatuses.ContainsKey(StatusType.Tension)) statusMultiplier += 0.3f;
+        if (activeStatuses.ContainsKey(StatusType.Focus)) statusMultiplier -= 0.3f;
+
+        return globalBaseSpeed * mentalMultiplier * statusMultiplier;
+    }
+
+    public float GetFinalHitBarSlowdown(float globalBaseSlowdown)
+    {
+        float loadMultiplier = 1.0f;
+
+        // 仅玩家受负重影响，敌人默认 1.0
+        if (isPlayer && GameManager.Instance != null)
+        {
+            var loadState = GameManager.Instance.playerProfile.GetLoadWeightState();
+            switch (loadState)
+            {
+                case GlobalBattleRules.LoadWeightState.Light: loadMultiplier = 1.3f; break;     // +30%
+                case GlobalBattleRules.LoadWeightState.Medium: loadMultiplier = 1.0f; break;    // 不变
+                case GlobalBattleRules.LoadWeightState.Heavy: loadMultiplier = 0.7f; break;     // -30%
+                case GlobalBattleRules.LoadWeightState.Extreme: loadMultiplier = 0.4f; break;   // -60%
+            }
+        }
+        return globalBaseSlowdown * loadMultiplier;
+    }
+
+    public void ResetTurnData() { tempDamageReduction = 0; tempHitWidthModifier = 0; }
+
+    public void TakeDamage(int rawDamage)
+    {
+        int remainingDamage = rawDamage;
+        if (currentExtraLife > 0)
+        {
+            if (currentExtraLife >= remainingDamage) { currentExtraLife -= remainingDamage; remainingDamage = 0; }
+            else { remainingDamage -= currentExtraLife; currentExtraLife = 0; Debug.Log($"[{roleData.roleName}] 的防具破损！"); }
+        }
+        if (remainingDamage > 0)
+        {
+            currentBasicLife -= remainingDamage;
+            if (currentBasicLife <= 0) { currentBasicLife = 0; OnHpChanged?.Invoke(); Die(); PlayDieAnim(); return; }
+        }
+        OnHpChanged?.Invoke();
+    }
+
+    public bool ConsumeStamina(int amount)
+    {
+        if (currentStamina >= amount) { currentStamina -= amount; OnStaminaChanged?.Invoke(); return true; }
+        return false;
+    }
+
+    public void RecoverStamina()
+    {
+        currentStamina += roleData.staminaRecoverPerTurn;
+        if (currentStamina > roleData.maxStamina) currentStamina = roleData.maxStamina;
+        OnStaminaChanged?.Invoke();
+        TickStatuses();
+    }
+
+    public void AddStatus(StatusType type, int duration)
+    {
+        if (activeStatuses.ContainsKey(type)) activeStatuses[type] = Mathf.Max(activeStatuses[type], duration);
+        else activeStatuses.Add(type, duration);
+        OnStatusChanged?.Invoke();
+    }
+
+    public void TickStatuses()
+    {
+        var toRemove = new List<StatusType>();
+        var keys = new List<StatusType>(activeStatuses.Keys);
+        foreach (var key in keys) { activeStatuses[key]--; if (activeStatuses[key] <= 0) toRemove.Add(key); }
+        foreach (var key in toRemove) { activeStatuses.Remove(key); }
+        OnStatusChanged?.Invoke();
+    }
+
+    public float GetHitBarWidthModifier()
+    {
+        float modifier = 0f;
+        if (activeStatuses.ContainsKey(StatusType.Tension)) modifier -= 6f;
+        if (activeStatuses.ContainsKey(StatusType.Focus)) modifier += 6f;
+        return modifier;
+    }
+
+    public void TriggerHitPoint() => OnAnimHitPoint?.Invoke();
+    public void PlayAnim(string animName) { if (animator != null) animator.SetTrigger(animName); }
+    public void PlayHitAnim() => PlayAnim("Hit");
+    public void PlayMissAnim() => PlayAnim("Miss");
+    public void PlayDieAnim() => PlayAnim("Die");
+    private void Die() { OnDeath?.Invoke(); }
+}

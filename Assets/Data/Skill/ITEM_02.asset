@@ -39,6 +39,7 @@ MonoBehaviour:
     baseSlowdown: 0
     actionTime: 0
     sections: []
+  castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
   effects:
   - rid: 2591120425798336514
   references:
