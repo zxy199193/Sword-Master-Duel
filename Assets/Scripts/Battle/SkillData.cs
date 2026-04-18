@@ -25,7 +25,8 @@ public class SkillData : ScriptableObject
 
     [Header("Item Properties")]
     public bool isConsumable;
-    // 【移除】：删除了这里的 quantity 和 skillLevel，已彻底解耦到 SkillSlot！
+
+    public int price = 100;
 
     [Header("Hit Bar Settings")]
     public int hitTimes = 1;

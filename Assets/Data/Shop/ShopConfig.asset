@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 577846bd0a6d00d438c4af3811bebc44, type: 3}
+  m_Name: ShopConfig
+  m_EditorClassIdentifier: 
+  availableSkills:
+  - {fileID: 11400000, guid: d29c4ab77970f444c923287ce35543f4, type: 2}
+  - {fileID: 11400000, guid: c3eb73b81c6754c4094bccdb6132482b, type: 2}
+  availableEquipments:
+  - {fileID: 11400000, guid: 4161d1e11d59a3940b9ef16f7150ae73, type: 2}
+  - {fileID: 11400000, guid: e4de47acb132f5748933bfb9ccf3f8ea, type: 2}
+  - {fileID: 11400000, guid: d66e917e3eb5833458f63242907f8510, type: 2}
+  availableItems:
+  - {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
+  - {fileID: 11400000, guid: f17287398bf6a46469bca1bd08f0976b, type: 2}
+  - {fileID: 11400000, guid: c22af5460d2101f4d922e5f7fe0642fd, type: 2}
+  isGachaActive: 1

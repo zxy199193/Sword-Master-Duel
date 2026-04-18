@@ -16,7 +16,6 @@ MonoBehaviour:
   description: "\u5A01\u529B\u4E2D\uFF0C\u547D\u4E2D\u7387\u4E2D"
   skillIcon: {fileID: 21300000, guid: 38d513935403092408d114a995fcfa42, type: 3}
   skillType: 0
-  skillLevel: 1
   animationTriggerName: Attack
   staminaCosts: 050000000500000004000000
   basicDamages:
@@ -31,8 +30,8 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  quantity: 0
   isConsumable: 0
+  price: 100
   hitTimes: 1
   hitBarConfig:
     baseSpeed: 100
@@ -42,6 +41,7 @@ MonoBehaviour:
     - level: 1
       axisPosition: 50
       width: 20
+  castEffectPrefab: {fileID: 0}
   effects: []
   references:
     version: 2

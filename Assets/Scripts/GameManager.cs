@@ -106,6 +106,32 @@ public class PlayerProfile
         if (ratio <= 1.5f) return GlobalBattleRules.LoadWeightState.Heavy;
         return GlobalBattleRules.LoadWeightState.Extreme;
     }
+
+    [Header("跨场景 Buff")]
+    public bool hasMassageBuff = false; // 按摩 Buff：下一次战斗开始时体力回满
+
+    // 安全扣钱方法
+    public bool ConsumeGold(int amount)
+    {
+        if (totalGold >= amount)
+        {
+            totalGold -= amount;
+            return true;
+        }
+        return false;
+    }
+
+    // 安全扣血方法（保证不会死，最低剩 1 滴血）
+    public bool ConsumeHpSafely(int amount)
+    {
+        if (currentHp > 1)
+        {
+            currentHp -= amount;
+            if (currentHp < 1) currentHp = 1;
+            return true;
+        }
+        return false; // 如果只有 1 滴血了，不让用扣血功能
+    }
 }
 
 public class GameManager : MonoBehaviour
