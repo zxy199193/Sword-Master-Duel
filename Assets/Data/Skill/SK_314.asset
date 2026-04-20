@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 608e1027dbec7dc4a8438b4248abfb17, type: 3}
-  m_Name: SK_223
+  m_Name: SK_314
   m_EditorClassIdentifier: 
-  skillName: "\u6B65\u6CD5"
-  description: "\u4F7F\u7528\u540E\u6211\u65B9\u8FDB\u5165\u3010\u7075\u52A8\u3011\u72B6\u6001"
-  skillIcon: {fileID: 21300000, guid: 5fcffea1084f4d14aa9340465fb5df31, type: 3}
-  skillType: 3
-  animationTriggerName: Attack
+  skillName: "\u5FEB\u901F\u53CD\u51FB"
+  description: "\u9632\u5FA1\u6548\u679C\u5C0F\r\n\u5BF9\u65B9\u8FDB\u653B\u540E\u4F1A\u7ACB\u523B\u53CD\u51FB\u9020\u6210\u4F24\u5BB3\uFF08\u5A01\u529B\u5C0F\uFF09"
+  skillIcon: {fileID: 21300000, guid: 413253281d5376b4c847c4879c2e4829, type: 3}
+  skillType: 1
+  animationTriggerName: 
   staminaCosts: 020000000200000001000000
   basicDamages:
   - 0
   - 0
   - 0
   basicDefends:
-  - 0
-  - 0
-  - 0
+  - 2
+  - 4
+  - 7
   hitAmends:
-  - 0
-  - 0
-  - 0
+  - 8
+  - 6
+  - 4
   isConsumable: 0
   price: 50
   hitTimes: 1
@@ -40,13 +40,11 @@ MonoBehaviour:
     sections: []
   castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
   effects:
-  - rid: 2591120357824135170
+  - rid: 2591120559595585544
   references:
     version: 2
     RefIds:
-    - rid: 2591120357824135170
-      type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2591120559595585544
+      type: {class: CounterAttackOnEvadeEffect, ns: , asm: Assembly-CSharp}
       data:
-        statusType: 2
-        baseDurations: 020000000300000003000000
-        applyToSelf: 1
+        counterDamages: 030000000500000008000000

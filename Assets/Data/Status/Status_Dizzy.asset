@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 880029687ada51244b47bfe6ad397314, type: 3}
+  m_Name: Status_Dizzy
+  m_EditorClassIdentifier: 
+  statusType: 4
+  statusName: "\u7729\u6655"
+  icon: {fileID: 21300000, guid: d135275b0ac4b924895bc3c1390398e9, type: 3}
+  description: "\u6ED1\u5757\u8FD0\u52A8\u6A21\u5F0F\u53D8\u4E3A\u4E0D\u89C4\u5219\u8FD0\u52A8"

@@ -105,7 +105,6 @@ public class BattleManager : MonoBehaviour
                 if (!phaseFound) currentPhase = sortedPhases[sortedPhases.Count - 1];
             }
 
-            // 【核心修复】：键值对改为 SkillSlot
             var validMainSkills = new List<KeyValuePair<SkillSlot, int>>();
             var validSubSkills = new List<KeyValuePair<SkillSlot, int>>();
 
@@ -117,8 +116,8 @@ public class BattleManager : MonoBehaviour
                 {
                     if (slot == null || slot.skillData == null) continue;
 
-                    // 【核心修复】：传入 level 获取动态消耗
-                    if (slot.skillData.GetStaminaCost(slot.level) > enemyEntity.currentStamina) continue;
+                    // 【替换为动态获取费用】
+                    if (GetActualSkillCost(enemyEntity, slot) > enemyEntity.currentStamina) continue;
 
                     if (slot.skillData.skillType == SkillType.Attack || slot.skillData.skillType == SkillType.Defend || slot.skillData.skillType == SkillType.Dodge)
                     {
@@ -147,13 +146,15 @@ public class BattleManager : MonoBehaviour
 
             currentEnemySkill = SelectSkillByWeight(validMainSkills);
 
-            int mainSkillCost = currentEnemySkill != null ? currentEnemySkill.skillData.GetStaminaCost(currentEnemySkill.level) : 0;
+            // 【替换为动态获取费用】
+            int mainSkillCost = currentEnemySkill != null ? GetActualSkillCost(enemyEntity, currentEnemySkill) : 0;
             int remainingStamina = enemyEntity.currentStamina - mainSkillCost;
             float subProb = phaseFound ? currentPhase.subSkillProbability : 0.5f;
 
             if (Random.value < subProb && remainingStamina > 0 && validSubSkills.Count > 0)
             {
-                validSubSkills.RemoveAll(kvp => kvp.Key.skillData.GetStaminaCost(kvp.Key.level) > remainingStamina);
+                // 【替换为动态获取费用】
+                validSubSkills.RemoveAll(kvp => GetActualSkillCost(enemyEntity, kvp.Key) > remainingStamina);
                 currentEnemySubSkill = SelectSkillByWeight(validSubSkills);
             }
         }
@@ -165,10 +166,11 @@ public class BattleManager : MonoBehaviour
 
         Debug.Log($"<color=cyan>[Combat] 玩家: 主[{pMain}] 副[{pSub}] | 敌人: 主[{eMain}] 副[{eSub}]</color>");
 
-        if (currentPlayerSkill != null) playerEntity.ConsumeStamina(currentPlayerSkill.skillData.GetStaminaCost(currentPlayerSkill.level));
-        if (currentPlayerSubSkill != null) playerEntity.ConsumeStamina(currentPlayerSubSkill.skillData.GetStaminaCost(currentPlayerSubSkill.level));
-        if (currentEnemySkill != null) enemyEntity.ConsumeStamina(currentEnemySkill.skillData.GetStaminaCost(currentEnemySkill.level));
-        if (currentEnemySubSkill != null) enemyEntity.ConsumeStamina(currentEnemySubSkill.skillData.GetStaminaCost(currentEnemySubSkill.level));
+        // 【替换为动态获取费用】
+        if (currentPlayerSkill != null) playerEntity.ConsumeStamina(GetActualSkillCost(playerEntity, currentPlayerSkill, currentPlayerSubSkill));
+        if (currentPlayerSubSkill != null) playerEntity.ConsumeStamina(GetActualSkillCost(playerEntity, currentPlayerSubSkill));
+        if (currentEnemySkill != null) enemyEntity.ConsumeStamina(GetActualSkillCost(enemyEntity, currentEnemySkill, currentEnemySubSkill));
+        if (currentEnemySubSkill != null) enemyEntity.ConsumeStamina(GetActualSkillCost(enemyEntity, currentEnemySubSkill));
 
         ChangeState(new ActionBroadcastState(this));
     }
@@ -188,19 +190,30 @@ public class BattleManager : MonoBehaviour
         DamagePopup popupScript = popupObj.GetComponent<DamagePopup>();
         if (popupScript != null) popupScript.Setup(textContent);
     }
-
     private void ApplyNonAttackSkills(BattleEntity entity, SkillSlot slot)
     {
         if (slot == null || slot.skillData == null) return;
 
         if (slot.skillData.skillType == SkillType.Defend)
         {
-            entity.tempDamageReduction = slot.skillData.GetBasicDefend(slot.level) + entity.roleData.strength;
+            entity.tempDamageReduction = slot.skillData.GetBasicDefend(slot.level) + entity.GetFinalStrength();
             entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level);
         }
         else if (slot.skillData.skillType == SkillType.Dodge)
         {
-            entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level) - entity.roleData.mentality;
+            // 【核心修改】：如果有灵动状态，额外提供 6 点判定缩减！
+            float agileBonus = entity.activeStatuses.ContainsKey(StatusType.Agile) ? 6f : 0f;
+            entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level) - entity.GetFinalMentality() - agileBonus;
+        }
+
+        // 触发闪避/防御技能自带的特效 (比如启动免疫状态)
+        if (slot.skillData.effects != null && slot.skillData.effects.Count > 0)
+        {
+            BattleEntity target = (entity == playerEntity) ? enemyEntity : playerEntity;
+            foreach (var effect in slot.skillData.effects)
+            {
+                if (effect != null) effect.Execute(entity, target, this, slot.level);
+            }
         }
     }
 
@@ -212,28 +225,26 @@ public class BattleManager : MonoBehaviour
         {
             if (slot.quantity <= 0) return;
             slot.quantity--;
-            Debug.Log($"[{user.roleData.roleName}] 使用了道具 [{slot.skillData.skillName}]，剩余: {slot.quantity}");
-        }
-        else if (slot.skillData.skillType == SkillType.Special)
-        {
-            Debug.Log($"[{user.roleData.roleName}] 发动了特殊技能 [{slot.skillData.skillName}]");
-        }
-        else
-        {
-            return;
         }
 
         if (slot.skillData.castEffectPrefab != null)
-        {
             SpawnCastEffect(user.transform, slot.skillData.castEffectPrefab);
-        }
 
         if (slot.skillData.effects != null && slot.skillData.effects.Count > 0)
         {
             foreach (var effect in slot.skillData.effects)
             {
                 if (effect == null) continue;
-                effect.Execute(user, target, this, slot.level); // 传入 slot.level
+
+                // 免疫拦截机制：如果是害人的特效，且目标处于后撤步的免疫状态，直接没收效果！
+                if (effect.IsHarmfulToTarget() && target.isImmuneToSubSkills)
+                {
+                    SpawnDamagePopup(target.isPlayer, "<color=#888888>免疫!</color>", 0);
+                    Debug.Log($"[战术拦截] {target.roleData.roleName} 通过后撤步免疫了 {slot.skillData.skillName} 的负面效果！");
+                    continue;
+                }
+
+                effect.Execute(user, target, this, slot.level);
             }
         }
     }
@@ -278,6 +289,39 @@ public class BattleManager : MonoBehaviour
         Destroy(effect, 2f);
     }
 
+    // ==========================================
+    // 获取技能最终的真实体力消耗
+    // ==========================================
+    // ==========================================
+    // 获取技能最终的真实体力消耗 (支持向前预测)
+    // ==========================================
+    public int GetActualSkillCost(BattleEntity entity, SkillSlot slot, SkillSlot pairedSubSkill = null)
+    {
+        if (slot == null || slot.skillData == null) return 0;
+        int cost = slot.skillData.GetStaminaCost(slot.level);
+
+        bool hasAgile = entity.activeStatuses.ContainsKey(StatusType.Agile);
+
+        // 【核心前瞻预测】：如果你这回合还没灵动，但你带了步法(即将获得灵动)，立刻给你打折！
+        if (!hasAgile && pairedSubSkill != null && pairedSubSkill.skillData != null && pairedSubSkill.skillData.effects != null)
+        {
+            foreach (var effect in pairedSubSkill.skillData.effects)
+            {
+                if (effect is ApplyStatusEffect se && se.statusType == StatusType.Agile && se.applyToSelf)
+                {
+                    hasAgile = true; break;
+                }
+            }
+        }
+
+        // 灵动状态发威：如果是闪避技能，体力消耗 -1
+        if (slot.skillData.skillType == SkillType.Dodge && hasAgile)
+        {
+            cost = Mathf.Max(0, cost - 1);
+        }
+        return cost;
+    }
+
     private SkillSlot SelectSkillByWeight(List<KeyValuePair<SkillSlot, int>> weightedSkills)
     {
         if (weightedSkills == null || weightedSkills.Count == 0) return null;
@@ -313,39 +357,74 @@ public class BattleManager : MonoBehaviour
         if (broadcastUIRoot != null) broadcastUIRoot.SetActive(false);
     }
 
+    // 【判断这个副技能是给自己上的 Buff，还是给别人上的 Debuff/炸弹】
+    private bool IsSelfTargetSkill(SkillData skill)
+    {
+        if (skill == null || skill.effects == null || skill.effects.Count == 0) return true; // 没效果默认安全
+        foreach (var effect in skill.effects)
+        {
+            if (effect != null && effect.IsHarmfulToTarget()) return false; // 只要有一个害人的效果，就是敌对技能
+        }
+        return true;
+    }
+
     public IEnumerator RoutineActionBroadcast()
     {
-        if (currentPlayerSubSkill != null && currentPlayerSubSkill.skillData != null)
+        bool pSubIsSelf = currentPlayerSubSkill != null && IsSelfTargetSkill(currentPlayerSubSkill.skillData);
+        bool eSubIsSelf = currentEnemySubSkill != null && IsSelfTargetSkill(currentEnemySubSkill.skillData);
+
+        // (1) 我方 - 增益/恢复道具 (如：步法、调息)
+        if (currentPlayerSubSkill != null && pSubIsSelf)
         {
             ShowBroadcast($"我方使用了【{currentPlayerSubSkill.skillData.skillName}】");
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1.5f);
             ExecuteSecondaryAction(playerEntity, enemyEntity, currentPlayerSubSkill);
         }
 
-        if (currentEnemySubSkill != null && currentEnemySubSkill.skillData != null)
+        // (2) 敌方 - 增益/恢复道具
+        if (currentEnemySubSkill != null && eSubIsSelf)
         {
             ShowBroadcast($"对方使用了【{currentEnemySubSkill.skillData.skillName}】");
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1.5f);
             ExecuteSecondaryAction(enemyEntity, playerEntity, currentEnemySubSkill);
         }
 
+        // (3) & (4) 我方和敌方 - 防御/闪避
         if (currentPlayerSkill != null && currentPlayerSkill.skillData != null && (currentPlayerSkill.skillData.skillType == SkillType.Defend || currentPlayerSkill.skillData.skillType == SkillType.Dodge))
         {
-            ShowBroadcast($"我方进行了防御，使用【{currentPlayerSkill.skillData.skillName}】");
+            ShowBroadcast($"我方使用了【{currentPlayerSkill.skillData.skillName}】");
             yield return new WaitForSeconds(1f);
             ApplyNonAttackSkills(playerEntity, currentPlayerSkill);
         }
 
         if (currentEnemySkill != null && currentEnemySkill.skillData != null && (currentEnemySkill.skillData.skillType == SkillType.Defend || currentEnemySkill.skillData.skillType == SkillType.Dodge))
         {
-            ShowBroadcast($"对方进行了防御，使用【{currentEnemySkill.skillData.skillName}】");
+            ShowBroadcast($"对方使用了【{currentEnemySkill.skillData.skillName}】");
             yield return new WaitForSeconds(1f);
             ApplyNonAttackSkills(enemyEntity, currentEnemySkill);
+        }
+
+        // (5) 我方 - 有害特殊/道具 (如：炸弹)
+        if (currentPlayerSubSkill != null && !pSubIsSelf)
+        {
+            ShowBroadcast($"我方使用了【{currentPlayerSubSkill.skillData.skillName}】");
+            yield return new WaitForSeconds(1.5f);
+            ExecuteSecondaryAction(playerEntity, enemyEntity, currentPlayerSubSkill);
+        }
+
+        // (6) 敌方 - 有害特殊/道具
+        if (currentEnemySubSkill != null && !eSubIsSelf)
+        {
+            ShowBroadcast($"对方使用了【{currentEnemySubSkill.skillData.skillName}】");
+            yield return new WaitForSeconds(1.5f);
+            ExecuteSecondaryAction(enemyEntity, playerEntity, currentEnemySubSkill);
         }
 
         HideBroadcast();
         isPlayerAttackResolved = false;
         isEnemyAttackResolved = false;
+
+        // (7) & (8) 进入攻击互砍结算
         ProceedNextAttack();
     }
 

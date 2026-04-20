@@ -19,6 +19,7 @@ public class BattleEntity : MonoBehaviour
     [Header("Turn Temporary Data")]
     public float tempDamageReduction = 0;
     public float tempHitWidthModifier = 0;
+    public bool isImmuneToSubSkills = false;
 
     [Header("Status System")]
     public Dictionary<StatusType, int> activeStatuses = new Dictionary<StatusType, int>();
@@ -152,7 +153,7 @@ public class BattleEntity : MonoBehaviour
     }
 
     // ==========================================
-    // 【核心找回】：打击条速度与减速度计算 (精神力与负重系统)
+    // 打击条速度计算 (加入眩晕波动)
     // ==========================================
     public float GetFinalHitBarSpeed(float globalBaseSpeed)
     {
@@ -166,6 +167,18 @@ public class BattleEntity : MonoBehaviour
         float statusMultiplier = 1.0f;
         if (activeStatuses.ContainsKey(StatusType.Tension)) statusMultiplier += 0.3f;
         if (activeStatuses.ContainsKey(StatusType.Focus)) statusMultiplier -= 0.3f;
+
+        // ==========================================
+        // 【核心新增】：眩晕状态的忽快忽慢逻辑
+        // ==========================================
+        if (activeStatuses.ContainsKey(StatusType.Dizzy))
+        {
+            // 使用柏林噪声 (PerlinNoise) 生成随时间连续变化的随机数
+            // Mathf.PerlinNoise 返回 0~1。减去 0.5 变成 -0.5~0.5，再乘以 0.6 变成 -0.3~0.3 (即 ±30%)
+            // Time.time * 3f 控制的是波动的剧烈程度，数字越大速度变化越快
+            float dizzyFluctuation = (Mathf.PerlinNoise(Time.time * 5f, 0f) - 0.5f) * 1f;
+            statusMultiplier += dizzyFluctuation;
+        }
 
         return globalBaseSpeed * mentalMultiplier * statusMultiplier;
     }
@@ -192,8 +205,7 @@ public class BattleEntity : MonoBehaviour
     // ==========================================
     // 战斗与状态逻辑
     // ==========================================
-    public void ResetTurnData() { tempDamageReduction = 0; tempHitWidthModifier = 0; }
-
+    public void ResetTurnData() { tempDamageReduction = 0; tempHitWidthModifier = 0; isImmuneToSubSkills = false; }
     public void TakeDamage(int rawDamage)
     {
         int remainingDamage = rawDamage;
@@ -218,9 +230,15 @@ public class BattleEntity : MonoBehaviour
 
     public void RecoverStamina()
     {
-        currentStamina += roleData.staminaRecoverPerTurn;
+        int recoverAmount = roleData.staminaRecoverPerTurn;
+        if (activeStatuses.ContainsKey(StatusType.Gathering))
+        {
+            recoverAmount += 1;
+        }
 
-        // 【保留修复】：使用加点和装备后的最终体力上限钳制
+        currentStamina += recoverAmount;
+
+        // 使用加点和装备后的最终体力上限钳制
         int maxStam = GetFinalMaxStamina();
         if (currentStamina > maxStam) currentStamina = maxStam;
 

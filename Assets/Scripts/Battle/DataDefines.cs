@@ -7,7 +7,7 @@ using UnityEngine;
 // ==========================================
 public enum SkillType { Attack, Defend, Dodge, Special, Item }
 public enum SectionLevel { Level0, Level1, Level2, Level3, Level4, Level5, Level6, Level99 }
-public enum StatusType { Tension, Focus }
+public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy }
 public enum AttributeType { Life, Stamina, Strength, Mentality }
 
 // ==========================================
@@ -72,8 +72,32 @@ public struct AIPhaseConfig
 [Serializable]
 public abstract class SkillEffect
 {
-    // 【核心改动】：所有特效的执行方法现在必须接收 skillLevel 参数
+    // 原本的执行方法（结算后触发，用于回血、上Buff、飘字等）
     public abstract void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel);
+
+    // 允许特效在伤害乘算前，提供“基础伤害修正值”
+    public virtual int GetBaseDamageModifier(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        return 0;
+    }
+
+    // ==========================================
+    // 【核心新增】：允许防御特效在判定伤害时，根据对方的打击条等级提供“额外减伤”
+    // ==========================================
+    public virtual int GetDefenseModifier(BattleEntity defender, BattleEntity attacker, BattleManager manager, int skillLevel, SectionLevel? hitLevel)
+    {
+        return 0;
+    }
+    public virtual bool IsHarmfulToTarget() { return false; }
+    public virtual void OnEvadeSuccess(BattleEntity defender, BattleEntity attacker, BattleManager manager, int skillLevel)
+    {
+    }
+    public virtual void OnPreDamageSettle(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel, float hitMultiplier, float weaponMultiplier)
+    {
+    }
+    public virtual void OnAttackHit(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel, SectionLevel hitLevel)
+    {
+    }
 }
 
 [Serializable]
@@ -128,6 +152,7 @@ public class DirectDamageEffect : SkillEffect
 {
     [Tooltip("各等级下直接造成的伤害值 (请填入3个值)")]
     public int[] damageAmounts = new int[3];
+    public override bool IsHarmfulToTarget() => true;
 
     public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
@@ -166,6 +191,7 @@ public class HitBarInterferenceEffect : SkillEffect
 {
     [Tooltip("各等级下缩小对方命中区间的宽度 (请填入3个值)")]
     public float[] reduceWidthAmounts = new float[3];
+    public override bool IsHarmfulToTarget() => true;
 
     public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
@@ -186,6 +212,7 @@ public class ApplyStatusEffect : SkillEffect
     public int[] baseDurations = new int[3];
     [Tooltip("是否作用于自己？(勾选加给自己，否则加给目标)")]
     public bool applyToSelf;
+    public override bool IsHarmfulToTarget() => !applyToSelf;
 
     public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
@@ -198,7 +225,15 @@ public class ApplyStatusEffect : SkillEffect
         BattleEntity actualTarget = applyToSelf ? caster : target;
         actualTarget.AddStatus(statusType, finalDuration);
 
-        string statusName = statusType == StatusType.Tension ? "紧张" : "集中";
+        string statusName = statusType.ToString();
+        switch (statusType)
+        {
+            case StatusType.Tension: statusName = "紧张"; break;
+            case StatusType.Focus: statusName = "集中"; break;
+            case StatusType.Agile: statusName = "灵动"; break;
+            case StatusType.Gathering: statusName = "聚气"; break;
+            case StatusType.Dizzy: statusName = "眩晕"; break;
+        }
 
         // 【核心修复】：呼叫状态UI刷新，并修正飘字位置
         actualTarget.OnStatusChanged?.Invoke();
@@ -208,6 +243,245 @@ public class ApplyStatusEffect : SkillEffect
     }
 }
 
+[Serializable]
+public class CounterExtraDamageEffect : SkillEffect
+{
+    [Tooltip("各等级下，如果对方也攻击，提升的基础伤害 (请填入3个值)")]
+    public int[] extraDamages = new int[3];
+
+    // 1. 参与伤害公式的前置计算
+    public override int GetBaseDamageModifier(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        SkillSlot opponentSkill = caster.isPlayer ? manager.currentEnemySkill : manager.currentPlayerSkill;
+
+        // 如果对方也用了攻击技能，返回这10点基础伤害加成
+        if (opponentSkill != null && opponentSkill.skillData != null && opponentSkill.skillData.skillType == SkillType.Attack)
+        {
+            int idx = Mathf.Clamp(skillLevel - 1, 0, extraDamages.Length - 1);
+            return extraDamages.Length > 0 ? extraDamages[idx] : 0;
+        }
+        return 0;
+    }
+
+    // 2. 攻击命中后的视觉表现
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        SkillSlot opponentSkill = caster.isPlayer ? manager.currentEnemySkill : manager.currentPlayerSkill;
+
+        if (opponentSkill != null && opponentSkill.skillData != null && opponentSkill.skillData.skillType == SkillType.Attack)
+        {
+            // 这里不再扣血，血量已经在上面混入普攻一起扣过了。这里只负责飘个帅气的字！
+            manager.SpawnDamagePopup(target.isPlayer, $"<color=#FF4500>居!</color>", 1);
+            Debug.Log($"[{caster.roleData.roleName}] 触发居合特效！基础伤害大幅度提升！");
+        }
+    }
+}
+
+[Serializable]
+public class CriticalDefenseEffect : SkillEffect
+{
+    [Tooltip("各等级下，当对方打击条达到指定等级及以上时，额外提升的防御力 (请填入3个值)")]
+    public int[] extraDefends = new int[3];
+
+    [Tooltip("触发该效果所需的最低打击条评价 (默认 Level3)")]
+    public SectionLevel minTriggerLevel = SectionLevel.Level3;
+
+    // 在对方打中自己，算伤害的瞬间触发！
+    public override int GetDefenseModifier(BattleEntity defender, BattleEntity attacker, BattleManager manager, int skillLevel, SectionLevel? hitLevel)
+    {
+        // 判定：如果对方按出了有效成绩，并且等级 >= 要求的最低等级（如 Level3）
+        if (hitLevel.HasValue && hitLevel.Value >= minTriggerLevel)
+        {
+            int idx = Mathf.Clamp(skillLevel - 1, 0, extraDefends.Length - 1);
+            int defBonus = extraDefends.Length > 0 ? extraDefends[idx] : 0;
+
+            if (defBonus > 0)
+            {
+                // 当场飘个绿字提示玩家完美格挡了！
+                manager.SpawnDamagePopup(defender.isPlayer, $"<color=#32CD32>要害防御!</color>", 1);
+                Debug.Log($"[{defender.roleData.roleName}] 触发要害防御！对方打击评价为 {hitLevel.Value}，额外提供减伤：{defBonus}");
+            }
+            return defBonus;
+        }
+        return 0;
+    }
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 留空，防御生效的逻辑和飘字已经在上面的拦截器里完成了
+    }
+}
+
+[Serializable]
+public class SubSkillImmunityEffect : SkillEffect
+{
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 赋予免疫标志
+        caster.isImmuneToSubSkills = true;
+
+        manager.SpawnDamagePopup(caster.isPlayer, "<color=#00FFFF>回避准备</color>", 1);
+        Debug.Log($"[{caster.roleData.roleName}] 触发后撤步！本回合免疫对方的有害副技能！");
+    }
+}
+
+[Serializable]
+public class CounterStatusOnEvadeEffect : SkillEffect
+{
+    [Tooltip("闪避成功后，给攻击方施加的状态")]
+    public StatusType statusToApply = StatusType.Tension;
+
+    [Tooltip("各等级下的状态持续回合数 (请填入3个值)")]
+    public int[] durations = new int[3];
+
+    public override void OnEvadeSuccess(BattleEntity defender, BattleEntity attacker, BattleManager manager, int skillLevel)
+    {
+        int idx = Mathf.Clamp(skillLevel - 1, 0, durations.Length - 1);
+        int dur = durations.Length > 0 ? durations[idx] : 0;
+
+        if (dur > 0)
+        {
+            // 给劈空的倒霉蛋加上状态
+            attacker.AddStatus(statusToApply, dur);
+
+            // 飘字提示玩家无刀取成功！
+            manager.SpawnDamagePopup(attacker.isPlayer, $"<color=#FF8C00>破绽![{statusToApply}]</color>", 1);
+            Debug.Log($"[{defender.roleData.roleName}] 触发无刀取！闪避成功，导致 [{attacker.roleData.roleName}] 陷入 {statusToApply} 状态 {dur} 回合！");
+        }
+    }
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 留空，真正的逻辑都在上面的 OnEvadeSuccess 里
+    }
+}
+[Serializable]
+public class CounterAttackOnEvadeEffect : SkillEffect
+{
+    [Tooltip("闪避成功后，反击的基础伤害 (请填入3个值，如 6, 8, 11)")]
+    public int[] counterDamages = new int[3];
+
+    public override void OnEvadeSuccess(BattleEntity defender, BattleEntity attacker, BattleManager manager, int skillLevel)
+    {
+        int idx = Mathf.Clamp(skillLevel - 1, 0, counterDamages.Length - 1);
+        int baseDmg = counterDamages.Length > 0 ? counterDamages[idx] : 0;
+
+        if (baseDmg > 0)
+        {
+            // 伤害公式：技能反击基础伤害 + 自身(defender)的力量属性
+            int finalDamage = baseDmg + defender.GetFinalStrength();
+
+            // 扣血（作为惩罚性反击，这里直接造成伤害，无视对方此时的临时防御，突出一个“破绽真实伤害”）
+            attacker.TakeDamage(finalDamage);
+
+            // 让被反击的人播受击动画和飙血特效
+            attacker.PlayHitAnim();
+            manager.SpawnHitEffect(attacker.transform);
+
+            // 飘字表现：防守方头上冒出“燕返！”，攻击方头上爆出红色的反击伤害数字
+            manager.SpawnDamagePopup(defender.isPlayer, "<color=#FF4500>燕返!</color>", 1);
+            manager.SpawnDamagePopup(attacker.isPlayer, finalDamage.ToString(), 2); // 传2让它用暴击样式的数字
+
+            Debug.Log($"[{defender.roleData.roleName}] 触发燕返！成功闪避并反斩，对 [{attacker.roleData.roleName}] 造成了 {finalDamage} 点真实伤害！");
+
+            // 万一这一下直接把对方反击死了，得让他倒下
+            if (attacker.currentBasicLife <= 0)
+            {
+                attacker.PlayDieAnim();
+            }
+        }
+    }
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 留空：核心逻辑都在闪避成功的回调里
+    }
+}
+
+[Serializable]
+public class AntiShieldDamageEffect : SkillEffect
+{
+    [Tooltip("各等级下，对额外生命造成的额外基础伤害 (请填入3个值，如 3, 5, 8)")]
+    public int[] extraShieldDamages = new int[3];
+
+    public override void OnPreDamageSettle(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel, float hitMultiplier, float weaponMultiplier)
+    {
+        int idx = Mathf.Clamp(skillLevel - 1, 0, extraShieldDamages.Length - 1);
+        int baseExtra = extraShieldDamages.Length > 0 ? extraShieldDamages[idx] : 0;
+
+        // 仅当配置了额外伤害，且目标当前有额外生命时才生效
+        if (baseExtra > 0 && target.currentExtraLife > 0)
+        {
+            // 按照你的公式计算：额外基础伤害 × 武器倍率 × 打击条倍率 (此伤害为破甲真伤，无视对方防御)
+            int finalExtraDmg = Mathf.RoundToInt(baseExtra * weaponMultiplier * hitMultiplier);
+
+            // 限制最大扣除量：不能超过对方当前的额外生命（溢出部分会被丢弃）
+            int actualDeduct = Mathf.Min(target.currentExtraLife, finalExtraDmg);
+
+            // 偷偷扣除额外生命
+            target.currentExtraLife -= actualDeduct;
+            target.OnHpChanged?.Invoke(); // 刷新UI上的血条/护盾条
+
+            // 飘个灰色的字提示玩家碎甲成功！
+            manager.SpawnDamagePopup(target.isPlayer, $"<color=#A9A9A9>碎甲 {actualDeduct}</color>", 1);
+            Debug.Log($"[{caster.roleData.roleName}] 触发重劈！对额外生命造成了 {finalExtraDmg} 点伤害，实际扣除 {actualDeduct} 点！");
+        }
+    }
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 留空，核心破盾逻辑已在 OnPreDamageSettle 完成
+    }
+}
+[Serializable]
+public class ApplyStatusOnHitLevelEffect : SkillEffect
+{
+    [Tooltip("要施加的状态类型")]
+    public StatusType statusType = StatusType.Dizzy;
+
+    [Tooltip("触发该效果所需的最低打击条评价 (例如填 Level3)")]
+    public SectionLevel minTriggerLevel = SectionLevel.Level3;
+
+    [Tooltip("各等级下的状态持续回合数 (请填入3个值)")]
+    public int[] durations = new int[3];
+
+    public override void OnAttackHit(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel, SectionLevel hitLevel)
+    {
+        // 【核心判定】：因为咱们的枚举是从 Level0 到 Level6 顺序排列的，可以直接用 >= 判断！
+        if (hitLevel >= minTriggerLevel)
+        {
+            int idx = Mathf.Clamp(skillLevel - 1, 0, durations.Length - 1);
+            int dur = durations.Length > 0 ? durations[idx] : 0;
+
+            if (dur > 0)
+            {
+                // 给目标上状态
+                target.AddStatus(statusType, dur);
+
+                string statusName = statusType.ToString();
+                switch (statusType)
+                {
+                    case StatusType.Tension: statusName = "紧张"; break;
+                    case StatusType.Focus: statusName = "集中"; break;
+                    case StatusType.Agile: statusName = "灵动"; break;
+                    case StatusType.Gathering: statusName = "聚气"; break;
+                    case StatusType.Dizzy: statusName = "眩晕"; break;
+                }
+
+                // 刷新UI和飘字
+                target.OnStatusChanged?.Invoke();
+                manager.SpawnDamagePopup(target.isPlayer, $"<color=#FFD700>精准命中![{statusName}]</color>", 1);
+
+                Debug.Log($"[{caster.roleData.roleName}] 触发特效！打击评价达到 {hitLevel}，成功施加 [{statusName}] 状态 {dur} 回合！");
+            }
+        }
+    }
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 留空，核心逻辑已经转移到 OnAttackHit 中了
+    }
+}
 // ==========================================
 // 全局战斗规则 (Global Rules)
 // ==========================================
@@ -242,6 +516,7 @@ public static class GlobalBattleRules
             default: return new Color(0.3f, 0.3f, 0.3f);                // 灰
         }
     }
+
 
     // ==========================================
     // 全局打击条配置 (统一管理)

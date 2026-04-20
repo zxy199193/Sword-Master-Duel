@@ -72,6 +72,15 @@ public class HitBarManager : MonoBehaviour
             ProcessAILogic();
         }
 
+        // ==========================================
+        // 【核心修改】：每一帧实时刷新速度，让“眩晕柏林噪声”真正生效！
+        // 必须只在 Moving 状态刷新，防止干扰 Stopping 阶段的物理刹车计算
+        // ==========================================
+        if (currentState == HitBarState.Moving)
+        {
+            currentSpeed = currentCaster != null ? currentCaster.GetFinalHitBarSpeed(GlobalBattleRules.globalHitBarBaseSpeed) : GlobalBattleRules.globalHitBarBaseSpeed;
+        }
+
         if (currentState == HitBarState.Moving || currentState == HitBarState.Stopping)
         {
             currentSliderPos += currentSpeed * moveDirection * Time.deltaTime;
@@ -92,7 +101,6 @@ public class HitBarManager : MonoBehaviour
 
         if (currentState == HitBarState.Stopping)
         {
-            // 【核心修改】：动态获取当前的刹车减速度
             float finalSlowdown = currentCaster != null ? currentCaster.GetFinalHitBarSlowdown(GlobalBattleRules.globalHitBarBaseSlowdown) : GlobalBattleRules.globalHitBarBaseSlowdown;
 
             currentSpeed = finalSlowdown > 0 ? currentSpeed - (finalSlowdown * Time.deltaTime) : 0;
@@ -149,7 +157,6 @@ public class HitBarManager : MonoBehaviour
         currentSliderPos = UnityEngine.Random.Range(0f, 100f);
         moveDirection = UnityEngine.Random.Range(0, 2) == 0 ? 1 : -1;
 
-        // 【核心修改】：动态获取初速度
         currentSpeed = currentCaster != null ? currentCaster.GetFinalHitBarSpeed(GlobalBattleRules.globalHitBarBaseSpeed) : GlobalBattleRules.globalHitBarBaseSpeed;
 
         currentState = HitBarState.Moving;
@@ -177,7 +184,6 @@ public class HitBarManager : MonoBehaviour
     {
         if (aiCurrentBounces < aiTargetBounces) return;
 
-        // 【核心修改】：AI也要用正确的负重减速度来预判！
         float finalSlowdown = currentCaster != null ? currentCaster.GetFinalHitBarSlowdown(GlobalBattleRules.globalHitBarBaseSlowdown) : GlobalBattleRules.globalHitBarBaseSlowdown;
 
         float stopDistance = finalSlowdown > 0 ? (currentSpeed * currentSpeed) / (2f * finalSlowdown) : 0;

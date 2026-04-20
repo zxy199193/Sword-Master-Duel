@@ -15,7 +15,7 @@ MonoBehaviour:
   roleName: "\u9053\u573A\u5B66\u5F92 "
   roleModel: {fileID: 604816851, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
   animatorController: {fileID: 9100000, guid: f37ae24da973bca4fb0697120318a913, type: 2}
-  maxBasicLife: 15
+  maxBasicLife: 20
   maxStamina: 10
   strength: 1
   mentality: 2
@@ -24,8 +24,11 @@ MonoBehaviour:
   - skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
     level: 1
     quantity: 1
+  - skillData: {fileID: 11400000, guid: c22af5460d2101f4d922e5f7fe0642fd, type: 2}
+    level: 1
+    quantity: 3
   equippedWeapon: {fileID: 11400000, guid: e4de47acb132f5748933bfb9ccf3f8ea, type: 2}
-  equippedArmor: {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
+  equippedArmor: {fileID: 0}
   equippedAccessories: []
   isBoss: 0
   goldReward: 20
@@ -33,17 +36,13 @@ MonoBehaviour:
   aiReactionTolerance: 0.45
   aiPhases:
   - hpPercentageThreshold: 1
-    subSkillProbability: 0.3
+    subSkillProbability: 1
     mainSkillWeights:
     - skill: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
       weight: 50
-    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
-      weight: 50
     subSkillWeights:
-    - skill: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
+    - skill: {fileID: 11400000, guid: c22af5460d2101f4d922e5f7fe0642fd, type: 2}
       weight: 100
-    - skill: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
-      weight: 0
   - hpPercentageThreshold: 0.35
     subSkillProbability: 0.5
     mainSkillWeights:

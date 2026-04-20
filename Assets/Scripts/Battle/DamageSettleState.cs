@@ -25,7 +25,6 @@ public class DamageSettleState : BattleState
 
         BattleEntity attacker = battleManager.isPlayerAttacking ? battleManager.playerEntity : battleManager.enemyEntity;
 
-        // 【已修复：获取 SkillSlot】
         SkillSlot attackSlot = battleManager.isPlayerAttacking ? battleManager.currentPlayerSkill : battleManager.currentEnemySkill;
         SkillData attackSkill = attackSlot != null ? attackSlot.skillData : null;
 
@@ -93,7 +92,6 @@ public class DamageSettleState : BattleState
         BattleEntity attacker = battleManager.isPlayerAttacking ? battleManager.playerEntity : battleManager.enemyEntity;
         BattleEntity defender = battleManager.isPlayerAttacking ? battleManager.enemyEntity : battleManager.playerEntity;
 
-        // 【已修复：提取 SkillSlot 与 Level】
         SkillSlot attackSlot = battleManager.isPlayerAttacking ? battleManager.currentPlayerSkill : battleManager.currentEnemySkill;
         SkillData skill = attackSlot != null ? attackSlot.skillData : null;
         int level = attackSlot != null ? attackSlot.level : 1;
@@ -104,7 +102,6 @@ public class DamageSettleState : BattleState
         {
             float multiplier = GlobalBattleRules.GetHitMultiplier(hit.Value.level);
 
-            // 【已修复：读取最终力量与装备倍率】
             int finalStrength = attacker.roleData.strength;
             float weaponAtkFactor = 1.0f;
 
@@ -114,23 +111,95 @@ public class DamageSettleState : BattleState
                 finalStrength = profile.GetFinalStrength();
                 if (profile.equippedWeapon != null) weaponAtkFactor = profile.equippedWeapon.atkFactor;
             }
-
+            if (skill.effects != null && skill.effects.Count > 0)
+            {
+                foreach (var effect in skill.effects)
+                {
+                    if (effect != null)
+                    {
+                        // 传入手头已经算好的两个倍率
+                        effect.OnPreDamageSettle(attacker, defender, battleManager, level, multiplier, weaponAtkFactor);
+                    }
+                }
+            }
             int equipDamageModifier = 0;
             if (battleManager.isPlayerAttacking) equipDamageModifier = battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnAttackHit, hit.Value.level);
             else equipDamageModifier = battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnDefendHit, hit.Value.level);
 
-            // 【已修复：动态读取不同等级的伤害值】
-            float totalBaseDamage = skill.GetBasicDamage(level) + finalStrength + equipDamageModifier;
-            int rawDamage = Mathf.RoundToInt(weaponAtkFactor * multiplier * totalBaseDamage);
+            // ==========================================
+            // 1. 收集攻击方的特效增伤
+            // ==========================================
+            int skillEffectBaseDamageMod = 0;
+            if (skill.effects != null && skill.effects.Count > 0)
+            {
+                foreach (var effect in skill.effects)
+                {
+                    if (effect != null)
+                    {
+                        skillEffectBaseDamageMod += effect.GetBaseDamageModifier(attacker, defender, battleManager, level);
+                    }
+                }
+            }
 
-            int finalDamage = Mathf.Max(0, rawDamage - Mathf.RoundToInt(defender.tempDamageReduction));
+            // ==========================================
+            // 2. 收集防御方的特效减伤
+            // ==========================================
+            SkillSlot defendSlot = battleManager.isPlayerAttacking ? battleManager.currentEnemySkill : battleManager.currentPlayerSkill;
+            SkillData defendSkill = defendSlot != null ? defendSlot.skillData : null;
+            int defendLevel = defendSlot != null ? defendSlot.level : 1;
 
+            int skillEffectDefenseMod = 0;
+            if (defendSkill != null && defendSkill.effects != null && defendSkill.effects.Count > 0)
+            {
+                foreach (var effect in defendSkill.effects)
+                {
+                    if (effect != null)
+                    {
+                        skillEffectDefenseMod += effect.GetDefenseModifier(defender, attacker, battleManager, defendLevel, hit.Value.level);
+                    }
+                }
+            }
+
+            // ==========================================
+            // 3. 【核心修改：采用你的新公式！】 
+            // 最终伤害 = (总攻击力 - 总减伤) × 武器倍率 × 打击条倍率
+            // ==========================================
+            float totalBaseDamage = skill.GetBasicDamage(level) + finalStrength + equipDamageModifier + skillEffectBaseDamageMod;
+            int totalReduction = Mathf.RoundToInt(defender.tempDamageReduction) + skillEffectDefenseMod;
+
+            // 先算净伤害（保底为0，防止防太高导致加血）
+            float netBaseDamage = Mathf.Max(0, totalBaseDamage - totalReduction);
+
+            // 最后再乘倍率！
+            int finalDamage = Mathf.RoundToInt(weaponAtkFactor * multiplier * netBaseDamage);
+
+            // ==========================================
+
+            // 造成最终伤害
             defender.TakeDamage(finalDamage);
 
+            // 播放受击特效和伤害数字
             battleManager.SpawnHitEffect(defender.transform);
             int hitLevelTag = (int)hit.Value.level >= 3 ? 2 : 1;
             battleManager.SpawnDamagePopup(isPlayerTakingDamage, finalDamage.ToString(), hitLevelTag);
 
+            // ==========================================
+            // 【核心修正】：触发特效时，带上 OnAttackHit 钩子
+            // ==========================================
+            if (skill.effects != null && skill.effects.Count > 0)
+            {
+                foreach (var effect in skill.effects)
+                {
+                    if (effect != null)
+                    {
+                        effect.Execute(attacker, defender, battleManager, level);
+                        // 把命中结果汇报给需要看命中等级的特效！
+                        effect.OnAttackHit(attacker, defender, battleManager, level, hit.Value.level);
+                    }
+                }
+            }
+
+            // 判断生死与动画
             if (defender.currentBasicLife <= 0) defender.PlayDieAnim();
             else defender.PlayHitAnim();
         }
@@ -139,6 +208,25 @@ public class DamageSettleState : BattleState
             Debug.Log($"[DamageSettleState] {attacker.roleData.roleName} 的该段攻击 Miss！");
             defender.PlayMissAnim();
             battleManager.SpawnDamagePopup(isPlayerTakingDamage, "MISS", 0);
+
+            // ==========================================
+            // 触发防守方闪避成功时的特效 (如：无刀取)
+            // ==========================================
+            SkillSlot defendSlot = battleManager.isPlayerAttacking ? battleManager.currentEnemySkill : battleManager.currentPlayerSkill;
+            SkillData defendSkill = defendSlot != null ? defendSlot.skillData : null;
+            int defendLevel = defendSlot != null ? defendSlot.level : 1;
+
+            if (defendSkill != null && defendSkill.effects != null && defendSkill.effects.Count > 0)
+            {
+                foreach (var effect in defendSkill.effects)
+                {
+                    if (effect != null)
+                    {
+                        // 呼叫咱们刚写的钩子！
+                        effect.OnEvadeSuccess(defender, attacker, battleManager, defendLevel);
+                    }
+                }
+            }
         }
     }
 

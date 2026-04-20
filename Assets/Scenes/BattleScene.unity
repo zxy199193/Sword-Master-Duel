@@ -2148,23 +2148,32 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 0}
     equippedAttackSkills:
-    - skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
+    - skillData: {fileID: 11400000, guid: 2d6b68eb1787720469af13354f4c328c, type: 2}
       level: 1
       quantity: 0
     - skillData: {fileID: 11400000, guid: 71f0d27139a6ee7478e95946f2344d08, type: 2}
       level: 1
       quantity: 0
-    - skillData: {fileID: 11400000, guid: c8c81fcc60cc9ce4694de3d313541bf2, type: 2}
+    - skillData: {fileID: 11400000, guid: 5daf620929a442e4ab3f48622b19a29a, type: 2}
       level: 1
       quantity: 0
     equippedDefendSkills:
-    - skillData: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
+    - skillData: {fileID: 11400000, guid: 56110b0a913fda24a9abb3f143d74b8e, type: 2}
       level: 1
       quantity: 0
     - skillData: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
       level: 1
       quantity: 0
-    equippedSpecialSkills: []
+    equippedSpecialSkills:
+    - skillData: {fileID: 11400000, guid: 8046ae447ea2a124abc8447e31372e38, type: 2}
+      level: 1
+      quantity: 0
+    - skillData: {fileID: 11400000, guid: cd9fdddebd7538f4a92dc81b83bf5b10, type: 2}
+      level: 1
+      quantity: 0
+    - skillData: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
+      level: 1
+      quantity: 0
     equippedItems: []
     storageEquipments: []
     storageSkillsAndItems: []
@@ -2506,6 +2515,7 @@ MonoBehaviour:
   runtimeSkills: []
   tempDamageReduction: 0
   tempHitWidthModifier: 0
+  isImmuneToSubSkills: 0
   animator: {fileID: 1139714225}
 --- !u!114 &1319697502 stripped
 MonoBehaviour:
@@ -2572,6 +2582,7 @@ MonoBehaviour:
   runtimeSkills: []
   tempDamageReduction: 0
   tempHitWidthModifier: 0
+  isImmuneToSubSkills: 0
   animator: {fileID: 1503619278}
 --- !u!1 &1477522931
 GameObject:

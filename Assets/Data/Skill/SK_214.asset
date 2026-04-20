@@ -39,7 +39,13 @@ MonoBehaviour:
     actionTime: 0
     sections: []
   castEffectPrefab: {fileID: 0}
-  effects: []
+  effects:
+  - rid: 2591120559595585541
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2591120559595585541
+      type: {class: CounterStatusOnEvadeEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusToApply: 0
+        durations: 020000000300000004000000

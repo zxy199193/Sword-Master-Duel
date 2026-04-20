@@ -98,3 +98,39 @@ public class SkillData : ScriptableObject
         return leveledConfig;
     }
 }
+// ==========================================
+// 以下为解决 SerializeReference 无法直接添加子类的定制面板代码
+// ==========================================
+#if UNITY_EDITOR
+[CustomEditor(typeof(SkillData))]
+public class SkillDataEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        // 1. 正常绘制原本的面板
+        DrawDefaultInspector();
+
+        SkillData skillData = (SkillData)target;
+
+        EditorGUILayout.Space(10);
+        EditorGUILayout.LabelField("快速添加技能特效", EditorStyles.boldLabel);
+
+        // 2. 利用反射，自动找出所有继承了 SkillEffect 且可以被实例化的特效子类
+        var effectTypes = typeof(SkillEffect).Assembly.GetTypes()
+            .Where(t => t.IsSubclassOf(typeof(SkillEffect)) && !t.IsAbstract);
+
+        // 3. 为每一个子类生成一个按钮
+        foreach (var type in effectTypes)
+        {
+            if (GUILayout.Button($"添加 {type.Name}"))
+            {
+                // 点击按钮后，实例化该子类并塞入列表
+                skillData.effects.Add((SkillEffect)Activator.CreateInstance(type));
+
+                // 标记资产已被修改（确保 Ctrl+S 能保存住）
+                EditorUtility.SetDirty(skillData);
+            }
+        }
+    }
+}
+#endif
