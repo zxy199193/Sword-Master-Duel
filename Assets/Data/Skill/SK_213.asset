@@ -12,13 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 608e1027dbec7dc4a8438b4248abfb17, type: 3}
   m_Name: SK_213
   m_EditorClassIdentifier: 
-  skillName: "\u5927\u559D"
-  description: "\u4F7F\u7528\u540E\u5BF9\u65B9\u8FDB\u5165\u3010\u7D27\u5F20\u3011\u72B6\u6001"
-  skillIcon: {fileID: 21300000, guid: 413253281d5376b4c847c4879c2e4829, type: 3}
-  skillType: 3
-  skillLevel: 1
-  animationTriggerName: Attack
-  staminaCosts: 010000000100000000000000
+  skillName: "\u71D5\u8FD4"
+  description: "\u95EA\u907F\u6548\u679C\u5927\r\n\u6210\u529F\u95EA\u907F\u540E\u4F1A\u7ACB\u523B\u53CD\u51FB\u9020\u6210\u4F24\u5BB3\uFF08\u5A01\u529B\u4E2D\uFF09"
+  skillIcon: {fileID: 21300000, guid: 1865e03ddf73da84fadbde5756f08c97, type: 3}
+  skillType: 2
+  animationTriggerName: 
+  staminaCosts: 050000000500000004000000
   basicDamages:
   - 0
   - 0
@@ -28,26 +27,19 @@ MonoBehaviour:
   - 0
   - 0
   hitAmends:
-  - 0
-  - 0
-  - 0
-  quantity: 0
+  - -10
+  - -12
+  - -15
   isConsumable: 0
+  price: 50
   hitTimes: 1
   hitBarConfig:
     baseSpeed: 0
     baseSlowdown: 0
     actionTime: 0
     sections: []
-  castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
-  effects:
-  - rid: 2591120357824135170
+  castEffectPrefab: {fileID: 0}
+  effects: []
   references:
     version: 2
-    RefIds:
-    - rid: 2591120357824135170
-      type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
-      data:
-        statusType: 0
-        baseDurations: 010000000200000002000000
-        applyToSelf: 0
+    RefIds: []

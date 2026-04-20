@@ -37,14 +37,24 @@ public class BattleEntity : MonoBehaviour
         roleData = data;
         isPlayer = playerFlag;
 
+        // ==========================================
+        // 【核心新增】：动态替换专属动画控制器！
+        // ==========================================
+        if (animator != null && roleData.animatorController != null)
+        {
+            animator.runtimeAnimatorController = roleData.animatorController;
+        }
+
         if (isPlayer && GameManager.Instance != null)
         {
             currentBasicLife = GameManager.Instance.playerProfile.currentHp;
             currentStamina = GameManager.Instance.playerProfile.currentStamina;
-            if (GameManager.Instance.playerProfile.equippedArmor != null)
-                currentExtraLife = GameManager.Instance.playerProfile.equippedArmor.durability;
-            else
-                currentExtraLife = 0;
+
+            // 继承上一局打完剩下的护盾
+            currentExtraLife = GameManager.Instance.playerProfile.currentExtraLife;
+
+            int maxDurability = GameManager.Instance.playerProfile.equippedArmor != null ? GameManager.Instance.playerProfile.equippedArmor.durability : 0;
+            if (currentExtraLife > maxDurability) currentExtraLife = maxDurability;
         }
         else
         {
@@ -98,7 +108,7 @@ public class BattleEntity : MonoBehaviour
     }
 
     // ==========================================
-    // 统一属性获取接口 (抹平敌我差异)
+    // 统一属性获取接口
     // ==========================================
     public EquipmentData GetEquippedWeapon()
     {
@@ -109,11 +119,15 @@ public class BattleEntity : MonoBehaviour
     public int GetFinalStrength()
     {
         if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalStrength();
+
         int finalStr = roleData.strength;
         if (roleData.equippedWeapon != null) finalStr += roleData.equippedWeapon.bonusStrength;
         if (roleData.equippedArmor != null) finalStr += roleData.equippedArmor.bonusStrength;
+
         if (roleData.equippedAccessories != null)
+        {
             foreach (var acc in roleData.equippedAccessories) if (acc != null) finalStr += acc.bonusStrength;
+        }
         return finalStr;
     }
 
@@ -124,22 +138,31 @@ public class BattleEntity : MonoBehaviour
         if (roleData.equippedWeapon != null) finalMen += roleData.equippedWeapon.bonusMentality;
         if (roleData.equippedArmor != null) finalMen += roleData.equippedArmor.bonusMentality;
         if (roleData.equippedAccessories != null)
+        {
             foreach (var acc in roleData.equippedAccessories) if (acc != null) finalMen += acc.bonusMentality;
+        }
         return finalMen;
     }
 
+    // 【保留修复】：动态体力上限
+    public int GetFinalMaxStamina()
+    {
+        if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalMaxStamina();
+        return roleData.maxStamina;
+    }
+
     // ==========================================
-    // 【核心新增】：打击条移动表现获取
+    // 【核心找回】：打击条速度与减速度计算 (精神力与负重系统)
     // ==========================================
     public float GetFinalHitBarSpeed(float globalBaseSpeed)
     {
         int mentality = GetFinalMentality();
 
-        // 公式：每有 1 点精神，速度减 2%。限制最多减速到 20% 防止不动了
+        // 公式：每有 1 点精神，速度减 2%。限制最多减速到 20%
         float speedReduction = mentality * 0.02f;
         float mentalMultiplier = Mathf.Max(0.2f, 1.0f - speedReduction);
 
-        // 叠加原有的状态效果(紧张/专注)
+        // 叠加状态效果(紧张/专注)
         float statusMultiplier = 1.0f;
         if (activeStatuses.ContainsKey(StatusType.Tension)) statusMultiplier += 0.3f;
         if (activeStatuses.ContainsKey(StatusType.Focus)) statusMultiplier -= 0.3f;
@@ -166,6 +189,9 @@ public class BattleEntity : MonoBehaviour
         return globalBaseSlowdown * loadMultiplier;
     }
 
+    // ==========================================
+    // 战斗与状态逻辑
+    // ==========================================
     public void ResetTurnData() { tempDamageReduction = 0; tempHitWidthModifier = 0; }
 
     public void TakeDamage(int rawDamage)
@@ -193,7 +219,11 @@ public class BattleEntity : MonoBehaviour
     public void RecoverStamina()
     {
         currentStamina += roleData.staminaRecoverPerTurn;
-        if (currentStamina > roleData.maxStamina) currentStamina = roleData.maxStamina;
+
+        // 【保留修复】：使用加点和装备后的最终体力上限钳制
+        int maxStam = GetFinalMaxStamina();
+        if (currentStamina > maxStam) currentStamina = maxStam;
+
         OnStaminaChanged?.Invoke();
         TickStatuses();
     }

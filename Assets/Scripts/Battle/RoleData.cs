@@ -20,6 +20,8 @@ public class RoleData : ScriptableObject
     [Header("角色信息")]
     public string roleName;
     public Sprite roleModel;
+    [Header("视觉与动画")]
+    public RuntimeAnimatorController animatorController; // 专属动画控制器
 
     [Header("基础属性")]
     public int maxBasicLife = 20;
@@ -44,6 +46,7 @@ public class RoleData : ScriptableObject
     public bool isBoss;
     [Tooltip("击败该敌人可获得的金币奖励")]
     public int goldReward = 50;
+    public int expReward = 50;
 
     [Header("AI 设定 (NPC有效)")]
     [Tooltip("AI QTE 反应时间宽容度 (秒)。值越小AI越精准(0即完美)，值越大容易偏离中心。")]

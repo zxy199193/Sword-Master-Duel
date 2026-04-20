@@ -12,9 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a0dbef844444e4d882f65518d31fd1, type: 3}
   m_Name: Level_4
   m_EditorClassIdentifier: 
-  levelTitle: "\u5173\u53614"
-  mainLevelIndex: 1
-  enemies:
-  - {fileID: 11400000, guid: 45b65116af273cc49a64972e2dc25cb7, type: 2}
-  - {fileID: 11400000, guid: 45b65116af273cc49a64972e2dc25cb7, type: 2}
-  - {fileID: 11400000, guid: 488696eaeb69b4344a866686e17354bd, type: 2}
+  levelTitle: "\u51B3\u65974"
+  possibleGroups:
+  - groupName: "\u5251\u58EB\u7EC44"
+    enemies:
+    - {fileID: 11400000, guid: 45b65116af273cc49a64972e2dc25cb7, type: 2}
+    - {fileID: 11400000, guid: ea04d3292e7c9ac428d376df84b14142, type: 2}
+    - {fileID: 11400000, guid: c8703835a45bf03439fe0ed77e4287a6, type: 2}
+  - groupName: "\u58EB\u5175\u7EC44"
+    enemies:
+    - {fileID: 11400000, guid: 8b990ebee944e58458fba11f9f0121b8, type: 2}
+    - {fileID: 11400000, guid: 2e8f4cc46c9a79e4bad35324ee04cb98, type: 2}
+    - {fileID: 11400000, guid: 8736c81b331d2a24cb9b1cbe25eef021, type: 2}
+  - groupName: "\u5F3A\u76D7\u7EC44"
+    enemies:
+    - {fileID: 11400000, guid: 6737812f4ff40be40a7dc4e06dc62b42, type: 2}
+    - {fileID: 11400000, guid: 47a7205160363234185619d582e91ba8, type: 2}
+    - {fileID: 11400000, guid: 481450d9bacede542aec9e48d7fc9ff2, type: 2}
+  - groupName: "\u5FCD\u8005\u7EC44"
+    enemies:
+    - {fileID: 11400000, guid: 2cedf7e6df6e9514ea2c684202f5adba, type: 2}
+    - {fileID: 11400000, guid: 3e8e879283083424f8e91c4d49aeaba5, type: 2}
+    - {fileID: 11400000, guid: 174e26983294db645ae6f07581a049d1, type: 2}

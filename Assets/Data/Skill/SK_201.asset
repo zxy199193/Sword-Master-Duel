@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 608e1027dbec7dc4a8438b4248abfb17, type: 3}
   m_Name: SK_201
   m_EditorClassIdentifier: 
-  skillName: "\u4E00\u5B57\u65A9"
+  skillName: "\u4E00\u6587\u5B57\u65A9"
   description: "\u5A01\u529B\u4E2D\uFF0C\u547D\u4E2D\u7387\u4E2D"
   skillIcon: {fileID: 21300000, guid: 9b3f523b8b3decd45a63011c6494579d, type: 3}
   skillType: 0
-  skillLevel: 1
   animationTriggerName: Attack
   staminaCosts: 070000000700000006000000
   basicDamages:
@@ -31,8 +30,8 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  quantity: 0
   isConsumable: 0
+  price: 50
   hitTimes: 1
   hitBarConfig:
     baseSpeed: 100
@@ -45,6 +44,7 @@ MonoBehaviour:
     - level: 3
       axisPosition: 50
       width: 10
+  castEffectPrefab: {fileID: 0}
   effects: []
   references:
     version: 2

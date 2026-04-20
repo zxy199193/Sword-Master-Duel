@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e36239bdf90eef4b9aeb698d13592be, type: 3}
+  m_Name: Enemy_303
+  m_EditorClassIdentifier: 
+  roleName: "\u5F3A\u76D7\u5934\u76EE"
+  roleModel: {fileID: -128221220, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  animatorController: {fileID: 9100000, guid: 9b3927e934df3244ab83488ba12acc64, type: 2}
+  maxBasicLife: 45
+  maxStamina: 16
+  strength: 12
+  mentality: 6
+  staminaRecoverPerTurn: 3
+  equippedSkills:
+  - skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
+    level: 1
+    quantity: 1
+  equippedWeapon: {fileID: 11400000, guid: e4de47acb132f5748933bfb9ccf3f8ea, type: 2}
+  equippedArmor: {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
+  equippedAccessories: []
+  isBoss: 0
+  goldReward: 60
+  expReward: 70
+  aiReactionTolerance: 0.45
+  aiPhases:
+  - hpPercentageThreshold: 1
+    subSkillProbability: 0.3
+    mainSkillWeights:
+    - skill: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
+      weight: 50
+    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
+      weight: 50
+    subSkillWeights:
+    - skill: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
+      weight: 100
+    - skill: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
+      weight: 0
+  - hpPercentageThreshold: 0.35
+    subSkillProbability: 0.5
+    mainSkillWeights:
+    - skill: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
+      weight: 30
+    - skill: {fileID: 11400000, guid: c3eb73b81c6754c4094bccdb6132482b, type: 2}
+      weight: 50
+    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
+      weight: 20
+    subSkillWeights:
+    - skill: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
+      weight: 40
+    - skill: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
+      weight: 30
+    - skill: {fileID: 11400000, guid: f17287398bf6a46469bca1bd08f0976b, type: 2}
+      weight: 30

@@ -19,7 +19,7 @@ public class BattleEndState : BattleState
         {
             Debug.Log("<color=yellow>[BattleEnd] 双方同归于尽，算作败北！</color>");
             battleManager.ShowBroadcast("同归于尽...");
-            GameManager.Instance.OnBattleResolution(false);
+            GameManager.Instance.OnBattleResolution(false); // 失败默认没有奖励
         }
         else if (isPlayerDead)
         {
@@ -32,9 +32,16 @@ public class BattleEndState : BattleState
             Debug.Log("<color=green>[BattleEnd] 战斗胜利！</color>");
             battleManager.ShowBroadcast("战斗胜利！");
 
-            // 获取敌人身上配置的金币奖励
+            // ==========================================
+            // 【核心修改】：同时获取金币和经验奖励
+            // ==========================================
             int gold = battleManager.enemyEntity.roleData.goldReward;
-            GameManager.Instance.OnBattleResolution(true, gold);
+
+            // 读取我们在 RoleData 里新加的经验奖励字段
+            int exp = battleManager.enemyEntity.roleData.expReward;
+
+            // 把金币和经验一起上报给 GameManager 进行结算和升级判定
+            GameManager.Instance.OnBattleResolution(true, gold, exp);
         }
     }
 

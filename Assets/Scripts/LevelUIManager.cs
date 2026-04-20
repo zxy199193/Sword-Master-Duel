@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,45 +39,32 @@ public class LevelUIManager : MonoBehaviour
     /// <summary>
     /// 由 GameManager 调用：根据当前进度更新 UI 显示
     /// </summary>
-    public void UpdateAndShow(LevelData levelData, int nodeIndex)
+    public void UpdateAndShow(LevelData levelData, int nodeIndex, List<RoleData> currentEnemies)
     {
         gameObject.SetActive(true);
 
-        // 1. 更新关卡标题
         if (levelTitleText != null)
         {
             levelTitleText.text = $"关卡 {levelData.levelTitle}";
         }
 
-        // 2. 遍历更新 3 个敌人的状态
         for (int i = 0; i < 3; i++)
         {
-            // 防呆：如果策划没配置满 3 个敌人，直接隐藏
-            if (i >= levelData.enemies.Count || levelData.enemies[i] == null)
+            // 【修改点】：从 currentEnemies 里读取，而不是 levelData.enemies
+            if (i >= currentEnemies.Count || currentEnemies[i] == null)
             {
                 enemyIcons[i].gameObject.SetActive(false);
                 continue;
             }
 
-            // 读取敌人模型/头像
-            enemyIcons[i].sprite = levelData.enemies[i].roleModel;
+            enemyIcons[i].sprite = currentEnemies[i].roleModel;
             enemyIcons[i].gameObject.SetActive(true);
 
-            // ==========================================
-            // 进度视觉逻辑
-            // ==========================================
-
-            // 如果索引 < 当前进度，说明已经打过了 (显示击败遮罩)
             if (defeatedOverlays.Length > i && defeatedOverlays[i] != null)
-            {
                 defeatedOverlays[i].SetActive(i < nodeIndex);
-            }
 
-            // 如果索引 == 当前进度，说明是马上要打的 (显示高亮指示器)
             if (currentNodeIndicators.Length > i && currentNodeIndicators[i] != null)
-            {
                 currentNodeIndicators[i].SetActive(i == nodeIndex);
-            }
         }
     }
 

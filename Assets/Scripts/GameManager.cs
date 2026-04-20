@@ -10,9 +10,8 @@ public class PlayerProfile
     [Header("成长属性 (Level & Attributes)")]
     public int level = 1;
     public int currentExp = 0;
-    public int unallocatedPoints = 0; // 未分配的属性点
+    public int unallocatedPoints = 0;
 
-    // 以下为玩家通过升级加点后的真实基础面板（不包含装备加成）
     public int baseMaxLife;
     public int baseMaxStamina;
     public int baseStrength;
@@ -21,12 +20,16 @@ public class PlayerProfile
     [Header("战斗运行时资源 (跨关卡继承)")]
     public int currentHp;
     public int currentStamina;
+
+    // 【核心修复 Bug 2】：跨局继承护盾！
+    public int currentExtraLife;
+
     public int totalGold;
 
     [Header("当前穿戴装备 (Equipped)")]
     public EquipmentData equippedWeapon;
     public EquipmentData equippedArmor;
-    public List<EquipmentData> equippedAccessories = new List<EquipmentData>(); // 默认可带2个
+    public List<EquipmentData> equippedAccessories = new List<EquipmentData>();
 
     [Header("当前战斗配置 (Loadout)")]
     public List<SkillSlot> equippedAttackSkills = new List<SkillSlot>();
@@ -38,14 +41,24 @@ public class PlayerProfile
     public List<EquipmentData> storageEquipments = new List<EquipmentData>();
     public List<SkillSlot> storageSkillsAndItems = new List<SkillSlot>();
 
-    // ==========================================
-    // 在 PlayerProfile 的最下方，更新这些获取属性的方法
-    // ==========================================
-
-    public int GetMaxLoad()
+    public void AddExp(int amount)
     {
-        return 10 + GetFinalMaxStamina() + GetFinalStrength();
+        if (level >= 10) return;
+
+        currentExp += amount;
+
+        while (currentExp >= 100 && level < 10)
+        {
+            currentExp -= 100;
+            level++;
+            unallocatedPoints += 4;
+            Debug.Log($"<color=lime>升级啦！当前等级：Lv.{level}，获得 4 点属性点！</color>");
+        }
+
+        if (level >= 10) currentExp = 0;
     }
+
+    public int GetMaxLoad() => 10 + GetFinalMaxStamina() + GetFinalStrength();
 
     public int GetCurrentLoadWeight()
     {
@@ -92,9 +105,6 @@ public class PlayerProfile
         return total;
     }
 
-    /// <summary>
-    /// 获取当前角色的负重状态
-    /// </summary>
     public GlobalBattleRules.LoadWeightState GetLoadWeightState()
     {
         int currentLoad = GetCurrentLoadWeight();
@@ -108,29 +118,18 @@ public class PlayerProfile
     }
 
     [Header("跨场景 Buff")]
-    public bool hasMassageBuff = false; // 按摩 Buff：下一次战斗开始时体力回满
+    public bool hasMassageBuff = false;
 
-    // 安全扣钱方法
     public bool ConsumeGold(int amount)
     {
-        if (totalGold >= amount)
-        {
-            totalGold -= amount;
-            return true;
-        }
+        if (totalGold >= amount) { totalGold -= amount; return true; }
         return false;
     }
 
-    // 安全扣血方法（保证不会死，最低剩 1 滴血）
     public bool ConsumeHpSafely(int amount)
     {
-        if (currentHp > 1)
-        {
-            currentHp -= amount;
-            if (currentHp < 1) currentHp = 1;
-            return true;
-        }
-        return false; // 如果只有 1 滴血了，不让用扣血功能
+        if (currentHp > 1) { currentHp -= amount; if (currentHp < 1) currentHp = 1; return true; }
+        return false;
     }
 }
 
@@ -145,12 +144,13 @@ public class GameManager : MonoBehaviour
     [Header("Runtime Progress")]
     public int currentMainLevelIndex = 0;
     public int currentNodeIndex = 0;
+    [HideInInspector] public List<RoleData> currentLevelEnemies = new List<RoleData>();
 
     [Header("Managers Reference")]
     public BattleManager battleManager;
     public LevelUIManager levelUIManager;
     public RestUIManager restUIManager;
-    public BattleResultUI battleResultUI; // 【新增】：结算弹窗引用
+    public BattleResultUI battleResultUI;
 
     private void Awake()
     {
@@ -158,49 +158,64 @@ public class GameManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
+    private void Start()
+    {
+        StartNewGame();
+    }
+
     public void StartNewGame()
     {
-        // 1. 初始化等级与经验
         playerProfile.level = 1;
         playerProfile.currentExp = 0;
-        playerProfile.unallocatedPoints = 0;
+        playerProfile.unallocatedPoints = 4;
         playerProfile.totalGold = 0;
 
-        // 2. 从 RoleData 读取初始白板属性
-        playerProfile.baseMaxLife = playerProfile.playerRoleAsset.maxBasicLife;
-        playerProfile.baseMaxStamina = playerProfile.playerRoleAsset.maxStamina;
-        playerProfile.baseStrength = playerProfile.playerRoleAsset.strength;
-        playerProfile.baseMentality = playerProfile.playerRoleAsset.mentality;
+        playerProfile.baseMaxLife = 20;
+        playerProfile.baseMaxStamina = 10;
+        playerProfile.baseStrength = 0;
+        playerProfile.baseMentality = 0;
 
-        // 3. 回满血量和体力
         playerProfile.currentHp = playerProfile.baseMaxLife;
         playerProfile.currentStamina = playerProfile.baseMaxStamina;
+
+        // 【核心修复 Bug 2】：游戏开始时给满护盾
+        playerProfile.currentExtraLife = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.durability : 0;
 
         currentMainLevelIndex = 0;
         currentNodeIndex = 0;
 
+        RollEnemiesForCurrentLevel();
         EnterLevelNodeUI();
     }
 
-    /// <summary>
-    /// 接收 BattleEndState 的战斗结果
-    /// </summary>
-    public void OnBattleResolution(bool isWin, int goldReward = 0)
+    private void RollEnemiesForCurrentLevel()
+    {
+        LevelData currentLevel = allLevels[currentMainLevelIndex];
+        var validGroups = currentLevel.possibleGroups.FindAll(g => g.enemies != null && g.enemies.Count > 0);
+
+        if (validGroups.Count > 0)
+        {
+            int randIndex = Random.Range(0, validGroups.Count);
+            currentLevelEnemies = validGroups[randIndex].enemies;
+            Debug.Log($"<color=orange>新关卡！随机抽中了敌人组：{validGroups[randIndex].groupName}</color>");
+        }
+        else
+        {
+            Debug.LogError($"关卡 {currentLevel.levelTitle} 没有配置有效的敌人组（或组内没拖入敌人）！");
+            currentLevelEnemies = new List<RoleData>();
+        }
+    }
+
+    public void OnBattleResolution(bool isWin, int goldReward = 0, int expReward = 0)
     {
         if (isWin)
         {
             playerProfile.totalGold += goldReward;
+            playerProfile.AddExp(expReward);
             SavePlayerBattleState();
 
-            // 【核心修改】：不再直接推进节点，而是呼出结算弹窗！
-            if (battleResultUI != null)
-            {
-                battleResultUI.ShowResult(goldReward);
-            }
-            else
-            {
-                AdvanceToNextNode(); // 防呆：如果没配弹窗就直接进
-            }
+            if (battleResultUI != null) battleResultUI.ShowResult(goldReward);
+            else AdvanceToNextNode();
         }
         else
         {
@@ -211,31 +226,24 @@ public class GameManager : MonoBehaviour
     public void OnBattleRetreat()
     {
         SavePlayerBattleState();
-        AdvanceToNextNode(); // 撤退没有奖励，直接无缝推进
+        AdvanceToNextNode();
     }
 
     private void SavePlayerBattleState()
     {
         playerProfile.currentHp = battleManager.playerEntity.currentBasicLife;
         playerProfile.currentStamina = battleManager.playerEntity.currentStamina;
+
+        // 【核心修复 Bug 2】：战斗结束时，将打剩下的护盾保存下来！
+        playerProfile.currentExtraLife = battleManager.playerEntity.currentExtraLife;
     }
 
-    /// <summary>
-    /// 【修改可见性】：改为 public，供 BattleResultUI 点击继续时调用
-    /// </summary>
     public void AdvanceToNextNode()
     {
         currentNodeIndex++;
 
-        if (currentNodeIndex >= 3)
-        {
-            EnterRestUI();
-        }
-        else
-        {
-            // 【核心修改：无缝连战】：还没打完 3 个怪，直接刷下一个怪开打，不再退回关卡 UI
-            StartCombatNode();
-        }
+        if (currentNodeIndex >= 3) EnterRestUI();
+        else StartCombatNode();
     }
 
     public void AdvanceToNextMainLevel()
@@ -245,25 +253,34 @@ public class GameManager : MonoBehaviour
 
         if (currentMainLevelIndex >= allLevels.Count) return;
 
-        playerProfile.currentStamina = playerProfile.playerRoleAsset.maxStamina / 2;
+        // 【核心修复 Bug 1】：进入下一大关时，根据最终属性点给一半体力（也可以自己改回全满）
+        playerProfile.currentStamina = playerProfile.GetFinalMaxStamina() / 2;
+
+        // 【核心修复 Bug 2】：进入新的一大关，护盾重新恢复到最大值！
+        playerProfile.currentExtraLife = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.durability : 0;
+
+        RollEnemiesForCurrentLevel();
         EnterLevelNodeUI();
     }
 
-    // ==========================================
-    // UI 层流转调度 
-    // ==========================================
-
     private void EnterLevelNodeUI()
     {
+        if (currentLevelEnemies == null || currentLevelEnemies.Count == 0) RollEnemiesForCurrentLevel();
+
         battleManager.gameObject.SetActive(false);
         LevelData currentLevel = allLevels[currentMainLevelIndex];
-        levelUIManager.UpdateAndShow(currentLevel, currentNodeIndex);
+        levelUIManager.UpdateAndShow(currentLevel, currentNodeIndex, currentLevelEnemies);
     }
 
     public void StartCombatNode()
     {
-        LevelData currentLevel = allLevels[currentMainLevelIndex];
-        RoleData currentEnemyData = currentLevel.enemies[currentNodeIndex];
+        if (currentLevelEnemies == null || currentNodeIndex >= currentLevelEnemies.Count)
+        {
+            Debug.LogError($"开战失败！当前抽取的敌人列表为空，或超出了索引！currentNodeIndex: {currentNodeIndex}");
+            return;
+        }
+
+        RoleData currentEnemyData = currentLevelEnemies[currentNodeIndex];
 
         battleManager.gameObject.SetActive(true);
         battleManager.SetupNewBattle(playerProfile.playerRoleAsset, currentEnemyData);

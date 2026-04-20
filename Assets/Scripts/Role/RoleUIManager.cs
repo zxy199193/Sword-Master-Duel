@@ -105,7 +105,11 @@ public class RoleUIManager : MonoBehaviour
 
         if (roleNameText) roleNameText.text = profile.playerRoleAsset.roleName;
         if (levelText) levelText.text = $"{profile.level}";
-        if (expText) expText.text = $"{profile.currentExp}/100";
+        if (expText)
+        {
+            if (profile.level >= 10) expText.text = "MAX";
+            else expText.text = $"{profile.currentExp}/100";
+        }
         if (goldText) goldText.text = profile.totalGold.ToString();
 
         if (lifeText) lifeText.text = profile.GetFinalMaxLife().ToString();
@@ -180,10 +184,10 @@ public class RoleUIManager : MonoBehaviour
 
         switch (attrType)
         {
-            case AttributeType.Life: profile.baseMaxLife += 2; break;
-            case AttributeType.Stamina: profile.baseMaxStamina += 1; break;
-            case AttributeType.Strength: profile.baseStrength += 1; break;
-            case AttributeType.Mentality: profile.baseMentality += 1; break;
+            case AttributeType.Life: profile.baseMaxLife += 3; break;       // 【修改】：每点+3生命
+            case AttributeType.Stamina: profile.baseMaxStamina += 2; break; // 【修改】：每点+2体力
+            case AttributeType.Strength: profile.baseStrength += 1; break;  // 【修改】：每点+1力量
+            case AttributeType.Mentality: profile.baseMentality += 1; break;// 【修改】：每点+1精神
         }
         RefreshAllUI();
     }

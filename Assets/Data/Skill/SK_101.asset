@@ -31,7 +31,7 @@ MonoBehaviour:
   - 0
   - 0
   isConsumable: 0
-  price: 100
+  price: 30
   hitTimes: 1
   hitBarConfig:
     baseSpeed: 100

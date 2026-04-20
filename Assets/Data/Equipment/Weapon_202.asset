@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
+  m_Name: Weapon_202
+  m_EditorClassIdentifier: 
+  equipName: "\u957F\u7259"
+  description: "\u547D\u4E2D\u533A\u95F4\u7B49\u7EA72\uFF0C+6\uFF0C\u547D\u4E2D\u533A\u95F4\u7B49\u7EA73\uFF0C+4\r"
+  icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
+  equipType: 0
+  quality: 1
+  weight: 8
+  price: 30
+  bonusLife: 0
+  bonusStamina: 0
+  bonusStrength: 0
+  bonusMentality: 0
+  atkFactor: 1.3
+  durability: 0
+  equipEffects:
+  - rid: 2591120534691905537
+  - rid: 2591120534691905538
+  references:
+    version: 2
+    RefIds:
+    - rid: 2591120534691905537
+      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 1
+        condition: 1
+        targetLevelMin: 2
+        targetLevelMax: 2
+        damageModifier: 6
+    - rid: 2591120534691905538
+      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 1
+        condition: 1
+        targetLevelMin: 3
+        targetLevelMax: 3
+        damageModifier: 4
