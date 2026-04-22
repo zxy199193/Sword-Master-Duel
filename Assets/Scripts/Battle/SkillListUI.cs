@@ -10,53 +10,80 @@ public class SkillListUI : MonoBehaviour
     public GameObject skillItemPrefab;
     public Button closeButton;
 
-    // 回调类型改为 SkillSlot
+    [Header("修正数值 Toggle")]
+    public Toggle modifiedStatsToggle;
+
     private Action<SkillSlot> onSkillSelectedCallback;
+    private BattleManager battleManager;
+
+    // 保存所有当前生成的卡片，用于 Toggle 切换时刷新
+    private List<SkillItemUI> spawnedItems = new List<SkillItemUI>();
 
     private void Start()
     {
         if (closeButton != null) closeButton.onClick.AddListener(ClosePanel);
+
+        if (modifiedStatsToggle != null)
+        {
+            modifiedStatsToggle.isOn = true; // 默认开启修正模式
+            modifiedStatsToggle.onValueChanged.AddListener(OnToggleChanged);
+        }
     }
 
-    // 列表类型改为 List<SkillSlot>
-    public void OpenList(List<SkillSlot> allSkills, BattleEntity caster, int availableStamina, Action<SkillSlot> callback, params SkillType[] filterTypes)
+    public void OpenList(List<SkillSlot> allSkills, BattleEntity caster, int availableStamina, Action<SkillSlot> callback, BattleManager manager, params SkillType[] filterTypes)
     {
+        battleManager = manager;
         onSkillSelectedCallback = callback;
         gameObject.SetActive(true);
 
         foreach (Transform child in contentRoot) Destroy(child.gameObject);
+        spawnedItems.Clear();
+
+        bool showModified = modifiedStatsToggle != null && modifiedStatsToggle.isOn;
 
         foreach (var slot in allSkills)
         {
-            // 通过 slot.skillData 读取枚举
             if (slot != null && slot.skillData != null && Array.Exists(filterTypes, type => type == slot.skillData.skillType))
             {
-                CreateSkillItemUI(slot, caster, availableStamina);
+                CreateSkillItemUI(slot, caster, availableStamina, showModified);
             }
         }
     }
 
     public void ClosePanel() { gameObject.SetActive(false); }
 
-    private void CreateSkillItemUI(SkillSlot slot, BattleEntity caster, int availableStamina)
+    private void CreateSkillItemUI(SkillSlot slot, BattleEntity caster, int availableStamina, bool showModified)
     {
         GameObject go = Instantiate(skillItemPrefab, contentRoot);
-        // 注意：这里是你战斗 UI 专用的 SkillItemUI 组件
         SkillItemUI itemUI = go.GetComponent<SkillItemUI>();
 
         if (itemUI != null)
         {
-            itemUI.Init(slot, caster, OnSkillSelected);
+            itemUI.Init(slot, caster, OnSkillSelected, battleManager);
 
-            // 读取解耦后的 quantity 和 GetStaminaCost
             bool isExhausted = (slot.skillData.skillType == SkillType.Item && slot.quantity <= 0);
-            bool isNoStamina = (slot.skillData.GetStaminaCost(slot.level) > availableStamina);
-
+            int actualCost = (battleManager != null) 
+                ? battleManager.GetActualSkillCost(caster, slot) 
+                : Mathf.RoundToInt(slot.skillData.GetStaminaCost(slot.level));
+            bool isNoStamina = (actualCost > availableStamina);
             itemUI.SetAvailable(!isExhausted && !isNoStamina);
+
+            // 按当前 Toggle 状态初始渲染
+            itemUI.RefreshStats(showModified);
+            spawnedItems.Add(itemUI);
         }
         else
         {
             Debug.LogError($"预制体 {skillItemPrefab.name} 上缺少 SkillItemUI 脚本！");
+        }
+    }
+
+    private void OnToggleChanged(bool isOn)
+    {
+        // Toggle 切换时刷新所有已生成的卡片
+        foreach (var item in spawnedItems)
+        {
+            if (item != null) item.RefreshStats(isOn);
         }
     }
 

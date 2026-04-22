@@ -157,10 +157,34 @@ public class BattleManager : MonoBehaviour
 
         Debug.Log($"<color=cyan>[Combat] 玩家: 主[{pMain}] 副[{pSub}] | 敌人: 主[{eMain}] 副[{eSub}]</color>");
 
+        // 判定双方是否都选择了防御/闪避（这种情况下不消耗主技能体力）
+        bool isBothDefensive = false;
+        if (currentPlayerSkill != null && currentEnemySkill != null)
+        {
+            var pType = currentPlayerSkill.skillData.skillType;
+            var eType = currentEnemySkill.skillData.skillType;
+            bool pIsDef = (pType == SkillType.Defend || pType == SkillType.Dodge);
+            bool eIsDef = (eType == SkillType.Defend || eType == SkillType.Dodge);
+            if (pIsDef && eIsDef)
+            {
+                isBothDefensive = true;
+                Debug.Log("<color=orange>[Combat] 双方均选择了防守，本轮主技能体力消耗豁免！</color>");
+            }
+        }
+
         // 动态获取费用并扣除体力
-        if (currentPlayerSkill != null) playerEntity.ConsumeStamina(GetActualSkillCost(playerEntity, currentPlayerSkill, currentPlayerSubSkill));
+        if (currentPlayerSkill != null) 
+        {
+            int cost = isBothDefensive ? 0 : GetActualSkillCost(playerEntity, currentPlayerSkill, currentPlayerSubSkill);
+            playerEntity.ConsumeStamina(cost);
+        }
         if (currentPlayerSubSkill != null) playerEntity.ConsumeStamina(GetActualSkillCost(playerEntity, currentPlayerSubSkill));
-        if (currentEnemySkill != null) enemyEntity.ConsumeStamina(GetActualSkillCost(enemyEntity, currentEnemySkill, currentEnemySubSkill));
+
+        if (currentEnemySkill != null) 
+        {
+            int cost = isBothDefensive ? 0 : GetActualSkillCost(enemyEntity, currentEnemySkill, currentEnemySubSkill);
+            enemyEntity.ConsumeStamina(cost);
+        }
         if (currentEnemySubSkill != null) enemyEntity.ConsumeStamina(GetActualSkillCost(enemyEntity, currentEnemySubSkill));
         // ==========================================
         // 钉刺的动作惩罚检测
@@ -213,7 +237,7 @@ public class BattleManager : MonoBehaviour
 
         if (slot.skillData.skillType == SkillType.Defend)
         {
-            entity.tempDamageReduction = slot.skillData.GetBasicDefend(slot.level) + entity.GetFinalStrength();
+            entity.tempDamageReduction = slot.skillData.GetBasicDefend(slot.level) + entity.GetFinalEndurance();
             entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level);
         }
         else if (slot.skillData.skillType == SkillType.Dodge)
@@ -343,6 +367,22 @@ public class BattleManager : MonoBehaviour
         {
             cost = Mathf.Max(0, cost - 1);
         }
+
+        // 负重效果：仅对攻击/防御/闪避招式生效（仅玩家）
+        var skillType = slot.skillData.skillType;
+        bool isMainSkillType = (skillType == SkillType.Attack || skillType == SkillType.Defend || skillType == SkillType.Dodge);
+        if (isMainSkillType && entity.isPlayer && GameManager.Instance != null)
+        {
+            var loadState = GameManager.Instance.playerProfile.GetLoadWeightState();
+            switch (loadState)
+            {
+                case GlobalBattleRules.LoadWeightState.Light:   cost = Mathf.Max(0, cost - 1); break;
+                case GlobalBattleRules.LoadWeightState.Heavy:   cost += 1; break;
+                case GlobalBattleRules.LoadWeightState.Extreme: cost += 2; break;
+                // Medium: 无修正
+            }
+        }
+
         return cost;
     }
 

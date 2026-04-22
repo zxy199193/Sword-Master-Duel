@@ -69,8 +69,8 @@ public class BattleEntity : MonoBehaviour
         {
             if (roleData != null)
             {
-                currentBasicLife = roleData.maxBasicLife;
-                currentStamina = roleData.maxStamina / 2;
+                currentBasicLife = GetFinalMaxLife();
+                currentStamina = GetFinalMaxStamina() / 2;
                 if (roleData.equippedArmor != null) currentExtraLife = roleData.equippedArmor.durability;
                 else currentExtraLife = 0;
             }
@@ -167,6 +167,36 @@ public class BattleEntity : MonoBehaviour
         return finalStr;
     }
 
+    public int GetFinalVitality()
+    {
+        if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalVitality();
+
+        int finalVit = roleData.vitality;
+        if (roleData.equippedWeapon != null) finalVit += roleData.equippedWeapon.bonusVitality;
+        if (roleData.equippedArmor != null) finalVit += roleData.equippedArmor.bonusVitality;
+
+        if (roleData.equippedAccessories != null)
+        {
+            foreach (var acc in roleData.equippedAccessories) if (acc != null) finalVit += acc.bonusVitality;
+        }
+        return finalVit;
+    }
+
+    public int GetFinalEndurance()
+    {
+        if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalEndurance();
+
+        int finalEnd = roleData.endurance;
+        if (roleData.equippedWeapon != null) finalEnd += roleData.equippedWeapon.bonusEndurance;
+        if (roleData.equippedArmor != null) finalEnd += roleData.equippedArmor.bonusEndurance;
+
+        if (roleData.equippedAccessories != null)
+        {
+            foreach (var acc in roleData.equippedAccessories) if (acc != null) finalEnd += acc.bonusEndurance;
+        }
+        return finalEnd;
+    }
+
     public int GetFinalMentality()
     {
         if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalMentality();
@@ -180,9 +210,37 @@ public class BattleEntity : MonoBehaviour
         return finalMen;
     }
 
+    public int GetFinalMaxLife()
+    {
+        if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalMaxLife();
+        
+        int total = roleData.maxBasicLife + GetFinalVitality() * 5;
+        if (roleData.equippedWeapon != null) total += roleData.equippedWeapon.bonusLife;
+        if (roleData.equippedArmor != null) total += roleData.equippedArmor.bonusLife;
+        if (roleData.equippedAccessories != null)
+        {
+            foreach (var acc in roleData.equippedAccessories) if (acc != null) total += acc.bonusLife;
+        }
+        return total;
+    }
+
     public int GetFinalMaxStamina()
     {
-        int baseMax = (isPlayer && GameManager.Instance != null) ? GameManager.Instance.playerProfile.GetFinalMaxStamina() : roleData.maxStamina;
+        int baseMax = 0;
+        if (isPlayer && GameManager.Instance != null)
+        {
+            baseMax = GameManager.Instance.playerProfile.GetFinalMaxStamina();
+        }
+        else
+        {
+            baseMax = roleData.maxStamina + GetFinalEndurance() * 2;
+            if (roleData.equippedWeapon != null) baseMax += roleData.equippedWeapon.bonusStamina;
+            if (roleData.equippedArmor != null) baseMax += roleData.equippedArmor.bonusStamina;
+            if (roleData.equippedAccessories != null)
+            {
+                foreach (var acc in roleData.equippedAccessories) if (acc != null) baseMax += acc.bonusStamina;
+            }
+        }
         return Mathf.Max(1, baseMax - staminaMaxPenalty);
     }
 
@@ -196,7 +254,7 @@ public class BattleEntity : MonoBehaviour
     {
         int mentality = GetFinalMentality();
 
-        float speedReduction = mentality * 0.02f;
+        float speedReduction = mentality * 0.03f; // 每点精神减慢3%
         float mentalMultiplier = Mathf.Max(0.2f, 1.0f - speedReduction);
 
         float statusMultiplier = 1.0f;
@@ -293,7 +351,7 @@ public class BattleEntity : MonoBehaviour
 
     public void RecoverStamina()
     {
-        int recoverAmount = roleData.staminaRecoverPerTurn;
+        int recoverAmount = roleData.staminaRecoverPerTurn + Mathf.FloorToInt(GetFinalMentality() / 6f);
         if (activeStatuses.ContainsKey(StatusType.Gathering))
         {
             recoverAmount += 1;

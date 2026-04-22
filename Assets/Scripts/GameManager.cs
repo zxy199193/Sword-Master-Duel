@@ -14,6 +14,8 @@ public class PlayerProfile
 
     public int baseMaxLife;
     public int baseMaxStamina;
+    public int vitality;
+    public int endurance;
     public int baseStrength;
     public int baseMentality;
 
@@ -62,7 +64,7 @@ public class PlayerProfile
         if (level >= 10) currentExp = 0;
     }
 
-    public int GetMaxLoad() => 10 + GetFinalMaxStamina() + GetFinalStrength();
+    public int GetMaxLoad() => 10 + GetFinalEndurance() * 2;
 
     public int GetCurrentLoadWeight()
     {
@@ -75,7 +77,7 @@ public class PlayerProfile
 
     public int GetFinalMaxLife()
     {
-        int total = baseMaxLife;
+        int total = baseMaxLife + GetFinalVitality() * 5;
         if (equippedWeapon != null) total += equippedWeapon.bonusLife;
         if (equippedArmor != null) total += equippedArmor.bonusLife;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusLife;
@@ -84,10 +86,28 @@ public class PlayerProfile
 
     public int GetFinalMaxStamina()
     {
-        int total = baseMaxStamina;
+        int total = baseMaxStamina + GetFinalEndurance() * 2;
         if (equippedWeapon != null) total += equippedWeapon.bonusStamina;
         if (equippedArmor != null) total += equippedArmor.bonusStamina;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusStamina;
+        return total;
+    }
+
+    public int GetFinalVitality()
+    {
+        int total = vitality;
+        if (equippedWeapon != null) total += equippedWeapon.bonusVitality;
+        if (equippedArmor != null) total += equippedArmor.bonusVitality;
+        foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusVitality;
+        return total;
+    }
+
+    public int GetFinalEndurance()
+    {
+        int total = endurance;
+        if (equippedWeapon != null) total += equippedWeapon.bonusEndurance;
+        if (equippedArmor != null) total += equippedArmor.bonusEndurance;
+        foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusEndurance;
         return total;
     }
 
@@ -107,6 +127,17 @@ public class PlayerProfile
         if (equippedArmor != null) total += equippedArmor.bonusMentality;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusMentality;
         return total;
+    }
+
+    public int GetHpRecoverPerBattle()
+    {
+        return GetFinalVitality();
+    }
+
+    public int GetStaminaRecoverPerTurn()
+    {
+        int baseRecover = playerRoleAsset != null ? playerRoleAsset.staminaRecoverPerTurn : 2;
+        return baseRecover + Mathf.FloorToInt(GetFinalMentality() / 6f);
     }
 
     public GlobalBattleRules.LoadWeightState GetLoadWeightState()
@@ -190,8 +221,10 @@ public class GameManager : MonoBehaviour
         playerProfile.unallocatedPoints = 4;
         playerProfile.totalGold = 0;
 
-        playerProfile.baseMaxLife = 20;
-        playerProfile.baseMaxStamina = 10;
+        playerProfile.baseMaxLife = 10;
+        playerProfile.baseMaxStamina = 5;
+        playerProfile.vitality = 0;
+        playerProfile.endurance = 0;
         playerProfile.baseStrength = 0;
         playerProfile.baseMentality = 0;
 
@@ -221,8 +254,8 @@ public class GameManager : MonoBehaviour
 
         if (currentMainLevelIndex >= allLevels.Count) return;
 
-        // 进入新关卡时，回复部分体力，重置护甲耐久
-        playerProfile.currentStamina = playerProfile.GetFinalMaxStamina() / 2;
+        // 进入新关卡时，回复100%体力，重置护甲耐久
+        playerProfile.currentStamina = playerProfile.GetFinalMaxStamina();
         playerProfile.currentExtraLife = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.durability : 0;
 
         RollEnemiesForCurrentLevel();
@@ -253,7 +286,15 @@ public class GameManager : MonoBehaviour
         {
             playerProfile.totalGold += goldReward;
             playerProfile.AddExp(expReward);
+            
             SavePlayerBattleState();
+
+            // 战后自动恢复生命 (每点活力 +1)
+            int autoHeal = playerProfile.GetFinalVitality();
+            if (autoHeal > 0)
+            {
+                playerProfile.currentHp = Mathf.Min(playerProfile.currentHp + autoHeal, playerProfile.GetFinalMaxLife());
+            }
 
             if (battleResultUI != null) battleResultUI.ShowResult(goldReward);
             else AdvanceToNextNode();

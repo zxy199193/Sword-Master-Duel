@@ -13,13 +13,17 @@ public class RoleUIManager : MonoBehaviour
     [Header("UI 引用 - 属性面板")]
     public Text lifeText;
     public Text staminaText;
+    public Text vitalityText;
+    public Text enduranceText;
     public Text strengthText;
     public Text mentalityText;
+    public Text staminaRecoverText;
+    public Text hpRecoverText;
 
     [Header("UI 引用 - 加点按钮")]
     public Text unallocatedPointsText;
-    public Button addLifeBtn;
-    public Button addStaminaBtn;
+    public Button addVitalityBtn;
+    public Button addEnduranceBtn;
     public Button addStrengthBtn;
     public Button addMentalityBtn;
 
@@ -72,8 +76,8 @@ public class RoleUIManager : MonoBehaviour
 
     private void InitializeButtons()
     {
-        if (addLifeBtn) addLifeBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Life));
-        if (addStaminaBtn) addStaminaBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Stamina));
+        if (addVitalityBtn) addVitalityBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Vitality));
+        if (addEnduranceBtn) addEnduranceBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Endurance));
         if (addStrengthBtn) addStrengthBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Strength));
         if (addMentalityBtn) addMentalityBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Mentality));
 
@@ -152,16 +156,20 @@ public class RoleUIManager : MonoBehaviour
         if (goldText) goldText.text = profile.totalGold.ToString();
 
         // Attributes
-        if (lifeText) lifeText.text = profile.GetFinalMaxLife().ToString();
-        if (staminaText) staminaText.text = profile.GetFinalMaxStamina().ToString();
+        if (lifeText) lifeText.text = $"{profile.currentHp}/{profile.GetFinalMaxLife()}";
+        if (staminaText) staminaText.text = $"{profile.currentStamina}/{profile.GetFinalMaxStamina()}";
+        if (vitalityText) vitalityText.text = profile.GetFinalVitality().ToString();
+        if (enduranceText) enduranceText.text = profile.GetFinalEndurance().ToString();
         if (strengthText) strengthText.text = profile.GetFinalStrength().ToString();
         if (mentalityText) mentalityText.text = profile.GetFinalMentality().ToString();
+        if (staminaRecoverText) staminaRecoverText.text = $"{profile.GetStaminaRecoverPerTurn()} 点/回合";
+        if (hpRecoverText) hpRecoverText.text = $"{profile.GetHpRecoverPerBattle()} 点/场";
 
         // Allocate Points
         if (unallocatedPointsText) unallocatedPointsText.text = $"{profile.unallocatedPoints}";
         bool canAllocate = profile.unallocatedPoints > 0;
-        if (addLifeBtn) addLifeBtn.gameObject.SetActive(canAllocate);
-        if (addStaminaBtn) addStaminaBtn.gameObject.SetActive(canAllocate);
+        if (addVitalityBtn) addVitalityBtn.gameObject.SetActive(canAllocate);
+        if (addEnduranceBtn) addEnduranceBtn.gameObject.SetActive(canAllocate);
         if (addStrengthBtn) addStrengthBtn.gameObject.SetActive(canAllocate);
         if (addMentalityBtn) addMentalityBtn.gameObject.SetActive(canAllocate);
 
@@ -227,13 +235,13 @@ public class RoleUIManager : MonoBehaviour
 
         switch (attrType)
         {
-            case AttributeType.Life:
-                profile.baseMaxLife += 5;
+            case AttributeType.Vitality:
+                profile.vitality += 1;
                 profile.currentHp += 5;
                 break;
-            case AttributeType.Stamina:
-                profile.baseMaxStamina += 3;
-                profile.currentStamina += 3;
+            case AttributeType.Endurance:
+                profile.endurance += 1;
+                profile.currentStamina += 2;
                 break;
             case AttributeType.Strength:
                 profile.baseStrength += 1;

@@ -82,7 +82,7 @@ public class ActionPanelUI : MonoBehaviour
 
             UpdateSelectionDisplay();
             CheckReadyButtonState();
-        }, typesToOpen);
+        }, battleManager, typesToOpen);
     }
 
     private void UpdateSelectionDisplay()

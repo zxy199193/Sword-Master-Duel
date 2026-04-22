@@ -35,11 +35,15 @@ public class SkillItemUI : MonoBehaviour
     public GameObject miniSectionPrefab;
 
     private SkillSlot boundSlot;
+    private BattleEntity boundCaster;
+    private BattleManager boundManager;
     private Action<SkillSlot> onSelectedCallback;
 
-    public void Init(SkillSlot slot, BattleEntity caster, Action<SkillSlot> callback)
+    public void Init(SkillSlot slot, BattleEntity caster, Action<SkillSlot> callback, BattleManager manager = null)
     {
         boundSlot = slot;
+        boundCaster = caster;
+        boundManager = manager;
         onSelectedCallback = callback;
         SkillData skillData = slot.skillData;
 
@@ -53,19 +57,28 @@ public class SkillItemUI : MonoBehaviour
             levelText.text = $"Lv.{slot.level}";
         }
 
-        HideAllDynamicNodes();
-
-        switch (skillData.skillType)
-        {
-            case SkillType.Attack: SetupAttackSkill(slot); break;
-            case SkillType.Defend: SetupDefendSkill(slot); break;
-            case SkillType.Dodge: SetupDodgeSkill(slot); break;
-            case SkillType.Special: SetupSpecialSkill(slot, caster); break;
-            case SkillType.Item: SetupItem(slot); break;
-        }
-
         selectButton.onClick.RemoveAllListeners();
         selectButton.onClick.AddListener(OnSelectClicked);
+
+        // 默认以修正模式刷新
+        RefreshStats(showModified: true);
+    }
+
+    /// <summary>
+    /// 刷新技能数值显示。showModified=true 时显示经过属性修正的数值
+    /// </summary>
+    public void RefreshStats(bool showModified)
+    {
+        HideAllDynamicNodes();
+
+        switch (boundSlot.skillData.skillType)
+        {
+            case SkillType.Attack:  SetupAttackSkill(showModified); break;
+            case SkillType.Defend:  SetupDefendSkill(showModified); break;
+            case SkillType.Dodge:   SetupDodgeSkill(showModified); break;
+            case SkillType.Special: SetupSpecialSkill(showModified); break;
+            case SkillType.Item:    SetupItem(); break;
+        }
     }
 
     public void SetAvailable(bool isAvailable)
@@ -77,39 +90,97 @@ public class SkillItemUI : MonoBehaviour
         cg.blocksRaycasts = isAvailable;
     }
 
-    private void SetupAttackSkill(SkillSlot slot)
+    // ==========================================
+    // Private Setup Methods
+    // ==========================================
+
+    private void SetupAttackSkill(bool showModified)
     {
-        SetNodeText(damageNode, damageText, slot.skillData.GetBasicDamage(slot.level).ToString());
-        SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
-        DrawMiniHitBar(slot);
+        int baseDamage = Mathf.RoundToInt(boundSlot.skillData.GetBasicDamage(boundSlot.level));
+        int staminaCost = Mathf.RoundToInt(boundSlot.skillData.GetStaminaCost(boundSlot.level));
+
+        if (showModified && boundCaster != null)
+        {
+            // 修正伤害：(基础 + 力量×2) × 武器倍率，取整
+            float weaponFactor = 1.0f;
+            if (boundCaster.isPlayer && GameManager.Instance != null)
+            {
+                var equip = GameManager.Instance.playerProfile.equippedWeapon;
+                if (equip != null) weaponFactor = equip.atkFactor;
+            }
+            else
+            {
+                var equip = boundCaster.roleData?.equippedWeapon;
+                if (equip != null) weaponFactor = equip.atkFactor;
+            }
+            int modifiedDamage = Mathf.RoundToInt((baseDamage + boundCaster.GetFinalStrength() * 2) * weaponFactor);
+            SetNodeText(damageNode, damageText, modifiedDamage.ToString());
+
+            // 修正体力：走 GetActualSkillCost 逻辑
+            if (boundManager != null)
+                staminaCost = boundManager.GetActualSkillCost(boundCaster, boundSlot);
+        }
+        else
+        {
+            SetNodeText(damageNode, damageText, baseDamage.ToString());
+        }
+
+        SetNodeText(staminaPureNode, staminaPureText, staminaCost.ToString());
+        DrawMiniHitBar(boundSlot);
     }
 
-    private void SetupDefendSkill(SkillSlot slot)
+    private void SetupDefendSkill(bool showModified)
     {
-        SetNodeText(defendNode, defendText, slot.skillData.GetBasicDefend(slot.level).ToString());
-        SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
-        SetNodeText(hitAmendIconNode, hitAmendIconText, $"+{slot.skillData.GetHitAmend(slot.level)}");
+        int baseDefend = Mathf.RoundToInt(boundSlot.skillData.GetBasicDefend(boundSlot.level));
+        int staminaCost = Mathf.RoundToInt(boundSlot.skillData.GetStaminaCost(boundSlot.level));
+
+        if (showModified && boundCaster != null)
+        {
+            // 修正防御：基础防御 + 耐力
+            int modifiedDefend = baseDefend + boundCaster.GetFinalEndurance();
+            SetNodeText(defendNode, defendText, modifiedDefend.ToString());
+
+            if (boundManager != null)
+                staminaCost = boundManager.GetActualSkillCost(boundCaster, boundSlot);
+        }
+        else
+        {
+            SetNodeText(defendNode, defendText, baseDefend.ToString());
+        }
+
+        SetNodeText(staminaPureNode, staminaPureText, staminaCost.ToString());
+        SetNodeText(hitAmendIconNode, hitAmendIconText, $"+{boundSlot.skillData.GetHitAmend(boundSlot.level)}");
     }
 
-    private void SetupDodgeSkill(SkillSlot slot)
+    private void SetupDodgeSkill(bool showModified)
     {
-        // 闪避也直接用通用的 Pure 体力节点
-        SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
-        SetNodeText(hitAmendIconNode, hitAmendIconText, slot.skillData.GetHitAmend(slot.level).ToString());
+        int staminaCost = boundSlot.skillData.GetStaminaCost(boundSlot.level);
+
+        if (showModified && boundCaster != null && boundManager != null)
+            staminaCost = boundManager.GetActualSkillCost(boundCaster, boundSlot);
+
+        SetNodeText(staminaPureNode, staminaPureText, staminaCost.ToString());
+        SetNodeText(hitAmendIconNode, hitAmendIconText, boundSlot.skillData.GetHitAmend(boundSlot.level).ToString());
     }
 
-    private void SetupSpecialSkill(SkillSlot slot, BattleEntity caster)
+    private void SetupSpecialSkill(bool showModified)
     {
-        SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
-        int baseDur = slot.skillData.GetBaseDuration(slot.level);
-        int extraDur = Mathf.FloorToInt(caster.roleData.mentality / 6f);
+        int staminaCost = boundSlot.skillData.GetStaminaCost(boundSlot.level);
+
+        if (showModified && boundCaster != null && boundManager != null)
+            staminaCost = boundManager.GetActualSkillCost(boundCaster, boundSlot);
+
+        SetNodeText(staminaPureNode, staminaPureText, staminaCost.ToString());
+
+        int baseDur = boundSlot.skillData.GetBaseDuration(boundSlot.level);
+        int extraDur = boundCaster != null ? Mathf.FloorToInt(boundCaster.GetFinalMentality() / 6f) : 0;
         int totalDur = Mathf.Max(1, baseDur + extraDur);
         SetNodeText(durationNode, durationText, totalDur.ToString());
     }
 
-    private void SetupItem(SkillSlot slot)
+    private void SetupItem()
     {
-        SetNodeText(quantityNode, quantityText, $"x{slot.quantity}");
+        SetNodeText(quantityNode, quantityText, $"x{boundSlot.quantity}");
     }
 
     private void HideAllDynamicNodes()

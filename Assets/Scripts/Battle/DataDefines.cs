@@ -8,7 +8,7 @@ using UnityEngine;
 public enum SkillType { Attack, Defend, Dodge, Special, Item }
 public enum SectionLevel { Level0, Level1, Level2, Level3, Level4, Level5, Level6, Level99 }
 public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked }
-public enum AttributeType { Life, Stamina, Strength, Mentality }
+public enum AttributeType { Vitality, Endurance, Strength, Mentality }
 
 // ==========================================
 // 核心数据结构 (Structs)

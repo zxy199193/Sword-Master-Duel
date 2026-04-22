@@ -28,6 +28,8 @@ public class EquipmentData : ScriptableObject
     [Header("静态属性加成 (佩戴即生效)")]
     public int bonusLife = 0;
     public int bonusStamina = 0;
+    public int bonusVitality = 0;
+    public int bonusEndurance = 0;
     public int bonusStrength = 0;
     public int bonusMentality = 0;
 

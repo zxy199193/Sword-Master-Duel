@@ -169,8 +169,8 @@ public class RestUIManager : MonoBehaviour
             switch (attr)
             {
                 case 0: profile.baseStrength += gain; Debug.Log($"瀑布冥想：损失6生命，顿悟！力量 +{gain}"); break;
-                case 1: profile.baseMaxLife += gain * 2; Debug.Log($"瀑布冥想：损失6生命，顿悟！基础生命上限 +{gain * 2}"); break;
-                case 2: profile.baseMaxStamina += gain; Debug.Log($"瀑布冥想：损失6生命，顿悟！基础体力上限 +{gain}"); break;
+                case 1: profile.vitality += gain; Debug.Log($"瀑布冥想：损失6生命，顿悟！活力 +{gain}"); break;
+                case 2: profile.endurance += gain; Debug.Log($"瀑布冥想：损失6生命，顿悟！耐力 +{gain}"); break;
                 case 3: profile.baseMentality += gain; Debug.Log($"瀑布冥想：损失6生命，顿悟！精神 +{gain}"); break;
             }
             RefreshPlayerStatusUI();
@@ -204,23 +204,93 @@ public class RestUIManager : MonoBehaviour
             if (currentShopConfig != null && currentShopConfig.availableItems.Count > 0)
             {
                 var randomItem = currentShopConfig.availableItems[Random.Range(0, currentShopConfig.availableItems.Count)];
-                if (shopListUI != null) shopListUI.Invoke("AddOrStackItem", 0);
+                
+                // 修复：直接实现添加道具或叠加数量的逻辑
+                bool found = false;
+                if (profile.equippedItems != null)
+                {
+                    foreach (var slot in profile.equippedItems)
+                    {
+                        if (slot != null && slot.skillData == randomItem) { slot.quantity++; found = true; break; }
+                    }
+                }
+                if (!found && profile.storageSkillsAndItems != null)
+                {
+                    foreach (var slot in profile.storageSkillsAndItems)
+                    {
+                        if (slot != null && slot.skillData == randomItem) { slot.quantity++; found = true; break; }
+                    }
+                }
+                if (!found)
+                {
+                    profile.storageSkillsAndItems.Add(new SkillSlot { skillData = randomItem, level = 1, quantity = 1 });
+                }
                 Debug.Log($"摇奖结果：获得道具 [{randomItem.skillName}]");
             }
-            else Debug.Log("摇奖结果：道具池为空，退还10金币");
+            else 
+            {
+                profile.totalGold += 10;
+                Debug.Log("摇奖结果：道具池为空，退还10金币");
+            }
         }
         else if (roll < 90)
         {
             if (currentShopConfig != null && currentShopConfig.availableSkills.Count > 0)
             {
                 var randomSkill = currentShopConfig.availableSkills[Random.Range(0, currentShopConfig.availableSkills.Count)];
-                Debug.Log($"摇奖结果：获得招式秘籍 [{randomSkill.skillName}]");
+                
+                // 修复：检查是否已有该招式，如果没有才添加
+                bool alreadyHas = false;
+                var allSlots = new System.Collections.Generic.List<SkillSlot>();
+                if (profile.equippedAttackSkills != null) allSlots.AddRange(profile.equippedAttackSkills);
+                if (profile.equippedDefendSkills != null) allSlots.AddRange(profile.equippedDefendSkills);
+                if (profile.equippedSpecialSkills != null) allSlots.AddRange(profile.equippedSpecialSkills);
+                if (profile.storageSkillsAndItems != null) allSlots.AddRange(profile.storageSkillsAndItems);
+
+                foreach (var slot in allSlots)
+                {
+                    if (slot != null && slot.skillData == randomSkill) { alreadyHas = true; break; }
+                }
+
+                if (!alreadyHas)
+                {
+                    profile.storageSkillsAndItems.Add(new SkillSlot { skillData = randomSkill, level = 1, quantity = 1 });
+                    Debug.Log($"摇奖结果：获得招式秘籍 [{randomSkill.skillName}]");
+                }
+                else
+                {
+                    // 如果已经有了，转换成 20 金币
+                    profile.totalGold += 20;
+                    Debug.Log($"摇奖结果：获得了已有的招式秘籍 [{randomSkill.skillName}]，自动转化为 20 金币");
+                }
             }
-            else Debug.Log("摇奖结果：招式池为空，退还10金币");
+            else 
+            {
+                profile.totalGold += 10;
+                Debug.Log("摇奖结果：招式池为空，退还10金币");
+            }
         }
         else
         {
-            Debug.Log("摇奖结果：神秘力量涌入，某个已装备的招式提升了1级！");
+            // 修复：随机找一个等级小于3的已装备招式提升1级
+            var upgradeCandidates = new System.Collections.Generic.List<SkillSlot>();
+            if (profile.equippedAttackSkills != null) upgradeCandidates.AddRange(profile.equippedAttackSkills);
+            if (profile.equippedDefendSkills != null) upgradeCandidates.AddRange(profile.equippedDefendSkills);
+            if (profile.equippedSpecialSkills != null) upgradeCandidates.AddRange(profile.equippedSpecialSkills);
+
+            upgradeCandidates.RemoveAll(s => s == null || s.skillData == null || s.level >= 3 || s.skillData.skillType == SkillType.Item);
+
+            if (upgradeCandidates.Count > 0)
+            {
+                var targetSlot = upgradeCandidates[Random.Range(0, upgradeCandidates.Count)];
+                targetSlot.level++;
+                Debug.Log($"摇奖结果：神秘力量涌入，你装备的招式 [{targetSlot.skillData.skillName}] 提升到了 Lv.{targetSlot.level}！");
+            }
+            else
+            {
+                profile.totalGold += 10;
+                Debug.Log("摇奖结果：你的装备中没有可以升级的招式，神秘力量散去，退还10金币。");
+            }
         }
 
         RefreshPlayerStatusUI();

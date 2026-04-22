@@ -156,7 +156,7 @@ public class DamageSettleState : BattleState
             }
 
             // 3. 计算最终伤害: (总攻击力 - 总减伤) × 武器倍率 × 打击条倍率
-            float totalBaseDamage = skill.GetBasicDamage(level) + finalStrength + equipDamageModifier + skillEffectBaseDamageMod;
+            float totalBaseDamage = skill.GetBasicDamage(level) + (finalStrength * 2) + equipDamageModifier + skillEffectBaseDamageMod;
             
             if (attacker.activeStatuses.ContainsKey(StatusType.Excited))
             {

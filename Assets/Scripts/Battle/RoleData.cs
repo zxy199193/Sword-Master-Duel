@@ -26,13 +26,15 @@ public class RoleData : ScriptableObject
     public RuntimeAnimatorController animatorController;
 
     [Header("基础属性")]
-    public int maxBasicLife = 20;
-    public int maxStamina = 10;
+    public int maxBasicLife = 10;
+    public int maxStamina = 5;
+    public int vitality = 0;
+    public int endurance = 0;
     public int strength = 0;
     public int mentality = 0;
     
     [Tooltip("每回合自动恢复体力")]
-    public int staminaRecoverPerTurn = 3;
+    public int staminaRecoverPerTurn = 2;
 
     [Header("敌方专属装备配置 (NPC有效)")]
     public EquipmentData equippedWeapon;
