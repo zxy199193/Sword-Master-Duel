@@ -171,6 +171,18 @@ public class DamageSettleState : BattleState
             // 造成最终伤害
             defender.TakeDamage(finalDamage);
 
+            // 播放音效
+            int hitSoundType = 1; // 正常命中
+            if (defendSkill != null && defendSkill.skillType == SkillType.Defend)
+            {
+                hitSoundType = 2; // 被防御
+            }
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayHitSound(hitSoundType);
+            }
+
             // 播放特效和飘字
             battleManager.SpawnHitEffect(defender.transform);
             int hitLevelTag = (int)hit.Value.level >= 3 ? 2 : 1;
@@ -198,6 +210,11 @@ public class DamageSettleState : BattleState
             Debug.Log($"[DamageSettleState] {attacker.roleData.roleName} 的该段攻击 Miss！");
             defender.PlayMissAnim();
             battleManager.SpawnDamagePopup(isPlayerTakingDamage, "MISS", 0);
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayHitSound(0); // Miss 音效
+            }
 
             // 触发防守方闪避成功时的特效 (如：无刀取)
             SkillSlot defendSlot = battleManager.isPlayerAttacking ? battleManager.currentEnemySkill : battleManager.currentPlayerSkill;

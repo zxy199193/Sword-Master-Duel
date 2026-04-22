@@ -19,6 +19,7 @@ public class RoleData : ScriptableObject
 {
     [Header("角色信息")]
     public string roleName;
+    [TextArea] public string roleDescription;
     public Sprite roleModel;
 
     [Header("视觉与动画")]

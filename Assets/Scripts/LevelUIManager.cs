@@ -9,6 +9,8 @@ public class LevelUIManager : MonoBehaviour
 
     [Header("Enemy Icons (Requires 3)")]
     public Image[] enemyIcons = new Image[3];
+    public Text[] enemyNameTexts = new Text[3];
+    public Text[] enemyDescTexts = new Text[3];
 
     [Header("Visual Feedback")]
     [Tooltip("Overlay for defeated enemies")]
@@ -57,12 +59,29 @@ public class LevelUIManager : MonoBehaviour
         {
             if (i >= currentEnemies.Count || currentEnemies[i] == null)
             {
-                enemyIcons[i].gameObject.SetActive(false);
+                if (enemyIcons.Length > i && enemyIcons[i] != null) enemyIcons[i].gameObject.SetActive(false);
+                if (enemyNameTexts.Length > i && enemyNameTexts[i] != null) enemyNameTexts[i].gameObject.SetActive(false);
+                if (enemyDescTexts.Length > i && enemyDescTexts[i] != null) enemyDescTexts[i].gameObject.SetActive(false);
                 continue;
             }
 
-            enemyIcons[i].sprite = currentEnemies[i].roleModel;
-            enemyIcons[i].gameObject.SetActive(true);
+            if (enemyIcons.Length > i && enemyIcons[i] != null)
+            {
+                enemyIcons[i].sprite = currentEnemies[i].roleModel;
+                enemyIcons[i].gameObject.SetActive(true);
+            }
+
+            if (enemyNameTexts.Length > i && enemyNameTexts[i] != null)
+            {
+                enemyNameTexts[i].text = currentEnemies[i].roleName;
+                enemyNameTexts[i].gameObject.SetActive(true);
+            }
+
+            if (enemyDescTexts.Length > i && enemyDescTexts[i] != null)
+            {
+                enemyDescTexts[i].text = currentEnemies[i].roleDescription;
+                enemyDescTexts[i].gameObject.SetActive(true);
+            }
 
             if (defeatedOverlays.Length > i && defeatedOverlays[i] != null)
                 defeatedOverlays[i].SetActive(i < nodeIndex);

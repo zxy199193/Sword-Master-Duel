@@ -135,7 +135,7 @@ public class RoleInfoUI : MonoBehaviour
 
             GameObject go = Instantiate(statusIconPrefab, statusContainer);
             StatusIconUI iconUI = go.GetComponent<StatusIconUI>();
-            if (iconUI != null) iconUI.Setup(data.icon, kvp.Value);
+            if (iconUI != null) iconUI.Setup(data, kvp.Value);
         }
     }
 

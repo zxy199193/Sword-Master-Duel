@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Enemy_102
   m_EditorClassIdentifier: 
   roleName: "\u9053\u573A\u9AD8\u624B"
+  roleDescription: "\u9053\u573A\u9AD8\u624B\u9053\u573A\u9AD8\u624B"
   roleModel: {fileID: -1481917108, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
   animatorController: {fileID: 9100000, guid: 8ccb58b0360c4504eb8046a94069d9f6, type: 2}
   maxBasicLife: 20
@@ -20,55 +21,21 @@ MonoBehaviour:
   strength: 3
   mentality: 5
   staminaRecoverPerTurn: 3
-  equippedSkills:
-  - skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: 6ba3735138f11e74294903884de885e6, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
-    level: 1
-    quantity: 1
   equippedWeapon: {fileID: 11400000, guid: a7633d404ba5b604ca4ad8f71ca572a5, type: 2}
   equippedArmor: {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
   equippedAccessories: []
+  aiReactionTolerance: 0.4
+  npcSkills:
+  - skillSlot:
+      skillData: {fileID: 0}
+      level: 0
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  subSkillProbabilities:
+  - 0.5
+  - -1
+  - -1
+  - -1
   isBoss: 0
   goldReward: 40
   expReward: 50
-  aiReactionTolerance: 0.4
-  aiPhases:
-  - hpPercentageThreshold: 1
-    subSkillProbability: 0.5
-    mainSkillWeights:
-    - skill: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
-      weight: 20
-    - skill: {fileID: 11400000, guid: 6ba3735138f11e74294903884de885e6, type: 2}
-      weight: 20
-    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
-      weight: 30
-    - skill: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
-      weight: 30
-    subSkillWeights:
-    - skill: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
-      weight: 100
-  - hpPercentageThreshold: 0.5
-    subSkillProbability: 0.5
-    mainSkillWeights:
-    - skill: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
-      weight: 20
-    - skill: {fileID: 11400000, guid: 6b1924b78bbd38048a5ff434a711b556, type: 2}
-      weight: 60
-    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
-      weight: 10
-    - skill: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
-      weight: 10
-    subSkillWeights:
-    - skill: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
-      weight: 100
