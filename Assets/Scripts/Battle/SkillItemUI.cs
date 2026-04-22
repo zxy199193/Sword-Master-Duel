@@ -4,33 +4,33 @@ using System;
 
 public class SkillItemUI : MonoBehaviour
 {
-    [Header("Í¨ÓÃÔªËØ (Common)")]
+    [Header("é€šç”¨å…ƒç´  (Common)")]
     public Text nameText;
     public Text levelText;
     public Text descriptionText;
     public Image skillIcon;
     public Button selectButton;
 
-    [Header("Õ¹Ê¾½Úµã (Dynamic Nodes)")]
+    [Header("å±•ç¤ºèŠ‚ç‚¹ (Dynamic Nodes)")]
     public GameObject damageNode;
     public Text damageText;
 
     public GameObject defendNode;
     public Text defendText;
 
-    public GameObject staminaPureNode; // Í³Ò»µÄËùÓĞ¼¼ÄÜÌåÁ¦½Úµã
+    public GameObject staminaPureNode; // ç»Ÿä¸€çš„æ‰€æœ‰æŠ€èƒ½ä½“åŠ›èŠ‚ç‚¹
     public Text staminaPureText;
 
-    public GameObject hitAmendIconNode; // ÃüÖĞĞŞÕı½Úµã
+    public GameObject hitAmendIconNode; // å‘½ä¸­ä¿®æ­£èŠ‚ç‚¹
     public Text hitAmendIconText;
 
-    public GameObject durationNode;    // ³ÖĞøÊ±¼ä½Úµã
+    public GameObject durationNode;    // æŒç»­æ—¶é—´èŠ‚ç‚¹
     public Text durationText;
 
-    public GameObject quantityNode;    // µÀ¾ßÊıÁ¿
+    public GameObject quantityNode;    // é“å…·æ•°é‡
     public Text quantityText;
 
-    [Header("ÃÔÄã´ò»÷Ìõ (Mini Hit Bar)")]
+    [Header("è¿·ä½ æ‰“å‡»æ¡ (Mini Hit Bar)")]
     public GameObject miniHitBarRoot;
     public GameObject miniSectionPrefab;
 
@@ -93,7 +93,7 @@ public class SkillItemUI : MonoBehaviour
 
     private void SetupDodgeSkill(SkillSlot slot)
     {
-        // ¡¾ºËĞÄĞŞ¸Ä¡¿£ºÉÁ±ÜÒ²Ö±½ÓÓÃÍ¨ÓÃµÄ Pure ÌåÁ¦½Úµã
+        // é—ªé¿ä¹Ÿç›´æ¥ç”¨é€šç”¨çš„ Pure ä½“åŠ›èŠ‚ç‚¹
         SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
         SetNodeText(hitAmendIconNode, hitAmendIconText, slot.skillData.GetHitAmend(slot.level).ToString());
     }

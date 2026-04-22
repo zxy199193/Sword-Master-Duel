@@ -3,7 +3,7 @@ using UnityEngine;
 using static GlobalBattleRules;
 
 /// <summary>
-/// ÉËº¦½áËã×´Ì¬£º¼àÌı¶¯»­ÊÂ¼ş²¢Öğ¶Î½áËã¶à¶Î¹¥»÷µÄÉËº¦Óë±íÏÖ
+/// ä¼¤å®³ç»“ç®—çŠ¶æ€ï¼šç›‘å¬åŠ¨ç”»äº‹ä»¶å¹¶é€æ®µç»“ç®—å¤šæ®µæ”»å‡»çš„ä¼¤å®³ä¸è¡¨ç°
 /// </summary>
 public class DamageSettleState : BattleState
 {
@@ -13,6 +13,10 @@ public class DamageSettleState : BattleState
     private bool isFinished = false;
 
     public DamageSettleState(BattleManager manager) : base(manager) { }
+
+    // ==========================================
+    // Lifecycle Methods
+    // ==========================================
 
     public override void Enter()
     {
@@ -24,13 +28,12 @@ public class DamageSettleState : BattleState
         battleManager.enemyEntity.OnAnimHitPoint += ExecuteDamage;
 
         BattleEntity attacker = battleManager.isPlayerAttacking ? battleManager.playerEntity : battleManager.enemyEntity;
-
         SkillSlot attackSlot = battleManager.isPlayerAttacking ? battleManager.currentPlayerSkill : battleManager.currentEnemySkill;
         SkillData attackSkill = attackSlot != null ? attackSlot.skillData : null;
 
         if (battleManager.currentHitResults.Count == 0 && battleManager.currentAttackTimeout)
         {
-            Debug.Log("[DamageSettleState] ¹¥»÷³¬Ê±£¬Î´ÊäÈëÈÎºÎÓĞĞ§Ö¸Áî¡£");
+            Debug.Log("[DamageSettleState] æ”»å‡»è¶…æ—¶ï¼Œæœªè¾“å…¥ä»»ä½•æœ‰æ•ˆæŒ‡ä»¤ã€‚");
             battleManager.StartCoroutine(DelayFinish(1.0f));
         }
         else if (attacker != null && attackSkill != null)
@@ -58,6 +61,10 @@ public class DamageSettleState : BattleState
         battleManager.enemyEntity.OnAnimHitPoint -= ExecuteDamage;
     }
 
+    // ==========================================
+    // Damage Execution
+    // ==========================================
+
     private void ExecuteDamage()
     {
         var results = battleManager.currentHitResults;
@@ -77,16 +84,6 @@ public class DamageSettleState : BattleState
         }
     }
 
-    private IEnumerator DelayFinish(float delayTime)
-    {
-        yield return new WaitForSeconds(delayTime);
-        if (!isFinished)
-        {
-            isFinished = true;
-            FinishStateAndTurn();
-        }
-    }
-
     private void ApplyDamageLogic(HitSection? hit)
     {
         BattleEntity attacker = battleManager.isPlayerAttacking ? battleManager.playerEntity : battleManager.enemyEntity;
@@ -101,7 +98,6 @@ public class DamageSettleState : BattleState
         if (hit.HasValue && skill != null)
         {
             float multiplier = GlobalBattleRules.GetHitMultiplier(hit.Value.level);
-
             int finalStrength = attacker.roleData.strength;
             float weaponAtkFactor = 1.0f;
 
@@ -111,24 +107,25 @@ public class DamageSettleState : BattleState
                 finalStrength = profile.GetFinalStrength();
                 if (profile.equippedWeapon != null) weaponAtkFactor = profile.equippedWeapon.atkFactor;
             }
+
             if (skill.effects != null && skill.effects.Count > 0)
             {
                 foreach (var effect in skill.effects)
                 {
                     if (effect != null)
                     {
-                        // ´«ÈëÊÖÍ·ÒÑ¾­ËãºÃµÄÁ½¸ö±¶ÂÊ
                         effect.OnPreDamageSettle(attacker, defender, battleManager, level, multiplier, weaponAtkFactor);
                     }
                 }
             }
-            int equipDamageModifier = 0;
-            if (battleManager.isPlayerAttacking) equipDamageModifier = battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnAttackHit, hit.Value.level);
-            else equipDamageModifier = battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnDefendHit, hit.Value.level);
 
-            // ==========================================
-            // 1. ÊÕ¼¯¹¥»÷·½µÄÌØĞ§ÔöÉË
-            // ==========================================
+            int equipDamageModifier = 0;
+            if (battleManager.isPlayerAttacking) 
+                equipDamageModifier = battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnAttackHit, hit.Value.level);
+            else 
+                equipDamageModifier = battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnDefendHit, hit.Value.level);
+
+            // 1. æ”¶é›†æ”»å‡»æ–¹çš„ç‰¹æ•ˆå¢ä¼¤
             int skillEffectBaseDamageMod = 0;
             if (skill.effects != null && skill.effects.Count > 0)
             {
@@ -141,9 +138,7 @@ public class DamageSettleState : BattleState
                 }
             }
 
-            // ==========================================
-            // 2. ÊÕ¼¯·ÀÓù·½µÄÌØĞ§¼õÉË
-            // ==========================================
+            // 2. æ”¶é›†é˜²å¾¡æ–¹çš„ç‰¹æ•ˆå‡ä¼¤
             SkillSlot defendSlot = battleManager.isPlayerAttacking ? battleManager.currentEnemySkill : battleManager.currentPlayerSkill;
             SkillData defendSkill = defendSlot != null ? defendSlot.skillData : null;
             int defendLevel = defendSlot != null ? defendSlot.level : 1;
@@ -160,10 +155,7 @@ public class DamageSettleState : BattleState
                 }
             }
 
-            // ==========================================
-            // 3. ¡¾ºËĞÄĞŞ¸Ä£º²ÉÓÃÄãµÄĞÂ¹«Ê½£¡¡¿ 
-            // ×îÖÕÉËº¦ = (×Ü¹¥»÷Á¦ - ×Ü¼õÉË) ¡Á ÎäÆ÷±¶ÂÊ ¡Á ´ò»÷Ìõ±¶ÂÊ
-            // ==========================================
+            // 3. è®¡ç®—æœ€ç»ˆä¼¤å®³: (æ€»æ”»å‡»åŠ› - æ€»å‡ä¼¤) Ã— æ­¦å™¨å€ç‡ Ã— æ‰“å‡»æ¡å€ç‡
             float totalBaseDamage = skill.GetBasicDamage(level) + finalStrength + equipDamageModifier + skillEffectBaseDamageMod;
             
             if (attacker.activeStatuses.ContainsKey(StatusType.Excited))
@@ -173,25 +165,18 @@ public class DamageSettleState : BattleState
 
             int totalReduction = Mathf.RoundToInt(defender.tempDamageReduction) + skillEffectDefenseMod;
 
-            // ÏÈËã¾»ÉËº¦£¨±£µ×Îª0£¬·ÀÖ¹·ÀÌ«¸ßµ¼ÖÂ¼ÓÑª£©
             float netBaseDamage = Mathf.Max(0, totalBaseDamage - totalReduction);
-
-            // ×îºóÔÙ³Ë±¶ÂÊ£¡
             int finalDamage = Mathf.RoundToInt(weaponAtkFactor * multiplier * netBaseDamage);
 
-            // ==========================================
-
-            // Ôì³É×îÖÕÉËº¦
+            // é€ æˆæœ€ç»ˆä¼¤å®³
             defender.TakeDamage(finalDamage);
 
-            // ²¥·ÅÊÜ»÷ÌØĞ§ºÍÉËº¦Êı×Ö
+            // æ’­æ”¾ç‰¹æ•ˆå’Œé£˜å­—
             battleManager.SpawnHitEffect(defender.transform);
             int hitLevelTag = (int)hit.Value.level >= 3 ? 2 : 1;
             battleManager.SpawnDamagePopup(isPlayerTakingDamage, finalDamage.ToString(), hitLevelTag);
 
-            // ==========================================
-            // ¡¾ºËĞÄĞŞÕı¡¿£º´¥·¢ÌØĞ§Ê±£¬´øÉÏ OnAttackHit ¹³×Ó
-            // ==========================================
+            // è§¦å‘ç‰¹æ•ˆ OnAttackHit é’©å­
             if (skill.effects != null && skill.effects.Count > 0)
             {
                 foreach (var effect in skill.effects)
@@ -199,25 +184,22 @@ public class DamageSettleState : BattleState
                     if (effect != null)
                     {
                         effect.Execute(attacker, defender, battleManager, level);
-                        // °ÑÃüÖĞ½á¹û»ã±¨¸øĞèÒª¿´ÃüÖĞµÈ¼¶µÄÌØĞ§£¡
                         effect.OnAttackHit(attacker, defender, battleManager, level, hit.Value.level);
                     }
                 }
             }
 
-            // ÅĞ¶ÏÉúËÀÓë¶¯»­
+            // åˆ¤æ–­ç”Ÿæ­»ä¸åŠ¨ç”»
             if (defender.currentBasicLife <= 0) defender.PlayDieAnim();
             else defender.PlayHitAnim();
         }
         else
         {
-            Debug.Log($"[DamageSettleState] {attacker.roleData.roleName} µÄ¸Ã¶Î¹¥»÷ Miss£¡");
+            Debug.Log($"[DamageSettleState] {attacker.roleData.roleName} çš„è¯¥æ®µæ”»å‡» Missï¼");
             defender.PlayMissAnim();
             battleManager.SpawnDamagePopup(isPlayerTakingDamage, "MISS", 0);
 
-            // ==========================================
-            // ´¥·¢·ÀÊØ·½ÉÁ±Ü³É¹¦Ê±µÄÌØĞ§ (Èç£ºÎŞµ¶È¡)
-            // ==========================================
+            // è§¦å‘é˜²å®ˆæ–¹é—ªé¿æˆåŠŸæ—¶çš„ç‰¹æ•ˆ (å¦‚ï¼šæ— åˆ€å–)
             SkillSlot defendSlot = battleManager.isPlayerAttacking ? battleManager.currentEnemySkill : battleManager.currentPlayerSkill;
             SkillData defendSkill = defendSlot != null ? defendSlot.skillData : null;
             int defendLevel = defendSlot != null ? defendSlot.level : 1;
@@ -228,11 +210,24 @@ public class DamageSettleState : BattleState
                 {
                     if (effect != null)
                     {
-                        // ºô½ĞÔÛÃÇ¸ÕĞ´µÄ¹³×Ó£¡
                         effect.OnEvadeSuccess(defender, attacker, battleManager, defendLevel);
                     }
                 }
             }
+        }
+    }
+
+    // ==========================================
+    // State Control
+    // ==========================================
+
+    private IEnumerator DelayFinish(float delayTime)
+    {
+        yield return new WaitForSeconds(delayTime);
+        if (!isFinished)
+        {
+            isFinished = true;
+            FinishStateAndTurn();
         }
     }
 

@@ -5,13 +5,13 @@ using System.Collections;
 public class DamagePopup : MonoBehaviour
 {
     [Header("Animation Settings")]
-    [SerializeField] private float moveSpeed = 2f;    // ÏòÉÏÆ®µÄËÙ¶È
-    [SerializeField] private float destroyTime = 2f;  // ´æ»î/µ­³öÊ±¼ä
+    [SerializeField] private float moveSpeed = 2f;    // å‘ä¸Šé£˜çš„é€Ÿåº¦
+    [SerializeField] private float destroyTime = 2f;  // å­˜æ´»/æ·¡å‡ºæ—¶é—´
 
     private Text popupText;
 
     // ==========================================
-    // Unity ÉúÃüÖÜÆÚ
+    // Unity ç”Ÿå‘½å‘¨æœŸ
     // ==========================================
     private void Awake()
     {
@@ -19,16 +19,16 @@ public class DamagePopup : MonoBehaviour
 
         if (popupText == null)
         {
-            Debug.LogWarning($"[DamagePopup] {gameObject.name} ¼°Æä×Ó½ÚµãÏÂÎ´ÕÒµ½ Text ×é¼ş£¡");
+            Debug.LogWarning($"[DamagePopup] {gameObject.name} åŠå…¶å­èŠ‚ç‚¹ä¸‹æœªæ‰¾åˆ° Text ç»„ä»¶ï¼");
         }
     }
 
     // ==========================================
-    // ¹«¹²½Ó¿Ú (Public API)
+    // å…¬å…±æ¥å£ (Public API)
     // ==========================================
 
     /// <summary>
-    /// ³õÊ¼»¯²¢Æô¶¯Æ®×Ö¶¯»­
+    /// åˆå§‹åŒ–å¹¶å¯åŠ¨é£˜å­—åŠ¨ç”»
     /// </summary>
     public void Setup(string textContent)
     {
@@ -40,7 +40,7 @@ public class DamagePopup : MonoBehaviour
     }
 
     // ==========================================
-    // ÄÚ²¿Ğ­³Ì¶¯»­Âß¼­
+    // å†…éƒ¨åç¨‹åŠ¨ç”»é€»è¾‘
     // ==========================================
     private IEnumerator AnimatePopup()
     {
@@ -49,10 +49,10 @@ public class DamagePopup : MonoBehaviour
 
         while (timer < destroyTime)
         {
-            // ÏòÉÏÔÈËÙÒÆ¶¯
+            // å‘ä¸ŠåŒ€é€Ÿç§»åŠ¨
             transform.position += Vector3.up * moveSpeed * Time.deltaTime;
 
-            // Í¸Ã÷¶È½¥Òşµ­³ö
+            // é€æ˜åº¦æ¸éšæ·¡å‡º
             float alpha = Mathf.Lerp(1f, 0f, timer / destroyTime);
             popupText.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
 

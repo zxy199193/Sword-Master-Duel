@@ -4,22 +4,22 @@ using System;
 
 public class RoleSkillItemUI : MonoBehaviour
 {
-    [Header("ª˘¥°Ω⁄µ„")]
+    [Header("UI ËäÇÁÇπ - Âü∫Á°Ä‰ø°ÊÅØ")]
     public Text nameText;
     public Image iconImage;
     public Text descText;
     public Text levelText;
 
-    [Header("≤Ÿ◊˜Ω⁄µ„")]
+    [Header("UI ËäÇÁÇπ - Êìç‰Ωú")]
     public GameObject equippedBadge;
     public Button actionBtn;
     public Text actionBtnText;
 
-    [Header("…ÃµÍ◊® ÙΩ⁄µ„ (–¬‘ˆ)")]
+    [Header("UI ËäÇÁÇπ - ÂïÜÂ∫ó‰∏ìÂ±û")]
     public GameObject priceNode;
     public Text priceText;
 
-    [Header("’π æΩ⁄µ„ (Dynamic Nodes)")]
+    [Header("UI ËäÇÁÇπ - Âä®ÊÄÅÂ±ûÊÄßÂ±ïÁ§∫")]
     public GameObject damageNode;
     public Text damageText;
     public GameObject defendNode;
@@ -33,60 +33,62 @@ public class RoleSkillItemUI : MonoBehaviour
     public GameObject quantityNode;
     public Text quantityText;
 
-    [Header("√‘ƒ„¥Úª˜Ãı (Mini Hit Bar)")]
+    [Header("Ëø∑‰Ω†ÊâìÂáªÊù°ÈÖçÁΩÆ")]
     public GameObject miniHitBarRoot;
     public GameObject miniSectionPrefab;
 
     // ==========================================
-    // ±≥∞¸ƒ£ Ω≥ı ºªØ
+    // Public Methods - Setup
     // ==========================================
+
     public void Setup(SkillSlot skillSlot, bool isEquipped, bool canUnequip, Action<SkillSlot> onActionClicked)
     {
         PopulateBasicInfo(skillSlot);
 
         if (equippedBadge) equippedBadge.SetActive(isEquipped);
-        if (priceNode) priceNode.SetActive(false); // ±≥∞¸¿Ô“˛≤ÿº€∏Ò
+        if (priceNode) priceNode.SetActive(false);
 
         if (actionBtn != null)
         {
-            actionBtn.interactable = true; // ±≥∞¸∞¥≈•”¿‘∂ø…µ„
+            actionBtn.interactable = true;
             actionBtn.onClick.RemoveAllListeners();
+            
             if (isEquipped)
             {
                 if (!canUnequip) actionBtn.gameObject.SetActive(false);
-                else { actionBtn.gameObject.SetActive(true); if (actionBtnText) actionBtnText.text = "–∂œ¬"; }
+                else 
+                { 
+                    actionBtn.gameObject.SetActive(true); 
+                    if (actionBtnText) actionBtnText.text = "Âç∏‰∏ã"; 
+                }
             }
             else
             {
                 actionBtn.gameObject.SetActive(true);
-                if (actionBtnText) actionBtnText.text = "◊∞±∏";
+                if (actionBtnText) actionBtnText.text = "Ë£ÖÂ§á";
             }
+            
             actionBtn.onClick.AddListener(() => onActionClicked?.Invoke(skillSlot));
         }
     }
 
-    // ==========================================
-    // …ÃµÍƒ£ Ω≥ı ºªØ (–¬‘ˆ)
-    // ==========================================
     public void SetupForShop(SkillSlot skillSlot, int price, bool canAfford, string btnText, Action<SkillSlot> onActionClicked)
     {
         PopulateBasicInfo(skillSlot);
 
-        if (equippedBadge) equippedBadge.SetActive(false); // …ÃµÍ¿Ô√ª”–◊∞±∏÷–±Íº«
+        if (equippedBadge) equippedBadge.SetActive(false);
 
-        // œ‘ æº€∏Ò
         if (priceNode) priceNode.SetActive(true);
         if (priceText)
         {
             priceText.text = price.ToString();
-            priceText.color = canAfford ? Color.white : Color.red; // ¬Ú≤ª∆±‰∫Ï
+            priceText.color = canAfford ? Color.white : Color.red;
         }
 
-        // …ÃµÍ∞¥≈•¬ﬂº≠
         if (actionBtn != null)
         {
             actionBtn.gameObject.SetActive(true);
-            actionBtn.interactable = canAfford; // ¬Ú≤ª∆æÕ÷√ª“
+            actionBtn.interactable = canAfford;
             if (actionBtnText) actionBtnText.text = btnText;
 
             actionBtn.onClick.RemoveAllListeners();
@@ -95,8 +97,9 @@ public class RoleSkillItemUI : MonoBehaviour
     }
 
     // ==========================================
-    // ƒ⁄≤øÕ®”√¬ﬂº≠ (Ã·»°∏¥”√)
+    // Private Methods - UI Generation
     // ==========================================
+
     private void PopulateBasicInfo(SkillSlot skillSlot)
     {
         if (nameText) nameText.text = skillSlot.skillData.skillName;
@@ -110,6 +113,7 @@ public class RoleSkillItemUI : MonoBehaviour
         }
 
         HideAllDynamicNodes();
+        
         switch (skillSlot.skillData.skillType)
         {
             case SkillType.Attack: SetupAttackSkill(skillSlot); break;
@@ -146,8 +150,12 @@ public class RoleSkillItemUI : MonoBehaviour
         SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
         int baseDur = slot.skillData.GetBaseDuration(slot.level);
         int extraDur = 0;
+        
         if (GameManager.Instance != null && GameManager.Instance.playerProfile != null)
+        {
             extraDur = Mathf.FloorToInt(GameManager.Instance.playerProfile.GetFinalMentality() / 6f);
+        }
+            
         SetNodeText(durationNode, durationText, Mathf.Max(1, baseDur + extraDur).ToString());
     }
 
@@ -168,17 +176,28 @@ public class RoleSkillItemUI : MonoBehaviour
 
     private void SetNodeText(GameObject node, Text textComp, string value)
     {
-        if (node != null && textComp != null) { node.SetActive(true); textComp.text = value; }
+        if (node != null && textComp != null) 
+        { 
+            node.SetActive(true); 
+            textComp.text = value; 
+        }
     }
 
     private void DrawMiniHitBar(SkillSlot slot)
     {
         if (miniHitBarRoot == null || miniSectionPrefab == null) return;
 
-        if (slot.skillData.skillType != SkillType.Attack) { miniHitBarRoot.SetActive(false); return; }
+        if (slot.skillData.skillType != SkillType.Attack) 
+        { 
+            miniHitBarRoot.SetActive(false); 
+            return; 
+        }
 
         miniHitBarRoot.SetActive(true);
-        foreach (Transform child in miniHitBarRoot.transform) Destroy(child.gameObject);
+        foreach (Transform child in miniHitBarRoot.transform) 
+        {
+            Destroy(child.gameObject);
+        }
 
         HitBarConfig config = slot.skillData.GetLeveledHitBarConfig(slot.level);
         if (config.sections == null) return;
@@ -189,9 +208,11 @@ public class RoleSkillItemUI : MonoBehaviour
         {
             GameObject go = Instantiate(miniSectionPrefab, miniHitBarRoot.transform);
             RectTransform rt = go.GetComponent<RectTransform>();
-            rt.anchorMin = new Vector2(0.5f, 0f); rt.anchorMax = new Vector2(0.5f, 1f);
+            rt.anchorMin = new Vector2(0.5f, 0f); 
+            rt.anchorMax = new Vector2(0.5f, 1f);
             rt.sizeDelta = new Vector2((section.width / 100f) * totalWidth, 0);
             rt.anchoredPosition = new Vector2((section.axisPosition / 100f) * totalWidth - (totalWidth / 2f), 0);
+            
             Image img = go.GetComponent<Image>();
             if (img != null) img.color = GlobalBattleRules.GetSectionColor(section.level);
         }

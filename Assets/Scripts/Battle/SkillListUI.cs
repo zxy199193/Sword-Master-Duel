@@ -10,7 +10,7 @@ public class SkillListUI : MonoBehaviour
     public GameObject skillItemPrefab;
     public Button closeButton;
 
-    // ¡¾ºËĞÄĞŞ¸´¡¿£º»Øµ÷ÀàĞÍ¸ÄÎª SkillSlot
+    // å›è°ƒç±»å‹æ”¹ä¸º SkillSlot
     private Action<SkillSlot> onSkillSelectedCallback;
 
     private void Start()
@@ -18,7 +18,7 @@ public class SkillListUI : MonoBehaviour
         if (closeButton != null) closeButton.onClick.AddListener(ClosePanel);
     }
 
-    // ¡¾ºËĞÄĞŞ¸´¡¿£ºÁĞ±íÀàĞÍ¸ÄÎª List<SkillSlot>
+    // åˆ—è¡¨ç±»å‹æ”¹ä¸º List<SkillSlot>
     public void OpenList(List<SkillSlot> allSkills, BattleEntity caster, int availableStamina, Action<SkillSlot> callback, params SkillType[] filterTypes)
     {
         onSkillSelectedCallback = callback;
@@ -28,7 +28,7 @@ public class SkillListUI : MonoBehaviour
 
         foreach (var slot in allSkills)
         {
-            // Í¨¹ı slot.skillData ¶ÁÈ¡Ã¶¾Ù
+            // é€šè¿‡ slot.skillData è¯»å–æšä¸¾
             if (slot != null && slot.skillData != null && Array.Exists(filterTypes, type => type == slot.skillData.skillType))
             {
                 CreateSkillItemUI(slot, caster, availableStamina);
@@ -41,14 +41,14 @@ public class SkillListUI : MonoBehaviour
     private void CreateSkillItemUI(SkillSlot slot, BattleEntity caster, int availableStamina)
     {
         GameObject go = Instantiate(skillItemPrefab, contentRoot);
-        // ×¢Òâ£ºÕâÀïÊÇÄãÕ½¶· UI ×¨ÓÃµÄ SkillItemUI ×é¼ş
+        // æ³¨æ„ï¼šè¿™é‡Œæ˜¯ä½ æˆ˜æ–— UI ä¸“ç”¨çš„ SkillItemUI ç»„ä»¶
         SkillItemUI itemUI = go.GetComponent<SkillItemUI>();
 
         if (itemUI != null)
         {
             itemUI.Init(slot, caster, OnSkillSelected);
 
-            // ¡¾ºËĞÄĞŞ¸´¡¿£º¶ÁÈ¡½âñîºóµÄ quantity ºÍ GetStaminaCost
+            // è¯»å–è§£è€¦åçš„ quantity å’Œ GetStaminaCost
             bool isExhausted = (slot.skillData.skillType == SkillType.Item && slot.quantity <= 0);
             bool isNoStamina = (slot.skillData.GetStaminaCost(slot.level) > availableStamina);
 
@@ -56,7 +56,7 @@ public class SkillListUI : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"Ô¤ÖÆÌå {skillItemPrefab.name} ÉÏÈ±ÉÙ SkillItemUI ½Å±¾£¡");
+            Debug.LogError($"é¢„åˆ¶ä½“ {skillItemPrefab.name} ä¸Šç¼ºå°‘ SkillItemUI è„šæœ¬ï¼");
         }
     }
 

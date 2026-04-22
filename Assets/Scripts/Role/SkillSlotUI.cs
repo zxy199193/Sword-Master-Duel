@@ -3,19 +3,28 @@ using UnityEngine.UI;
 
 public class SkillSlotUI : MonoBehaviour
 {
+    [Header("UI 寮曠敤 - 鍩虹鑺傜偣")]
     public Button slotBtn;
     public Text nameText;
     public GameObject emptyNode;
 
-    [Header("等级展示节点")]
+    [Header("UI 寮曠敤 - 绛夌骇灞曠ず")]
     public GameObject levelNode;
     public Text levelText;
+
+    // ==========================================
+    // Public Methods
+    // ==========================================
 
     public void UpdateUI(SkillSlot skillSlot)
     {
         if (skillSlot != null && skillSlot.skillData != null)
         {
-            if (nameText) { nameText.gameObject.SetActive(true); nameText.text = skillSlot.skillData.skillName; }
+            if (nameText) 
+            { 
+                nameText.gameObject.SetActive(true); 
+                nameText.text = skillSlot.skillData.skillName; 
+            }
             if (emptyNode) emptyNode.SetActive(false);
 
             if (levelNode) levelNode.SetActive(true);

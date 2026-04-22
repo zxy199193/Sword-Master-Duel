@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using static GlobalBattleRules;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 using System;
@@ -15,36 +14,36 @@ public enum ItemQuality { Common, Rare, Epic, Legendary }
 [CreateAssetMenu(fileName = "NewEquipment", menuName = "SwordMaster/Equipment Data")]
 public class EquipmentData : ScriptableObject
 {
-    [Header("»ù´¡ĞÅÏ¢")]
+    [Header("åŸºç¡€ä¿¡æ¯")]
     public string equipName;
     [TextArea] public string description;
     public Sprite icon;
     public EquipmentType equipType;
     public ItemQuality quality = ItemQuality.Common;
 
-    [Header("Í¨ÓÃÊôĞÔ")]
+    [Header("é€šç”¨å±æ€§")]
     public int weight = 5;
     public int price = 100;
 
-    [Header("¾²Ì¬ÊôĞÔ¼Ó³É (Åå´÷¼´ÉúĞ§)")]
+    [Header("é™æ€å±æ€§åŠ æˆ (ä½©æˆ´å³ç”Ÿæ•ˆ)")]
     public int bonusLife = 0;
     public int bonusStamina = 0;
     public int bonusStrength = 0;
     public int bonusMentality = 0;
 
-    [Header("ÎäÆ÷×¨ÊôÊôĞÔ")]
+    [Header("æ­¦å™¨ä¸“å±å±æ€§")]
     public float atkFactor = 1.0f;
 
-    [Header("·À¾ß×¨ÊôÊôĞÔ")]
+    [Header("é˜²å…·ä¸“å±å±æ€§")]
     public int durability = 0;
 
-    [Header("¶¯Ì¬Õ½¶·Ğ§¹û (ĞòÁĞ»¯¶àÌ¬)")]
+    [Header("åŠ¨æ€æˆ˜æ–—æ•ˆæœ (åºåˆ—åŒ–å¤šæ€)")]
     [SerializeReference]
     public List<EquipEffect> equipEffects = new List<EquipEffect>();
 }
 
 // ==========================================
-// ±à¼­Æ÷À©Õ¹Ãæ°å
+// ç¼–è¾‘å™¨æ‰©å±•é¢æ¿
 // ==========================================
 #if UNITY_EDITOR
 [CustomEditor(typeof(EquipmentData))]
@@ -54,6 +53,7 @@ public class EquipmentDataEditor : Editor
     {
         DrawDefaultInspector();
         EquipmentData data = (EquipmentData)target;
+        
         GUILayout.Space(15);
         GUILayout.Label("Add Equipment Effect", EditorStyles.boldLabel);
 

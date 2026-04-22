@@ -7,21 +7,19 @@ public class BattleInitState : BattleState
 
     public override void Enter()
     {
-        Debug.Log("[BattleInitState] Õ½¶·³õÊ¼»¯¿ªÊ¼...");
+        Debug.Log("[BattleInitState] æˆ˜æ–—åˆå§‹åŒ–å¼€å§‹...");
 
         if (battleManager.playerEntity == null || battleManager.enemyEntity == null) return;
 
-        // ==========================================
-        // 1. ÊµÌåÊı¾İ³õÊ¼»¯
-        // ==========================================
+        // å®ä½“æ•°æ®åˆå§‹åŒ–
         battleManager.playerEntity.Initialize(battleManager.playerEntity.roleData, true);
         battleManager.enemyEntity.Initialize(battleManager.enemyEntity.roleData, false);
 
-        // ¡¾ĞÂÔöĞŞ¸´ 1¡¿£ºµÚÒ»³¡Õ½¶·¿ª¾Ö£¬±ØĞë·¢·ÅÒ»´Î»ù´¡ÌåÁ¦»Ø¸´£¬·ÀÖ¹ 0 ÌåÁ¦ËÀËø£¡
+        // å‘æ”¾åŸºç¡€ä½“åŠ›å›å¤
         battleManager.playerEntity.RecoverStamina();
         battleManager.enemyEntity.RecoverStamina();
 
-        // ¡¾ĞÂÔöĞŞ¸´ 2¡¿£ºÇåÀíÉÏÒ»³¡Õ½¶·ÒòÎª SetActive(false) ±»ÆÈÖĞ¶ÏĞ­³Ì¶ø²ĞÁôµÄÆ®×Ö£¡
+        // æ¸…ç†æ®‹ç•™é£˜å­—
         if (battleManager.floatingTextCanvas != null)
         {
             foreach (Transform child in battleManager.floatingTextCanvas.transform)
@@ -30,17 +28,13 @@ public class BattleInitState : BattleState
             }
         }
 
-        // ==========================================
-        // 2. UI °ó¶¨
-        // ==========================================
+        // UI ç»‘å®š
         if (battleManager.playerInfoUI != null) battleManager.playerInfoUI.BindEntity(battleManager.playerEntity);
         if (battleManager.enemyInfoUI != null) battleManager.enemyInfoUI.BindEntity(battleManager.enemyEntity);
 
         battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnBattleStart, null);
 
-        // ==========================================
-        // 3. ×´Ì¬Á÷×ª
-        // ==========================================
+        // çŠ¶æ€æµè½¬
         battleManager.ChangeState(new PreparationState(battleManager));
     }
 }

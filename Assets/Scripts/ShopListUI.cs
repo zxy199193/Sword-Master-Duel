@@ -5,24 +5,30 @@ using System.Linq;
 
 public class ShopListUI : MonoBehaviour
 {
-    [Header("UI “˝”√")]
+    [Header("UI References")]
     public Text titleText;
     public Transform contentRoot;
+    public Button closeBtn;
 
-    [Header("‘§÷∆ÃÂ“˝”√ (À´πÏ÷∆)")]
-    // °æ–ﬁ∏ƒµ„°ø£∫œ÷‘⁄’‚∏ˆø”ŒªΩ” ’π“‘ÿ¡À EquipItemUI µƒ‘§÷∆ÃÂ¡À£°
+    [Header("Prefabs")]
     public GameObject shopEquipPrefab;
     public GameObject shopSkillPrefab;
 
-    public Button closeBtn;
-
     private ShopConfig currentConfig;
     private RestUIManager restUIManager;
+
+    // ==========================================
+    // Unity Lifecycle
+    // ==========================================
 
     private void Awake()
     {
         if (closeBtn) closeBtn.onClick.AddListener(CloseList);
     }
+
+    // ==========================================
+    // Public Methods - Initialization
+    // ==========================================
 
     public void Init(ShopConfig config, RestUIManager manager)
     {
@@ -32,17 +38,16 @@ public class ShopListUI : MonoBehaviour
 
     public void CloseList() => gameObject.SetActive(false);
 
-    private void ClearList()
-    {
-        foreach (Transform child in contentRoot) Destroy(child.gameObject);
-    }
+    // ==========================================
+    // Public Methods - Dojo Actions
+    // ==========================================
 
-    // ==========================================
-    // µ¿≥°π¶ƒ‹
-    // ==========================================
     public void OpenLearnSkill()
     {
-        gameObject.SetActive(true); titleText.text = "µ¿≥° - ’– Ω—ßœ∞"; ClearList();
+        gameObject.SetActive(true); 
+        titleText.text = "ÈÅìÂú∫ - ÊãõÂºèÂ≠¶‰π†"; 
+        ClearList();
+        
         var profile = GameManager.Instance.playerProfile;
 
         foreach (var skill in currentConfig.availableSkills)
@@ -50,12 +55,12 @@ public class ShopListUI : MonoBehaviour
             if (HasSkill(skill, profile)) continue;
 
             SkillSlot tempSlot = new SkillSlot { skillData = skill, level = 1, quantity = 1 };
-            CreateSkillUI(tempSlot, skill.price, "—ßœ∞", () =>
+            CreateSkillUI(tempSlot, skill.price, "Â≠¶‰π†", () =>
             {
                 if (profile.ConsumeGold(skill.price))
                 {
                     profile.storageSkillsAndItems.Add(new SkillSlot { skillData = skill, level = 1, quantity = 1 });
-                    Debug.Log($"—ßœ∞¡À–¬’– Ω: {skill.skillName}");
+                    Debug.Log($"Â≠¶‰π†‰∫ÜÊñ∞ÊãõÂºè: {skill.skillName}");
                     OpenLearnSkill();
                     restUIManager.RefreshPlayerStatusUI();
                 }
@@ -65,7 +70,10 @@ public class ShopListUI : MonoBehaviour
 
     public void OpenUpgradeSkill()
     {
-        gameObject.SetActive(true); titleText.text = "µ¿≥° - ’– ΩΩ¯Ω◊ (Lv.1 -> Lv.2)"; ClearList();
+        gameObject.SetActive(true); 
+        titleText.text = "ÈÅìÂú∫ - ÊãõÂºèËøõÈò∂ (Lv.1 -> Lv.2)"; 
+        ClearList();
+        
         var profile = GameManager.Instance.playerProfile;
         var lv1Skills = GetOwnedSkillsOfLevel(1, profile);
 
@@ -74,12 +82,12 @@ public class ShopListUI : MonoBehaviour
             int cost = slot.skillData.price;
             SkillSlot previewSlot = new SkillSlot { skillData = slot.skillData, level = 2, quantity = slot.quantity };
 
-            CreateSkillUI(previewSlot, cost, "Ω¯Ω◊", () =>
+            CreateSkillUI(previewSlot, cost, "ËøõÈò∂", () =>
             {
                 if (profile.ConsumeGold(cost))
                 {
                     slot.level = 2;
-                    Debug.Log($"’– ΩΩ¯Ω◊≥…π¶: {slot.skillData.skillName} …˝÷¡ Lv.2");
+                    Debug.Log($"ÊãõÂºèËøõÈò∂ÊàêÂäü: {slot.skillData.skillName} ÂçáËá≥ Lv.2");
                     OpenUpgradeSkill();
                     restUIManager.RefreshPlayerStatusUI();
                 }
@@ -89,7 +97,10 @@ public class ShopListUI : MonoBehaviour
 
     public void OpenMasterSkill()
     {
-        gameObject.SetActive(true); titleText.text = "µ¿≥° - ’– Ωæ´Õ® (Lv.2 -> Lv.3)"; ClearList();
+        gameObject.SetActive(true); 
+        titleText.text = "ÈÅìÂú∫ - ÊãõÂºèÁ≤æÈÄö (Lv.2 -> Lv.3)"; 
+        ClearList();
+        
         var profile = GameManager.Instance.playerProfile;
         var lv2Skills = GetOwnedSkillsOfLevel(2, profile);
 
@@ -98,12 +109,12 @@ public class ShopListUI : MonoBehaviour
             int cost = slot.skillData.price * 2;
             SkillSlot previewSlot = new SkillSlot { skillData = slot.skillData, level = 3, quantity = slot.quantity };
 
-            CreateSkillUI(previewSlot, cost, "æ´Õ®", () =>
+            CreateSkillUI(previewSlot, cost, "Á≤æÈÄö", () =>
             {
                 if (profile.ConsumeGold(cost))
                 {
                     slot.level = 3;
-                    Debug.Log($"’– Ωæ´Õ®≥…π¶: {slot.skillData.skillName} …˝÷¡ Lv.3");
+                    Debug.Log($"ÊãõÂºèÁ≤æÈÄöÊàêÂäü: {slot.skillData.skillName} ÂçáËá≥ Lv.3");
                     OpenMasterSkill();
                     restUIManager.RefreshPlayerStatusUI();
                 }
@@ -112,24 +123,27 @@ public class ShopListUI : MonoBehaviour
     }
 
     // ==========================================
-    // …ÃµÍπ¶ƒ‹
+    // Public Methods - Shop Actions
     // ==========================================
+
     public void OpenBuyEquipment()
     {
-        gameObject.SetActive(true); titleText.text = "…ÃµÍ - π∫¬Ú◊∞±∏"; ClearList();
+        gameObject.SetActive(true); 
+        titleText.text = "ÂïÜÂ∫ó - Ë¥≠‰π∞Ë£ÖÂ§á"; 
+        ClearList();
+        
         var profile = GameManager.Instance.playerProfile;
 
         foreach (var equip in currentConfig.availableEquipments)
         {
             if (HasEquipment(equip, profile)) continue;
 
-            // °æ–ﬁ∏ƒµ„°ø£∫≤ª‘Ÿ¥´‘”∆ﬂ‘”∞Àµƒ≤Œ ˝£¨÷±Ω”¥´ EquipData ±æÃÂ
-            CreateEquipUI(equip, "π∫¬Ú", () =>
+            CreateEquipUI(equip, "Ë¥≠‰π∞", () =>
             {
                 if (profile.ConsumeGold(equip.price))
                 {
                     profile.storageEquipments.Add(equip);
-                    Debug.Log($"π∫¬Ú¡À◊∞±∏: {equip.equipName}");
+                    Debug.Log($"Ë¥≠‰π∞‰∫ÜË£ÖÂ§á: {equip.equipName}");
                     OpenBuyEquipment();
                     restUIManager.RefreshPlayerStatusUI();
                 }
@@ -139,27 +153,28 @@ public class ShopListUI : MonoBehaviour
 
     public void OpenBuyItem()
     {
-        gameObject.SetActive(true); titleText.text = "…ÃµÍ - π∫¬Úµ¿æﬂ"; ClearList();
+        gameObject.SetActive(true); 
+        titleText.text = "ÂïÜÂ∫ó - Ë¥≠‰π∞ÈÅìÂÖ∑"; 
+        ClearList();
+        
         var profile = GameManager.Instance.playerProfile;
 
         foreach (var item in currentConfig.availableItems)
         {
-            // °æ∫À–ƒ–ﬁ∏ƒ°ø£∫π∫¬Ú«∞£¨œ»≤È≤ÈÕÊº“œ÷‘⁄…Ì…œ”–º∏∏ˆ£°
             int ownedCount = 0;
             if (profile.equippedItems != null)
                 ownedCount += profile.equippedItems.Where(s => s != null && s.skillData == item).Sum(s => s.quantity);
             if (profile.storageSkillsAndItems != null)
                 ownedCount += profile.storageSkillsAndItems.Where(s => s != null && s.skillData == item).Sum(s => s.quantity);
 
-            // ∞—µ±«∞’Ê µµƒ≥÷”–¡ø’π æ‘⁄…ÃµÍ UI ¿Ô£®∏Ò Ωª·±‰≥…£∫x[”µ”– ˝¡ø]£©
             SkillSlot tempSlot = new SkillSlot { skillData = item, level = 1, quantity = ownedCount };
 
-            CreateSkillUI(tempSlot, item.price, "π∫¬Ú", () =>
+            CreateSkillUI(tempSlot, item.price, "Ë¥≠‰π∞", () =>
             {
                 if (profile.ConsumeGold(item.price))
                 {
                     AddOrStackItem(item, profile);
-                    Debug.Log($"π∫¬Ú¡Àµ¿æﬂ: {item.skillName}");
+                    Debug.Log($"Ë¥≠‰π∞‰∫ÜÈÅìÂÖ∑: {item.skillName}");
                     OpenBuyItem();
                     restUIManager.RefreshPlayerStatusUI();
                 }
@@ -168,13 +183,20 @@ public class ShopListUI : MonoBehaviour
     }
 
     // ==========================================
-    // UI …˙≥…∆˜”Î ˝æ›≤È—Ø
+    // Private Methods - UI Generation
     // ==========================================
+
+    private void ClearList()
+    {
+        foreach (Transform child in contentRoot) 
+        {
+            Destroy(child.gameObject);
+        }
+    }
 
     private void CreateEquipUI(EquipmentData equip, string btnText, System.Action onClick)
     {
         var go = Instantiate(shopEquipPrefab, contentRoot);
-        // °æ∫À–ƒ–ﬁ∏ƒ°ø£∫ªÒ»°∏’…˝ÕÍº∂µƒ EquipItemUI
         var ui = go.GetComponent<EquipItemUI>();
         bool canAfford = GameManager.Instance.playerProfile.totalGold >= equip.price;
 
@@ -192,7 +214,10 @@ public class ShopListUI : MonoBehaviour
         ui.SetupForShop(slot, price, canAfford, btnText, clickWrapper);
     }
 
-    // ... œ¬∑Ωµƒ HasSkill, HasEquipment, GetOwnedSkillsOfLevel, GetAllSkillSlots, AddOrStackItem ∑Ω∑®±£≥÷≤ª±‰
+    // ==========================================
+    // Private Methods - Data Checks
+    // ==========================================
+
     private bool HasSkill(SkillData skillData, PlayerProfile profile)
     {
         var allSlots = GetAllSkillSlots(profile);
@@ -226,9 +251,23 @@ public class ShopListUI : MonoBehaviour
     private void AddOrStackItem(SkillData itemData, PlayerProfile profile)
     {
         foreach (var slot in profile.equippedItems)
-            if (slot != null && slot.skillData == itemData) { slot.quantity++; return; }
+        {
+            if (slot != null && slot.skillData == itemData) 
+            { 
+                slot.quantity++; 
+                return; 
+            }
+        }
+            
         foreach (var slot in profile.storageSkillsAndItems)
-            if (slot != null && slot.skillData == itemData) { slot.quantity++; return; }
+        {
+            if (slot != null && slot.skillData == itemData) 
+            { 
+                slot.quantity++; 
+                return; 
+            }
+        }
+            
         profile.storageSkillsAndItems.Add(new SkillSlot { skillData = itemData, level = 1, quantity = 1 });
     }
 }

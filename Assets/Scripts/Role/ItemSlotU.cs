@@ -3,26 +3,43 @@ using UnityEngine.UI;
 
 public class ItemSlotUI : MonoBehaviour
 {
+    [Header("UI 寮曠敤 - 鍩虹淇℃伅")]
     public Button slotBtn;
     public Image iconImg;
     public Text nameText;
     public GameObject emptyNode;
 
-    [Header("道具专属节点")]
+    [Header("UI 寮曠敤 - 閬撳叿涓撳睘鑺傜偣")]
     public GameObject quantityNode;
     public Text quantityText;
+
+    // ==========================================
+    // Unity Lifecycle
+    // ==========================================
 
     private void Awake()
     {
         if (slotBtn == null) slotBtn = GetComponent<Button>();
     }
 
+    // ==========================================
+    // Public Methods
+    // ==========================================
+
     public void UpdateUI(SkillSlot itemSlot)
     {
         if (itemSlot != null && itemSlot.skillData != null)
         {
-            if (iconImg) { iconImg.gameObject.SetActive(true); iconImg.sprite = itemSlot.skillData.skillIcon; }
-            if (nameText) { nameText.gameObject.SetActive(true); nameText.text = itemSlot.skillData.skillName; }
+            if (iconImg) 
+            { 
+                iconImg.gameObject.SetActive(true); 
+                iconImg.sprite = itemSlot.skillData.skillIcon; 
+            }
+            if (nameText) 
+            { 
+                nameText.gameObject.SetActive(true); 
+                nameText.text = itemSlot.skillData.skillName; 
+            }
             if (emptyNode) emptyNode.SetActive(false);
 
             if (quantityNode) quantityNode.SetActive(true);

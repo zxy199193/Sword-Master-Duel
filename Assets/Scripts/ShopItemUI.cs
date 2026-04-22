@@ -4,19 +4,20 @@ using System;
 
 public class ShopItemUI : MonoBehaviour
 {
-    [Header("展示节点")]
+    [Header("UI 鑺傜偣 - 灞曠ず")]
     public Image iconImg;
     public Text nameText;
     public Text descText;
     public Text priceText;
 
-    [Header("操作节点")]
+    [Header("UI 鑺傜偣 - 鎿嶄綔")]
     public Button actionBtn;
     public Text actionBtnText;
 
-    /// <summary>
-    /// 初始化商品项的数据
-    /// </summary>
+    // ==========================================
+    // Public Methods
+    // ==========================================
+
     public void Setup(Sprite icon, string name, string desc, int price, string btnText, bool canAfford, Action onClick)
     {
         if (iconImg) iconImg.sprite = icon;
@@ -26,7 +27,6 @@ public class ShopItemUI : MonoBehaviour
         if (priceText)
         {
             priceText.text = price.ToString();
-            // 买不起时，价格变红提示
             priceText.color = canAfford ? Color.white : Color.red;
         }
 
@@ -36,7 +36,6 @@ public class ShopItemUI : MonoBehaviour
         {
             actionBtn.onClick.RemoveAllListeners();
             actionBtn.onClick.AddListener(() => onClick?.Invoke());
-            // 买不起时，按钮变灰不可点
             actionBtn.interactable = canAfford;
         }
     }

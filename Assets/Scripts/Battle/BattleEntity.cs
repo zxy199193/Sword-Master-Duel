@@ -13,11 +13,16 @@ public class BattleEntity : MonoBehaviour
     public int currentExtraLife;
     public int currentStamina;
 
-    // 【核心新增】：透支带来的永久体力上限衰减
     public int staminaMaxPenalty = 0;
 
     [HideInInspector]
     public List<SkillSlot> runtimeSkills = new List<SkillSlot>();
+
+    [HideInInspector]
+    public float[] runtimeSubSkillProbabilities = new float[4];
+
+    [HideInInspector]
+    public Dictionary<SkillSlot, int[]> runtimeSkillWeights = new Dictionary<SkillSlot, int[]>();
 
     [Header("Turn Temporary Data")]
     public float tempDamageReduction = 0;
@@ -36,15 +41,16 @@ public class BattleEntity : MonoBehaviour
     public Action OnStatusChanged;
     public Action OnDeath;
 
+    // ==========================================
+    // Initialization
+    // ==========================================
+
     public void Initialize(RoleData data, bool playerFlag)
     {
         roleData = data;
         isPlayer = playerFlag;
-        staminaMaxPenalty = 0; // 重置透支惩罚
+        staminaMaxPenalty = 0;
 
-        // ==========================================
-        // 【核心新增】：动态替换专属动画控制器！
-        // ==========================================
         if (animator != null && roleData.animatorController != null)
         {
             animator.runtimeAnimatorController = roleData.animatorController;
@@ -54,8 +60,6 @@ public class BattleEntity : MonoBehaviour
         {
             currentBasicLife = GameManager.Instance.playerProfile.currentHp;
             currentStamina = GameManager.Instance.playerProfile.currentStamina;
-
-            // 继承上一局打完剩下的护盾
             currentExtraLife = GameManager.Instance.playerProfile.currentExtraLife;
 
             int maxDurability = GameManager.Instance.playerProfile.equippedArmor != null ? GameManager.Instance.playerProfile.equippedArmor.durability : 0;
@@ -96,14 +100,40 @@ public class BattleEntity : MonoBehaviour
         }
         else
         {
-            if (roleData != null && roleData.equippedSkills != null)
+            if (roleData != null)
             {
-                foreach (var slot in roleData.equippedSkills)
+                if (roleData.subSkillProbabilities != null && roleData.subSkillProbabilities.Length == 4)
                 {
-                    if (slot == null || slot.skillData == null) continue;
-                    SkillData inst = Instantiate(slot.skillData);
-                    SkillSlot runtimeSlot = new SkillSlot { skillData = inst, level = slot.level, quantity = slot.quantity };
-                    runtimeSkills.Add(runtimeSlot);
+                    float lastProb = 0f;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (roleData.subSkillProbabilities[i] != -1f) lastProb = roleData.subSkillProbabilities[i];
+                        runtimeSubSkillProbabilities[i] = lastProb;
+                    }
+                }
+
+                runtimeSkillWeights.Clear();
+                if (roleData.npcSkills != null)
+                {
+                    foreach (var config in roleData.npcSkills)
+                    {
+                        if (config == null || config.skillSlot == null || config.skillSlot.skillData == null) continue;
+
+                        SkillData inst = Instantiate(config.skillSlot.skillData);
+                        SkillSlot runtimeSlot = new SkillSlot { skillData = inst, level = config.skillSlot.level, quantity = config.skillSlot.quantity };
+                        runtimeSkills.Add(runtimeSlot);
+
+                        int[] parsedWeights = new int[4];
+                        int lastWeight = 0;
+                        for (int i = 0; i < 4; i++)
+                        {
+                            int configWeight = (config.phaseWeights != null && config.phaseWeights.Length > i) ? config.phaseWeights[i] : -1;
+                            if (configWeight != -1) lastWeight = configWeight;
+                            parsedWeights[i] = lastWeight;
+                        }
+
+                        runtimeSkillWeights.Add(runtimeSlot, parsedWeights);
+                    }
                 }
             }
         }
@@ -113,8 +143,9 @@ public class BattleEntity : MonoBehaviour
     }
 
     // ==========================================
-    // 统一属性获取接口
+    // Public Data Getters
     // ==========================================
+
     public EquipmentData GetEquippedWeapon()
     {
         if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.equippedWeapon;
@@ -149,22 +180,14 @@ public class BattleEntity : MonoBehaviour
         return finalMen;
     }
 
-    // 【修改】：动态体力上限，加入“透支”的永久惩罚
     public int GetFinalMaxStamina()
     {
         int baseMax = (isPlayer && GameManager.Instance != null) ? GameManager.Instance.playerProfile.GetFinalMaxStamina() : roleData.maxStamina;
-        // 减去透支惩罚，保底至少为1点体力上限
         return Mathf.Max(1, baseMax - staminaMaxPenalty);
     }
 
-    // ==========================================
-    // 时间与速度计算
-    // ==========================================
-
-    // 【核心新增】：急躁状态的时间缩短
     public float GetFinalActionTime(float baseTime)
     {
-        // 嘲讽效果：急躁状态下，操作时间强行减少 60%
         if (activeStatuses.ContainsKey(StatusType.Impatient)) return baseTime * 0.4f;
         return baseTime;
     }
@@ -173,16 +196,13 @@ public class BattleEntity : MonoBehaviour
     {
         int mentality = GetFinalMentality();
 
-        // 公式：每有 1 点精神，速度减 2%。限制最多减速到 20%
         float speedReduction = mentality * 0.02f;
         float mentalMultiplier = Mathf.Max(0.2f, 1.0f - speedReduction);
 
-        // 叠加状态效果(紧张/专注)
         float statusMultiplier = 1.0f;
         if (activeStatuses.ContainsKey(StatusType.Tension)) statusMultiplier += 0.3f;
         if (activeStatuses.ContainsKey(StatusType.Focus)) statusMultiplier -= 0.3f;
 
-        // 眩晕状态的忽快忽慢逻辑
         if (activeStatuses.ContainsKey(StatusType.Dizzy))
         {
             float dizzyFluctuation = (Mathf.PerlinNoise(Time.time * 5f, 0f) - 0.5f) * 1f;
@@ -196,55 +216,78 @@ public class BattleEntity : MonoBehaviour
     {
         float loadMultiplier = 1.0f;
 
-        // 仅玩家受负重影响，敌人默认 1.0
         if (isPlayer && GameManager.Instance != null)
         {
             var loadState = GameManager.Instance.playerProfile.GetLoadWeightState();
             switch (loadState)
             {
-                case GlobalBattleRules.LoadWeightState.Light: loadMultiplier = 1.3f; break;     // +30%
-                case GlobalBattleRules.LoadWeightState.Medium: loadMultiplier = 1.0f; break;    // 不变
-                case GlobalBattleRules.LoadWeightState.Heavy: loadMultiplier = 0.7f; break;     // -30%
-                case GlobalBattleRules.LoadWeightState.Extreme: loadMultiplier = 0.4f; break;   // -60%
+                case GlobalBattleRules.LoadWeightState.Light: loadMultiplier = 1.3f; break;
+                case GlobalBattleRules.LoadWeightState.Medium: loadMultiplier = 1.0f; break;
+                case GlobalBattleRules.LoadWeightState.Heavy: loadMultiplier = 0.7f; break;
+                case GlobalBattleRules.LoadWeightState.Extreme: loadMultiplier = 0.4f; break;
             }
         }
         return globalBaseSlowdown * loadMultiplier;
     }
 
     // ==========================================
-    // 战斗与状态逻辑
+    // Combat & Status Logic
     // ==========================================
-    public void ResetTurnData() { tempDamageReduction = 0; tempHitWidthModifier = 0; isImmuneToSubSkills = false; }
+
+    public void ResetTurnData() 
+    { 
+        tempDamageReduction = 0; 
+        tempHitWidthModifier = 0; 
+        isImmuneToSubSkills = false; 
+    }
 
     public void TakeDamage(int rawDamage)
     {
         int remainingDamage = rawDamage;
         if (currentExtraLife > 0)
         {
-            if (currentExtraLife >= remainingDamage) { currentExtraLife -= remainingDamage; remainingDamage = 0; }
-            else { remainingDamage -= currentExtraLife; currentExtraLife = 0; Debug.Log($"[{roleData.roleName}] 的防具破损！"); }
+            if (currentExtraLife >= remainingDamage) 
+            { 
+                currentExtraLife -= remainingDamage; 
+                remainingDamage = 0; 
+            }
+            else 
+            { 
+                remainingDamage -= currentExtraLife; 
+                currentExtraLife = 0; 
+                Debug.Log($"[{roleData.roleName}] 鐨勯槻鍏风牬鎹燂紒"); 
+            }
         }
 
         if (remainingDamage > 0)
         {
-            // ==========================================
-            // 【核心新增】：坚挺状态的极限锁血！
-            // ==========================================
             if (activeStatuses.ContainsKey(StatusType.Tenacious) && currentBasicLife > 1 && remainingDamage >= currentBasicLife)
             {
-                remainingDamage = currentBasicLife - 1; // 强行把伤害压到只剩1滴血
-                Debug.Log($"<color=#FF0000>[{roleData.roleName}] 触发了【坚挺】，强行锁血 1 点！</color>");
+                remainingDamage = currentBasicLife - 1;
+                Debug.Log($"<color=#FF0000>[{roleData.roleName}] 瑙﹀彂浜嗐�愬潥鎸恒�戯紝寮鸿閿佽 1 鐐癸紒</color>");
             }
 
             currentBasicLife -= remainingDamage;
-            if (currentBasicLife <= 0) { currentBasicLife = 0; OnHpChanged?.Invoke(); Die(); PlayDieAnim(); return; }
+            if (currentBasicLife <= 0) 
+            { 
+                currentBasicLife = 0; 
+                OnHpChanged?.Invoke(); 
+                Die(); 
+                PlayDieAnim(); 
+                return; 
+            }
         }
         OnHpChanged?.Invoke();
     }
 
     public bool ConsumeStamina(int amount)
     {
-        if (currentStamina >= amount) { currentStamina -= amount; OnStaminaChanged?.Invoke(); return true; }
+        if (currentStamina >= amount) 
+        { 
+            currentStamina -= amount; 
+            OnStaminaChanged?.Invoke(); 
+            return true; 
+        }
         return false;
     }
 
@@ -258,12 +301,11 @@ public class BattleEntity : MonoBehaviour
 
         currentStamina += recoverAmount;
 
-        // 使用加点和装备后的最终体力上限钳制
         int maxStam = GetFinalMaxStamina();
         if (currentStamina > maxStam) currentStamina = maxStam;
 
         OnStaminaChanged?.Invoke();
-        TickStatuses(); // TickStatuses必须在最后调用，因为里面可能触发“透支结束扣上限”逻辑
+        TickStatuses(); 
     }
 
     public void AddStatus(StatusType type, int duration)
@@ -284,19 +326,17 @@ public class BattleEntity : MonoBehaviour
             {
                 toRemove.Add(key);
 
-                // ==========================================
-                // 【核心新增】：透支状态结束时的永久惩罚！
-                // ==========================================
                 if (key == StatusType.Overdrawn)
                 {
                     staminaMaxPenalty += 10;
                     int newMax = GetFinalMaxStamina();
-                    if (currentStamina > newMax) currentStamina = newMax; // 如果当前体力超标了，也要切掉
+                    if (currentStamina > newMax) currentStamina = newMax;
                     OnStaminaChanged?.Invoke();
-                    Debug.Log($"<color=#FF0000>[{roleData.roleName}] 的【透支】状态结束，体力上限永久扣除 10 点！</color>");
+                    Debug.Log($"<color=#FF0000>[{roleData.roleName}] 鐨勩�愰�忔敮銆戠姸鎬佺粨鏉燂紝浣撳姏涓婇檺姘镐箙鎵ｉ櫎 10 鐐癸紒</color>");
                 }
             }
         }
+        
         foreach (var key in toRemove) { activeStatuses.Remove(key); }
         OnStatusChanged?.Invoke();
     }

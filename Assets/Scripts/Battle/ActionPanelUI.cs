@@ -22,7 +22,7 @@ public class ActionPanelUI : MonoBehaviour
     [Header("Core References")]
     public BattleManager battleManager;
 
-    // ¡¾ºËĞÄĞŞ¸´¡¿£º¸ÄÎª SkillSlot
+    // æ”¹ä¸º SkillSlot
     private SkillSlot selectedMainAction;
     private SkillSlot selectedSubAction;
 
@@ -57,7 +57,7 @@ public class ActionPanelUI : MonoBehaviour
 
         bool isOpeningMainAction = Array.Exists(typesToOpen, t => t == SkillType.Attack || t == SkillType.Defend || t == SkillType.Dodge);
 
-        // ¡¾ºËĞÄĞŞ¸´¡¿£º¶ÁÈ¡ºÄÀ¶Ê±£¬±ØĞë´«ÈëµÈ¼¶
+        // è¯»å–è€—è“æ—¶ï¼Œå¿…é¡»ä¼ å…¥ç­‰çº§
         if (isOpeningMainAction && selectedSubAction != null)
         {
             availableStamina -= selectedSubAction.skillData.GetStaminaCost(selectedSubAction.level);
@@ -98,7 +98,7 @@ public class ActionPanelUI : MonoBehaviour
         selectionNode.SetActive(true);
         string displayText = "";
 
-        // ¡¾ºËĞÄĞŞ¸´¡¿£º¼ÓÉÏ .skillData ²ÅÄÜ¶Áµ½Ãû×Ö
+        // åŠ ä¸Š .skillData æ‰èƒ½è¯»åˆ°åå­—
         if (selectedSubAction != null && selectedMainAction != null)
         {
             displayText = $"{selectedSubAction.skillData.skillName} + {selectedMainAction.skillData.skillName}";
@@ -127,7 +127,7 @@ public class ActionPanelUI : MonoBehaviour
 
     private void OnRetreatClicked()
     {
-        Debug.Log("<color=orange>Íæ¼ÒÑ¡ÔñÁË³·ÍË£¡</color>");
+        Debug.Log("<color=orange>ç©å®¶é€‰æ‹©äº†æ’¤é€€ï¼</color>");
         gameObject.SetActive(false);
         GameManager.Instance.OnBattleRetreat();
     }

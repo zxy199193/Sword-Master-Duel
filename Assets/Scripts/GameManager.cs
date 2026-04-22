@@ -4,10 +4,10 @@ using System.Collections.Generic;
 [System.Serializable]
 public class PlayerProfile
 {
-    [Header("½ÇÉ«Ô­Ê¼×Ê²ú")]
+    [Header("è§’è‰²åŸå§‹èµ„äº§")]
     public RoleData playerRoleAsset;
 
-    [Header("³É³¤ÊôĞÔ (Level & Attributes)")]
+    [Header("æˆé•¿ä¸å±æ€§ (Level & Attributes)")]
     public int level = 1;
     public int currentExp = 0;
     public int unallocatedPoints = 0;
@@ -17,29 +17,33 @@ public class PlayerProfile
     public int baseStrength;
     public int baseMentality;
 
-    [Header("Õ½¶·ÔËĞĞÊ±×ÊÔ´ (¿ç¹Ø¿¨¼Ì³Ğ)")]
+    [Header("æˆ˜æ–—ä¸å®æ—¶èµ„æº (Combat Resources)")]
     public int currentHp;
     public int currentStamina;
-
-    // ¡¾ºËĞÄĞŞ¸´ Bug 2¡¿£º¿ç¾Ö¼Ì³Ğ»¤¶Ü£¡
-    public int currentExtraLife;
-
+    public int currentExtraLife; // æŠ¤ç”²è€ä¹…åº¦
     public int totalGold;
 
-    [Header("µ±Ç°´©´÷×°±¸ (Equipped)")]
+    [Header("å½“å‰è£…å¤‡ (Equipped)")]
     public EquipmentData equippedWeapon;
     public EquipmentData equippedArmor;
     public List<EquipmentData> equippedAccessories = new List<EquipmentData>();
 
-    [Header("µ±Ç°Õ½¶·ÅäÖÃ (Loadout)")]
+    [Header("å½“å‰æˆ˜æ–—é…ç½® (Loadout)")]
     public List<SkillSlot> equippedAttackSkills = new List<SkillSlot>();
     public List<SkillSlot> equippedDefendSkills = new List<SkillSlot>();
     public List<SkillSlot> equippedSpecialSkills = new List<SkillSlot>();
     public List<SkillSlot> equippedItems = new List<SkillSlot>();
 
-    [Header("ÎŞÏŞ²Ö¿â (Storage)")]
+    [Header("ä»“åº“ (Storage)")]
     public List<EquipmentData> storageEquipments = new List<EquipmentData>();
     public List<SkillSlot> storageSkillsAndItems = new List<SkillSlot>();
+
+    [Header("åœºæ™¯ Buff")]
+    public bool hasMassageBuff = false;
+
+    // ==========================================
+    // Public Methods
+    // ==========================================
 
     public void AddExp(int amount)
     {
@@ -52,7 +56,7 @@ public class PlayerProfile
             currentExp -= 100;
             level++;
             unallocatedPoints += 4;
-            Debug.Log($"<color=lime>Éı¼¶À²£¡µ±Ç°µÈ¼¶£ºLv.{level}£¬»ñµÃ 4 µãÊôĞÔµã£¡</color>");
+            Debug.Log($"<color=lime>å‡çº§ï¼å½“å‰ç­‰çº§ Lv.{level}ï¼Œè·å¾— 4 ç‚¹å±æ€§ç‚¹ï¼</color>");
         }
 
         if (level >= 10) currentExp = 0;
@@ -117,18 +121,24 @@ public class PlayerProfile
         return GlobalBattleRules.LoadWeightState.Extreme;
     }
 
-    [Header("¿ç³¡¾° Buff")]
-    public bool hasMassageBuff = false;
-
     public bool ConsumeGold(int amount)
     {
-        if (totalGold >= amount) { totalGold -= amount; return true; }
+        if (totalGold >= amount) 
+        { 
+            totalGold -= amount; 
+            return true; 
+        }
         return false;
     }
 
     public bool ConsumeHpSafely(int amount)
     {
-        if (currentHp > 1) { currentHp -= amount; if (currentHp < 1) currentHp = 1; return true; }
+        if (currentHp > 1) 
+        { 
+            currentHp -= amount; 
+            if (currentHp < 1) currentHp = 1; 
+            return true; 
+        }
         return false;
     }
 }
@@ -137,20 +147,26 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [Header("Global Data")]
+    [Header("å…¨å±€æ•°æ® (Global Data)")]
     public PlayerProfile playerProfile;
     public List<LevelData> allLevels;
 
-    [Header("Runtime Progress")]
-    public int currentMainLevelIndex = 0;
-    public int currentNodeIndex = 0;
-    [HideInInspector] public List<RoleData> currentLevelEnemies = new List<RoleData>();
-
-    [Header("Managers Reference")]
+    [Header("æ ¸å¿ƒç®¡ç†å™¨å¼•ç”¨ (Managers Reference)")]
     public BattleManager battleManager;
     public LevelUIManager levelUIManager;
     public RestUIManager restUIManager;
     public BattleResultUI battleResultUI;
+
+    [Header("è¿è¡Œè¿›åº¦ (Runtime Progress)")]
+    public int currentMainLevelIndex = 0;
+    public int currentNodeIndex = 0;
+    
+    [HideInInspector] 
+    public List<RoleData> currentLevelEnemies = new List<RoleData>();
+
+    // ==========================================
+    // Unity Lifecycle
+    // ==========================================
 
     private void Awake()
     {
@@ -162,6 +178,10 @@ public class GameManager : MonoBehaviour
     {
         StartNewGame();
     }
+
+    // ==========================================
+    // Public Methods - Game Flow
+    // ==========================================
 
     public void StartNewGame()
     {
@@ -177,8 +197,6 @@ public class GameManager : MonoBehaviour
 
         playerProfile.currentHp = playerProfile.baseMaxLife;
         playerProfile.currentStamina = playerProfile.baseMaxStamina;
-
-        // ¡¾ºËĞÄĞŞ¸´ Bug 2¡¿£ºÓÎÏ·¿ªÊ¼Ê±¸øÂú»¤¶Ü
         playerProfile.currentExtraLife = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.durability : 0;
 
         currentMainLevelIndex = 0;
@@ -186,56 +204,6 @@ public class GameManager : MonoBehaviour
 
         RollEnemiesForCurrentLevel();
         EnterLevelNodeUI();
-    }
-
-    private void RollEnemiesForCurrentLevel()
-    {
-        LevelData currentLevel = allLevels[currentMainLevelIndex];
-        var validGroups = currentLevel.possibleGroups.FindAll(g => g.enemies != null && g.enemies.Count > 0);
-
-        if (validGroups.Count > 0)
-        {
-            int randIndex = Random.Range(0, validGroups.Count);
-            currentLevelEnemies = validGroups[randIndex].enemies;
-            Debug.Log($"<color=orange>ĞÂ¹Ø¿¨£¡Ëæ»ú³éÖĞÁËµĞÈË×é£º{validGroups[randIndex].groupName}</color>");
-        }
-        else
-        {
-            Debug.LogError($"¹Ø¿¨ {currentLevel.levelTitle} Ã»ÓĞÅäÖÃÓĞĞ§µÄµĞÈË×é£¨»ò×éÄÚÃ»ÍÏÈëµĞÈË£©£¡");
-            currentLevelEnemies = new List<RoleData>();
-        }
-    }
-
-    public void OnBattleResolution(bool isWin, int goldReward = 0, int expReward = 0)
-    {
-        if (isWin)
-        {
-            playerProfile.totalGold += goldReward;
-            playerProfile.AddExp(expReward);
-            SavePlayerBattleState();
-
-            if (battleResultUI != null) battleResultUI.ShowResult(goldReward);
-            else AdvanceToNextNode();
-        }
-        else
-        {
-            Debug.Log("Game Over! ÇëÖØĞÂ¿ªÊ¼ÓÎÏ·¡£");
-        }
-    }
-
-    public void OnBattleRetreat()
-    {
-        SavePlayerBattleState();
-        AdvanceToNextNode();
-    }
-
-    private void SavePlayerBattleState()
-    {
-        playerProfile.currentHp = battleManager.playerEntity.currentBasicLife;
-        playerProfile.currentStamina = battleManager.playerEntity.currentStamina;
-
-        // ¡¾ºËĞÄĞŞ¸´ Bug 2¡¿£ºÕ½¶·½áÊøÊ±£¬½«´òÊ£ÏÂµÄ»¤¶Ü±£´æÏÂÀ´£¡
-        playerProfile.currentExtraLife = battleManager.playerEntity.currentExtraLife;
     }
 
     public void AdvanceToNextNode()
@@ -253,14 +221,82 @@ public class GameManager : MonoBehaviour
 
         if (currentMainLevelIndex >= allLevels.Count) return;
 
-        // ¡¾ºËĞÄĞŞ¸´ Bug 1¡¿£º½øÈëÏÂÒ»´ó¹ØÊ±£¬¸ù¾İ×îÖÕÊôĞÔµã¸øÒ»°ëÌåÁ¦£¨Ò²¿ÉÒÔ×Ô¼º¸Ä»ØÈ«Âú£©
+        // è¿›å…¥æ–°å…³å¡æ—¶ï¼Œå›å¤éƒ¨åˆ†ä½“åŠ›ï¼Œé‡ç½®æŠ¤ç”²è€ä¹…
         playerProfile.currentStamina = playerProfile.GetFinalMaxStamina() / 2;
-
-        // ¡¾ºËĞÄĞŞ¸´ Bug 2¡¿£º½øÈëĞÂµÄÒ»´ó¹Ø£¬»¤¶ÜÖØĞÂ»Ö¸´µ½×î´óÖµ£¡
         playerProfile.currentExtraLife = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.durability : 0;
 
         RollEnemiesForCurrentLevel();
         EnterLevelNodeUI();
+    }
+
+    public void StartCombatNode()
+    {
+        if (currentLevelEnemies == null || currentNodeIndex >= currentLevelEnemies.Count)
+        {
+            Debug.LogError($"æˆ˜æ–—åŠ è½½å¤±è´¥ï¼šå½“å‰æ•Œäººåˆ—è¡¨ä¸ºç©ºæˆ–è¶Šç•Œã€‚currentNodeIndex: {currentNodeIndex}");
+            return;
+        }
+
+        RoleData currentEnemyData = currentLevelEnemies[currentNodeIndex];
+
+        battleManager.gameObject.SetActive(true);
+        battleManager.SetupNewBattle(playerProfile.playerRoleAsset, currentEnemyData);
+    }
+
+    // ==========================================
+    // Public Methods - Battle Callbacks
+    // ==========================================
+
+    public void OnBattleResolution(bool isWin, int goldReward = 0, int expReward = 0)
+    {
+        if (isWin)
+        {
+            playerProfile.totalGold += goldReward;
+            playerProfile.AddExp(expReward);
+            SavePlayerBattleState();
+
+            if (battleResultUI != null) battleResultUI.ShowResult(goldReward);
+            else AdvanceToNextNode();
+        }
+        else
+        {
+            Debug.Log("Game Over! ç©å®¶é˜µäº¡ã€‚");
+        }
+    }
+
+    public void OnBattleRetreat()
+    {
+        SavePlayerBattleState();
+        AdvanceToNextNode();
+    }
+
+    // ==========================================
+    // Private Methods
+    // ==========================================
+
+    private void RollEnemiesForCurrentLevel()
+    {
+        LevelData currentLevel = allLevels[currentMainLevelIndex];
+        var validGroups = currentLevel.possibleGroups.FindAll(g => g.enemies != null && g.enemies.Count > 0);
+
+        if (validGroups.Count > 0)
+        {
+            int randIndex = Random.Range(0, validGroups.Count);
+            currentLevelEnemies = validGroups[randIndex].enemies;
+            Debug.Log($"<color=orange>ç”Ÿæˆéšæœºæ•Œäººç»„ï¼š{validGroups[randIndex].groupName}</color>");
+        }
+        else
+        {
+            Debug.LogError($"å…³å¡ {currentLevel.levelTitle} æ²¡æœ‰é…ç½®æœ‰æ•ˆçš„æ•Œäººç»„ï¼");
+            currentLevelEnemies = new List<RoleData>();
+        }
+    }
+
+    private void SavePlayerBattleState()
+    {
+        playerProfile.currentHp = battleManager.playerEntity.currentBasicLife;
+        playerProfile.currentStamina = battleManager.playerEntity.currentStamina;
+        playerProfile.currentExtraLife = battleManager.playerEntity.currentExtraLife;
     }
 
     private void EnterLevelNodeUI()
@@ -270,20 +306,6 @@ public class GameManager : MonoBehaviour
         battleManager.gameObject.SetActive(false);
         LevelData currentLevel = allLevels[currentMainLevelIndex];
         levelUIManager.UpdateAndShow(currentLevel, currentNodeIndex, currentLevelEnemies);
-    }
-
-    public void StartCombatNode()
-    {
-        if (currentLevelEnemies == null || currentNodeIndex >= currentLevelEnemies.Count)
-        {
-            Debug.LogError($"¿ªÕ½Ê§°Ü£¡µ±Ç°³éÈ¡µÄµĞÈËÁĞ±íÎª¿Õ£¬»ò³¬³öÁËË÷Òı£¡currentNodeIndex: {currentNodeIndex}");
-            return;
-        }
-
-        RoleData currentEnemyData = currentLevelEnemies[currentNodeIndex];
-
-        battleManager.gameObject.SetActive(true);
-        battleManager.SetupNewBattle(playerProfile.playerRoleAsset, currentEnemyData);
     }
 
     private void EnterRestUI()

@@ -4,20 +4,24 @@ using System;
 
 public class BagItemUI : MonoBehaviour
 {
+    [Header("UI 鑺傜偣 - 鍩虹淇℃伅")]
     public Text nameText;
     public Image iconImage;
     public Text descText;
 
-    [Header("数量节点")]
+    [Header("UI 鑺傜偣 - 鏁伴噺")]
     public GameObject quantityNode;
     public Text quantityText;
 
-    [Header("状态与操作")]
+    [Header("UI 鑺傜偣 - 鐘舵�佷笌鎿嶄綔")]
     public GameObject equippedBadge;
     public Button actionBtn;
     public Text actionBtnText;
 
-    // 【修改点】：参数改为 SkillSlot
+    // ==========================================
+    // Public Methods
+    // ==========================================
+
     public void Setup(SkillSlot itemSlot, bool isEquipped, Action<SkillSlot> onActionClicked)
     {
         if (nameText) nameText.text = itemSlot.skillData.skillName;
@@ -25,7 +29,6 @@ public class BagItemUI : MonoBehaviour
         if (descText) descText.text = itemSlot.skillData.description;
 
         if (quantityNode) quantityNode.SetActive(true);
-        // 【修改点】：直接读取 slot 的 quantity
         if (quantityText) quantityText.text = itemSlot.quantity.ToString();
 
         if (equippedBadge) equippedBadge.SetActive(isEquipped);
@@ -34,11 +37,11 @@ public class BagItemUI : MonoBehaviour
 
         if (isEquipped)
         {
-            if (actionBtnText) actionBtnText.text = "卸下";
+            if (actionBtnText) actionBtnText.text = "鍗镐笅";
         }
         else
         {
-            if (actionBtnText) actionBtnText.text = "携带";
+            if (actionBtnText) actionBtnText.text = "鎼哄甫";
         }
 
         actionBtn.onClick.AddListener(() => onActionClicked?.Invoke(itemSlot));

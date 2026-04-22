@@ -4,36 +4,36 @@ using UnityEngine.UI;
 
 public class RoleUIManager : MonoBehaviour
 {
-    [Header("UI “˝”√ - ª˘¥°–≈œ¢")]
+    [Header("UI ÂºïÁî® - Âü∫Á°Ä‰ø°ÊÅØ")]
     public Text roleNameText;
     public Text levelText;
     public Text expText;
     public Text goldText;
 
-    [Header("UI “˝”√ -  Ù–‘√Ê∞Â")]
+    [Header("UI ÂºïÁî® - Â±ûÊÄßÈù¢Êùø")]
     public Text lifeText;
     public Text staminaText;
     public Text strengthText;
     public Text mentalityText;
 
-    [Header("UI “˝”√ - º”µ„∞¥≈•")]
+    [Header("UI ÂºïÁî® - Âä†ÁÇπÊåâÈíÆ")]
     public Text unallocatedPointsText;
     public Button addLifeBtn;
     public Button addStaminaBtn;
     public Button addStrengthBtn;
     public Button addMentalityBtn;
 
-    [Header("UI “˝”√ - ◊∞±∏œµÕ≥ (◊Èº˛ªØπ‹¿Ì)")]
+    [Header("UI ÂºïÁî® - Ë£ÖÂ§áÁ≥ªÁªü (ÁªÑ‰ª∂Âåñ)")]
     public EquipSlotUI weaponSlot;
     public EquipSlotUI armorSlot;
     public EquipSlotUI[] accSlots;
 
-    [Header("UI “˝”√ - µ¿æﬂœµÕ≥ (◊Èº˛ªØπ‹¿Ì)")]
+    [Header("UI ÂºïÁî® - ÈÅìÂÖ∑Á≥ªÁªü (ÁªÑ‰ª∂Âåñ)")]
     public ItemSlotUI[] itemSlots;
     public int currentUnlockedItemSlots = 4;
     public ItemListUI itemListUI;
 
-    [Header("UI “˝”√ - ’– ΩœµÕ≥ (3∏ˆ“≥«© + 6∏ˆ≤€Œª)")]
+    [Header("UI ÂºïÁî® - ÊãõÂºèÁ≥ªÁªü (ÁªÑ‰ª∂Âåñ)")]
     public SkillSlotUI[] skillSlots;
     public Button attackTabBtn;
     public Button defendTabBtn;
@@ -41,15 +41,36 @@ public class RoleUIManager : MonoBehaviour
     public RoleSkillListUI skillListUI;
     private int currentSkillTab = 0;
 
-    [Header("UI “˝”√ - ∂˛º∂√Ê∞Â (◊∞±∏)")]
+    [Header("UI ÂºïÁî® - ÂºπÂá∫Èù¢Êùø")]
     public EquipListUI equipListUI;
 
-    [Header("UI “˝”√ - ∏∫÷ÿœµÕ≥")]
+    [Header("UI ÂºïÁî® - Ë¥üÈáçÁ≥ªÁªü")]
     public Text loadWeightText;
 
     public Button closeBtn;
 
+    // ==========================================
+    // Unity Lifecycle
+    // ==========================================
+
     private void Start()
+    {
+        InitializeButtons();
+    }
+
+    private void OnEnable()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.playerProfile != null) 
+        {
+            RefreshAllUI();
+        }
+    }
+
+    // ==========================================
+    // Initialization
+    // ==========================================
+
+    private void InitializeButtons()
     {
         if (addLifeBtn) addLifeBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Life));
         if (addStaminaBtn) addStaminaBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Stamina));
@@ -64,17 +85,21 @@ public class RoleUIManager : MonoBehaviour
             for (int i = 0; i < accSlots.Length; i++)
             {
                 int slotIndex = i;
-                if (accSlots[i] != null && accSlots[i].slotBtn != null) accSlots[i].slotBtn.onClick.AddListener(() => OnAccSlotClicked(slotIndex));
+                if (accSlots[i] != null && accSlots[i].slotBtn != null) 
+                    accSlots[i].slotBtn.onClick.AddListener(() => OnAccSlotClicked(slotIndex));
             }
         }
+
         if (itemSlots != null)
         {
             for (int i = 0; i < itemSlots.Length; i++)
             {
                 int slotIndex = i;
-                if (itemSlots[i] != null && itemSlots[i].slotBtn != null) itemSlots[i].slotBtn.onClick.AddListener(() => OnItemSlotClicked(slotIndex));
+                if (itemSlots[i] != null && itemSlots[i].slotBtn != null) 
+                    itemSlots[i].slotBtn.onClick.AddListener(() => OnItemSlotClicked(slotIndex));
             }
         }
+
         if (attackTabBtn) attackTabBtn.onClick.AddListener(() => SwitchSkillTab(0));
         if (defendTabBtn) defendTabBtn.onClick.AddListener(() => SwitchSkillTab(1));
         if (specialTabBtn) specialTabBtn.onClick.AddListener(() => SwitchSkillTab(2));
@@ -84,25 +109,39 @@ public class RoleUIManager : MonoBehaviour
             for (int i = 0; i < skillSlots.Length; i++)
             {
                 int index = i;
-                if (skillSlots[i] != null && skillSlots[i].slotBtn != null) skillSlots[i].slotBtn.onClick.AddListener(() => OnSkillSlotClicked(index));
+                if (skillSlots[i] != null && skillSlots[i].slotBtn != null) 
+                    skillSlots[i].slotBtn.onClick.AddListener(() => OnSkillSlotClicked(index));
             }
         }
+
         if (closeBtn) closeBtn.onClick.AddListener(ClosePanel);
     }
 
-    private void OnEnable()
-    {
-        if (GameManager.Instance != null && GameManager.Instance.playerProfile != null) RefreshAllUI();
+    // ==========================================
+    // Public Methods
+    // ==========================================
+
+    public void ShowPanel() 
+    { 
+        gameObject.SetActive(true); 
+        RefreshAllUI(); 
     }
 
-    public void ShowPanel() { gameObject.SetActive(true); RefreshAllUI(); }
-    public void ClosePanel() { gameObject.SetActive(false); }
+    public void ClosePanel() 
+    { 
+        gameObject.SetActive(false); 
+    }
+
+    // ==========================================
+    // UI Refresh Logic
+    // ==========================================
 
     private void RefreshAllUI()
     {
         if (GameManager.Instance == null) return;
         PlayerProfile profile = GameManager.Instance.playerProfile;
 
+        // Basic Info
         if (roleNameText) roleNameText.text = profile.playerRoleAsset.roleName;
         if (levelText) levelText.text = $"{profile.level}";
         if (expText)
@@ -112,19 +151,21 @@ public class RoleUIManager : MonoBehaviour
         }
         if (goldText) goldText.text = profile.totalGold.ToString();
 
+        // Attributes
         if (lifeText) lifeText.text = profile.GetFinalMaxLife().ToString();
         if (staminaText) staminaText.text = profile.GetFinalMaxStamina().ToString();
         if (strengthText) strengthText.text = profile.GetFinalStrength().ToString();
         if (mentalityText) mentalityText.text = profile.GetFinalMentality().ToString();
 
+        // Allocate Points
         if (unallocatedPointsText) unallocatedPointsText.text = $"{profile.unallocatedPoints}";
-
         bool canAllocate = profile.unallocatedPoints > 0;
         if (addLifeBtn) addLifeBtn.gameObject.SetActive(canAllocate);
         if (addStaminaBtn) addStaminaBtn.gameObject.SetActive(canAllocate);
         if (addStrengthBtn) addStrengthBtn.gameObject.SetActive(canAllocate);
         if (addMentalityBtn) addMentalityBtn.gameObject.SetActive(canAllocate);
 
+        // Equipment Slots
         if (weaponSlot != null) weaponSlot.UpdateUI(profile.equippedWeapon);
         if (armorSlot != null) armorSlot.UpdateUI(profile.equippedArmor);
 
@@ -138,24 +179,28 @@ public class RoleUIManager : MonoBehaviour
                 accSlots[i].UpdateUI(accData);
             }
         }
+
+        // Item Slots
         if (itemSlots != null)
         {
             for (int i = 0; i < itemSlots.Length; i++)
             {
-                if (i >= currentUnlockedItemSlots) { itemSlots[i].gameObject.SetActive(false); continue; }
+                if (i >= currentUnlockedItemSlots) 
+                { 
+                    itemSlots[i].gameObject.SetActive(false); 
+                    continue; 
+                }
                 itemSlots[i].gameObject.SetActive(true);
                 SkillSlot itemData = null;
                 if (i < profile.equippedItems.Count) itemData = profile.equippedItems[i];
                 itemSlots[i].UpdateUI(itemData);
             }
         }
+
         RefreshLoadWeightUI(profile);
         RefreshSkillSlots();
     }
 
-    // ==========================================
-    // °æ∫À–ƒ–ﬁ∏ƒ°ø£∫∏∫÷ÿ◊¥Ã¨≈–∂®¬ﬂº≠
-    // ==========================================
     private void RefreshLoadWeightUI(PlayerProfile profile)
     {
         if (loadWeightText == null) return;
@@ -163,17 +208,15 @@ public class RoleUIManager : MonoBehaviour
         int currentLoad = profile.GetCurrentLoadWeight();
         int maxLoad = profile.GetMaxLoad();
 
-        // º∆À„∏∫÷ÿ±»¿˝
         float ratio = maxLoad > 0 ? (float)currentLoad / maxLoad : 0f;
         string stateStr = "";
 
-        if (ratio < 0.3f) stateStr = "«·";
-        else if (ratio <= 1.0f) stateStr = "  ÷–";
-        else if (ratio <= 1.5f) stateStr = "≥¨÷ÿ";
-        else stateStr = "º´÷ÿ";
+        if (ratio < 0.3f) stateStr = "ËΩª";
+        else if (ratio <= 1.0f) stateStr = "ÈÄÇ‰∏≠";
+        else if (ratio <= 1.5f) stateStr = "Ë∂ÖÈáç";
+        else stateStr = "ÊûÅÈáç";
 
-        //  ‰≥ˆ∏Ò Ω»Á£∫15/50£®  ÷–£©
-        loadWeightText.text = $"{currentLoad}/{maxLoad}£®{stateStr}£©";
+        loadWeightText.text = $"{currentLoad}/{maxLoad}Ôºà{stateStr}Ôºâ";
     }
 
     private void AllocatePoint(AttributeType attrType)
@@ -186,12 +229,10 @@ public class RoleUIManager : MonoBehaviour
         {
             case AttributeType.Life:
                 profile.baseMaxLife += 5;
-                // °æ∫À–ƒ–¬‘ˆ°ø£∫Õ¨ ±‘ˆº”µ±«∞…˙√¸÷µ
                 profile.currentHp += 5;
                 break;
             case AttributeType.Stamina:
                 profile.baseMaxStamina += 3;
-                // °æ∫À–ƒ–¬‘ˆ°ø£∫Õ¨ ±‘ˆº”µ±«∞ÃÂ¡¶÷µ
                 profile.currentStamina += 3;
                 break;
             case AttributeType.Strength:
@@ -202,7 +243,6 @@ public class RoleUIManager : MonoBehaviour
                 break;
         }
 
-        // ∞≤»´«Ø÷∆£∫∑¿÷πƒ≥–©º´∂À«Èøˆœ¬µ±«∞—™¡ø≥¨π˝¡À◊Ó¥Û…œœﬁ
         if (profile.currentHp > profile.GetFinalMaxLife()) profile.currentHp = profile.GetFinalMaxLife();
         if (profile.currentStamina > profile.GetFinalMaxStamina()) profile.currentStamina = profile.GetFinalMaxStamina();
 
@@ -210,8 +250,9 @@ public class RoleUIManager : MonoBehaviour
     }
 
     // ==========================================
-    // ◊∞±∏π‹¿Ì
+    // Equipment Management
     // ==========================================
+
     private void OnWeaponSlotClicked()
     {
         if (equipListUI == null) return;
@@ -278,8 +319,9 @@ public class RoleUIManager : MonoBehaviour
     }
 
     // ==========================================
-    // µ¿æﬂπ‹¿Ì
+    // Item Management
     // ==========================================
+
     private void OnItemSlotClicked(int index)
     {
         if (itemListUI == null) return;
@@ -312,8 +354,9 @@ public class RoleUIManager : MonoBehaviour
     }
 
     // ==========================================
-    // ’– Ωπ‹¿Ì
+    // Skill Management
     // ==========================================
+
     private void SwitchSkillTab(int tabIndex)
     {
         currentSkillTab = tabIndex;
@@ -352,20 +395,20 @@ public class RoleUIManager : MonoBehaviour
         if (currentSkillTab == 0)
         {
             targetList = profile.equippedAttackSkills;
-            tabName = "π•ª˜’– Ω";
+            tabName = "ÊîªÂáªÊãõÂºè";
             allowedTypes.Add(SkillType.Attack);
         }
         else if (currentSkillTab == 1)
         {
             targetList = profile.equippedDefendSkills;
-            tabName = "∑¿…¡’– Ω";
+            tabName = "Èò≤Èó™ÊãõÂºè";
             allowedTypes.Add(SkillType.Defend);
             allowedTypes.Add(SkillType.Dodge);
         }
         else if (currentSkillTab == 2)
         {
             targetList = profile.equippedSpecialSkills;
-            tabName = "Ãÿ ‚’– Ω";
+            tabName = "ÁâπÊÆäÊãõÂºè";
             allowedTypes.Add(SkillType.Special);
         }
 
