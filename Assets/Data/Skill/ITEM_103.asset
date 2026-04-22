@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 608e1027dbec7dc4a8438b4248abfb17, type: 3}
   m_Name: ITEM_103
   m_EditorClassIdentifier: 
-  skillName: "\u8425\u517B\u5242"
-  description: "\u4F7F\u7528\u540E\u5BF9\u65B9\u8FDB\u5165\u3010\u906E\u853D\u3011\u72B6\u60012\u56DE\u5408"
+  skillName: "\u6C99\u5B50"
+  description: "\u4F7F\u7528\u540E\u5BF9\u65B9\u8FDB\u5165\u3010\u906E\u853D\u3011\u72B6\u60011\u56DE\u5408\r"
   skillIcon: {fileID: 21300000, guid: 5fcffea1084f4d14aa9340465fb5df31, type: 3}
   skillType: 4
   animationTriggerName: Attack
@@ -40,11 +40,13 @@ MonoBehaviour:
     sections: []
   castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
   effects:
-  - rid: 2591120425798336514
+  - rid: 2591120581170823170
   references:
     version: 2
     RefIds:
-    - rid: 2591120425798336514
-      type: {class: RecoverStaminaEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2591120581170823170
+      type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        staminaAmounts: 03000000
+        statusType: 9
+        baseDurations: 010000000100000001000000
+        applyToSelf: 0

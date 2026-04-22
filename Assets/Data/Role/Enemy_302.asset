@@ -15,17 +15,32 @@ MonoBehaviour:
   roleName: "\u5F3A\u76D7"
   roleModel: {fileID: -1234823036, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
   animatorController: {fileID: 9100000, guid: d526a5fc7e9e055439da17fde1acfa77, type: 2}
-  maxBasicLife: 30
-  maxStamina: 12
-  strength: 7
-  mentality: 3
+  maxBasicLife: 45
+  maxStamina: 9
+  strength: 6
+  mentality: 0
   staminaRecoverPerTurn: 3
   equippedSkills:
-  - skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
+  - skillData: {fileID: 11400000, guid: fea8bac6424aa4e46817ca90543e2adc, type: 2}
     level: 1
     quantity: 1
-  equippedWeapon: {fileID: 11400000, guid: e4de47acb132f5748933bfb9ccf3f8ea, type: 2}
-  equippedArmor: {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
+  - skillData: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
+    level: 1
+    quantity: 1
+  - skillData: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
+    level: 1
+    quantity: 1
+  - skillData: {fileID: 11400000, guid: c5b9034335f70bd498615629811b566c, type: 2}
+    level: 1
+    quantity: 1
+  - skillData: {fileID: 11400000, guid: c063db8790af34e4cb3c42e3bf8da76a, type: 2}
+    level: 1
+    quantity: 2
+  - skillData: {fileID: 11400000, guid: 581cf46c902186f4a84fb49c1045502d, type: 2}
+    level: 1
+    quantity: 2
+  equippedWeapon: {fileID: 11400000, guid: 4527a3f70375e1545b99890f833c55ae, type: 2}
+  equippedArmor: {fileID: 11400000, guid: 6f0b2ed08393b4146a13d7bcf9a28506, type: 2}
   equippedAccessories: []
   isBoss: 0
   goldReward: 40
@@ -33,30 +48,34 @@ MonoBehaviour:
   aiReactionTolerance: 0.55
   aiPhases:
   - hpPercentageThreshold: 1
-    subSkillProbability: 0.3
-    mainSkillWeights:
-    - skill: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
-      weight: 50
-    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
-      weight: 50
-    subSkillWeights:
-    - skill: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
-      weight: 100
-    - skill: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
-      weight: 0
-  - hpPercentageThreshold: 0.35
     subSkillProbability: 0.5
     mainSkillWeights:
-    - skill: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
-      weight: 30
-    - skill: {fileID: 11400000, guid: c3eb73b81c6754c4094bccdb6132482b, type: 2}
-      weight: 50
-    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
-      weight: 20
-    subSkillWeights:
-    - skill: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
+    - skill: {fileID: 11400000, guid: fea8bac6424aa4e46817ca90543e2adc, type: 2}
       weight: 40
-    - skill: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
+    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
       weight: 30
-    - skill: {fileID: 11400000, guid: f17287398bf6a46469bca1bd08f0976b, type: 2}
+    - skill: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
+      weight: 30
+    subSkillWeights:
+    - skill: {fileID: 11400000, guid: c5b9034335f70bd498615629811b566c, type: 2}
+      weight: 40
+    - skill: {fileID: 11400000, guid: c063db8790af34e4cb3c42e3bf8da76a, type: 2}
+      weight: 30
+    - skill: {fileID: 11400000, guid: 581cf46c902186f4a84fb49c1045502d, type: 2}
+      weight: 30
+  - hpPercentageThreshold: 0.5
+    subSkillProbability: 0.5
+    mainSkillWeights:
+    - skill: {fileID: 11400000, guid: fea8bac6424aa4e46817ca90543e2adc, type: 2}
+      weight: 80
+    - skill: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
+      weight: 10
+    - skill: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
+      weight: 10
+    subSkillWeights:
+    - skill: {fileID: 11400000, guid: c5b9034335f70bd498615629811b566c, type: 2}
+      weight: 40
+    - skill: {fileID: 11400000, guid: c063db8790af34e4cb3c42e3bf8da76a, type: 2}
+      weight: 30
+    - skill: {fileID: 11400000, guid: 581cf46c902186f4a84fb49c1045502d, type: 2}
       weight: 30

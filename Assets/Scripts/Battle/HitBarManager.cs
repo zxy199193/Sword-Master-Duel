@@ -120,6 +120,19 @@ public class HitBarManager : MonoBehaviour
                                     bool isAI = false)
     {
         currentConfig = config;
+
+        if (caster != null && caster.activeStatuses.ContainsKey(StatusType.Obscured))
+        {
+            var sectionList = currentConfig.sections != null ? currentConfig.sections.ToList() : new List<HitSection>();
+            sectionList.Add(new HitSection
+            {
+                level = SectionLevel.Level99, // Level99 是我们的雷区专用判定
+                axisPosition = UnityEngine.Random.Range(15f, 85f),
+                width = 30f
+            });
+            currentConfig.sections = sectionList.ToArray();
+        }
+
         onHitComplete = onComplete;
         isAIPlay = isAI;
         currentCaster = caster;
@@ -148,7 +161,7 @@ public class HitBarManager : MonoBehaviour
         CreateSectionsUI();
         ResetSliderForNextHit();
 
-        timeRemaining = config.actionTime;
+        timeRemaining = currentCaster != null ? currentCaster.GetFinalActionTime(config.actionTime) : config.actionTime;
         gameObject.SetActive(true);
     }
 
@@ -219,6 +232,7 @@ public class HitBarManager : MonoBehaviour
     {
         HitSection? bestHit = null;
         int highestLevel = -1;
+        bool isObscuredHit = false; // 是否踩雷标志
 
         foreach (var section in currentConfig.sections)
         {
@@ -227,26 +241,35 @@ public class HitBarManager : MonoBehaviour
 
             if (currentSliderPos >= minBound && currentSliderPos <= maxBound)
             {
-                int levelValue = (int)section.level;
-                if (levelValue > highestLevel)
+                // 如果落入了沙子区，打上踩雷标记！
+                if (section.level == SectionLevel.Level99)
                 {
-                    highestLevel = levelValue;
-                    bestHit = section;
+                    isObscuredHit = true;
+                }
+                else
+                {
+                    int levelValue = (int)section.level;
+                    if (levelValue > highestLevel)
+                    {
+                        highestLevel = levelValue;
+                        bestHit = section;
+                    }
                 }
             }
+        }
+
+        // 遮蔽区拥有绝对的“一票否决权”，就算你同时踩到了完美的 Level6 和沙子区，也会被判定为 Miss！
+        if (isObscuredHit)
+        {
+            bestHit = null;
+            Debug.Log("[HitBarManager] 滑块落入了沙子遮蔽区，强制判为 Miss！");
         }
 
         accumulatedHits.Add(bestHit);
         currentHitCount++;
 
-        if (currentHitCount >= targetHitCount)
-        {
-            FinishHit(false);
-        }
-        else
-        {
-            ResetSliderForNextHit();
-        }
+        if (currentHitCount >= targetHitCount) FinishHit(false);
+        else ResetSliderForNextHit();
     }
 
     private void FinishHit(bool isTimeout)

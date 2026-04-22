@@ -184,11 +184,28 @@ public class RoleUIManager : MonoBehaviour
 
         switch (attrType)
         {
-            case AttributeType.Life: profile.baseMaxLife += 3; break;       // 【修改】：每点+3生命
-            case AttributeType.Stamina: profile.baseMaxStamina += 2; break; // 【修改】：每点+2体力
-            case AttributeType.Strength: profile.baseStrength += 1; break;  // 【修改】：每点+1力量
-            case AttributeType.Mentality: profile.baseMentality += 1; break;// 【修改】：每点+1精神
+            case AttributeType.Life:
+                profile.baseMaxLife += 5;
+                // 【核心新增】：同时增加当前生命值
+                profile.currentHp += 5;
+                break;
+            case AttributeType.Stamina:
+                profile.baseMaxStamina += 3;
+                // 【核心新增】：同时增加当前体力值
+                profile.currentStamina += 3;
+                break;
+            case AttributeType.Strength:
+                profile.baseStrength += 1;
+                break;
+            case AttributeType.Mentality:
+                profile.baseMentality += 1;
+                break;
         }
+
+        // 安全钳制：防止某些极端情况下当前血量超过了最大上限
+        if (profile.currentHp > profile.GetFinalMaxLife()) profile.currentHp = profile.GetFinalMaxLife();
+        if (profile.currentStamina > profile.GetFinalMaxStamina()) profile.currentStamina = profile.GetFinalMaxStamina();
+
         RefreshAllUI();
     }
 

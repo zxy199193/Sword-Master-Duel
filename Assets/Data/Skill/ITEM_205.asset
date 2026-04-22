@@ -40,11 +40,13 @@ MonoBehaviour:
     sections: []
   castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
   effects:
-  - rid: 2591120357824135168
+  - rid: 2591120581170823172
   references:
     version: 2
     RefIds:
-    - rid: 2591120357824135168
-      type: {class: DirectDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2591120581170823172
+      type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        damageAmounts: 08000000
+        statusType: 10
+        baseDurations: 630000006300000063000000
+        applyToSelf: 0

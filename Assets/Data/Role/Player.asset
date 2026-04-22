@@ -36,27 +36,6 @@ MonoBehaviour:
   - skillData: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
     level: 1
     quantity: 1
-  - skillData: {fileID: 11400000, guid: 6b1924b78bbd38048a5ff434a711b556, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: d29c4ab77970f444c923287ce35543f4, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: 8046ae447ea2a124abc8447e31372e38, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: f17287398bf6a46469bca1bd08f0976b, type: 2}
-    level: 1
-    quantity: 1
-  - skillData: {fileID: 11400000, guid: c22af5460d2101f4d922e5f7fe0642fd, type: 2}
-    level: 1
-    quantity: 1
   equippedWeapon: {fileID: 0}
   equippedArmor: {fileID: 0}
   equippedAccessories: []

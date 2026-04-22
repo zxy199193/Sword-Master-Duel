@@ -26,8 +26,8 @@ public class RoleData : ScriptableObject
     [Header("基础属性")]
     public int maxBasicLife = 20;
     public int maxStamina = 10;
-    public int strength = 1;
-    public int mentality = 1;
+    public int strength = 0;
+    public int mentality = 0;
 
     [Tooltip("每回合自动恢复体力")]
     public int staminaRecoverPerTurn = 3;

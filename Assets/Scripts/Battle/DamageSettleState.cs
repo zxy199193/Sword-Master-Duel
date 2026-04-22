@@ -165,6 +165,12 @@ public class DamageSettleState : BattleState
             // 最终伤害 = (总攻击力 - 总减伤) × 武器倍率 × 打击条倍率
             // ==========================================
             float totalBaseDamage = skill.GetBasicDamage(level) + finalStrength + equipDamageModifier + skillEffectBaseDamageMod;
+            
+            if (attacker.activeStatuses.ContainsKey(StatusType.Excited))
+            {
+                totalBaseDamage += 6;
+            }
+
             int totalReduction = Mathf.RoundToInt(defender.tempDamageReduction) + skillEffectDefenseMod;
 
             // 先算净伤害（保底为0，防止防太高导致加血）

@@ -171,7 +171,33 @@ public class BattleManager : MonoBehaviour
         if (currentPlayerSubSkill != null) playerEntity.ConsumeStamina(GetActualSkillCost(playerEntity, currentPlayerSubSkill));
         if (currentEnemySkill != null) enemyEntity.ConsumeStamina(GetActualSkillCost(enemyEntity, currentEnemySkill, currentEnemySubSkill));
         if (currentEnemySubSkill != null) enemyEntity.ConsumeStamina(GetActualSkillCost(enemyEntity, currentEnemySubSkill));
+        // ==========================================
+        // 【核心新增】：钉刺的动作惩罚检测
+        // ==========================================
+        void ApplySpikesDamage(BattleEntity entity, SkillSlot skill)
+        {
+            if (skill != null && entity.activeStatuses.ContainsKey(StatusType.Spikes))
+            {
+                if (skill.skillData.skillType == SkillType.Attack || skill.skillData.skillType == SkillType.Dodge)
+                {
+                    entity.TakeDamage(3);
+                    SpawnDamagePopup(entity.isPlayer, "<color=#8B0000>扎伤 -3</color>", 1);
+                    Debug.Log($"[场地魔法] {entity.roleData.roleName} 因为动作幅度过大，触发了钉刺，受到 3 点伤害！");
+                }
+            }
+        }
 
+        ApplySpikesDamage(playerEntity, currentPlayerSkill);
+        ApplySpikesDamage(enemyEntity, currentEnemySkill);
+
+        // 防御性拦截：如果有人按完技能直接被钉刺扎死了，立刻结束战斗
+        if (playerEntity.currentBasicLife <= 0 || enemyEntity.currentBasicLife <= 0)
+        {
+            ChangeState(new BattleEndState(this));
+            return;
+        }
+
+        // ==========================================
         ChangeState(new ActionBroadcastState(this));
     }
 
@@ -290,10 +316,7 @@ public class BattleManager : MonoBehaviour
     }
 
     // ==========================================
-    // 获取技能最终的真实体力消耗
-    // ==========================================
-    // ==========================================
-    // 获取技能最终的真实体力消耗 (支持向前预测)
+    // 获取技能最终的真实体力消耗 (支持向前预测与新状态)
     // ==========================================
     public int GetActualSkillCost(BattleEntity entity, SkillSlot slot, SkillSlot pairedSubSkill = null)
     {
@@ -301,18 +324,28 @@ public class BattleManager : MonoBehaviour
         int cost = slot.skillData.GetStaminaCost(slot.level);
 
         bool hasAgile = entity.activeStatuses.ContainsKey(StatusType.Agile);
+        bool hasExcited = entity.activeStatuses.ContainsKey(StatusType.Excited);
+        bool hasOverdrawn = entity.activeStatuses.ContainsKey(StatusType.Overdrawn);
 
-        // 【核心前瞻预测】：如果你这回合还没灵动，但你带了步法(即将获得灵动)，立刻给你打折！
-        if (!hasAgile && pairedSubSkill != null && pairedSubSkill.skillData != null && pairedSubSkill.skillData.effects != null)
+        // 前瞻预测（看这回合是不是要立刻上状态）
+        if (pairedSubSkill != null && pairedSubSkill.skillData != null && pairedSubSkill.skillData.effects != null)
         {
             foreach (var effect in pairedSubSkill.skillData.effects)
             {
-                if (effect is ApplyStatusEffect se && se.statusType == StatusType.Agile && se.applyToSelf)
+                if (effect is ApplyStatusEffect se && se.applyToSelf)
                 {
-                    hasAgile = true; break;
+                    if (se.statusType == StatusType.Agile) hasAgile = true;
+                    if (se.statusType == StatusType.Excited) hasExcited = true;
+                    if (se.statusType == StatusType.Overdrawn) hasOverdrawn = true;
                 }
             }
         }
+
+        // 【新增】：透支状态绝对优先：招式不消耗体力
+        if (hasOverdrawn) return 0;
+
+        // 【新增】：亢奋状态发威：所有招式体力消耗 + 1
+        if (hasExcited) cost += 1;
 
         // 灵动状态发威：如果是闪避技能，体力消耗 -1
         if (slot.skillData.skillType == SkillType.Dodge && hasAgile)

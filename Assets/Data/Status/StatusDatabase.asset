@@ -13,8 +13,15 @@ MonoBehaviour:
   m_Name: StatusDatabase
   m_EditorClassIdentifier: 
   allStatuses:
-  - {fileID: 11400000, guid: df3a945ce2db5b049be70b56be9457c1, type: 2}
-  - {fileID: 11400000, guid: 6d343c6f62c59c844b6392abb8038015, type: 2}
   - {fileID: 11400000, guid: cdb37938bf89d62419d7346d1a1a5dde, type: 2}
-  - {fileID: 11400000, guid: 9869d2cd6e340184a83c484b744c7c7d, type: 2}
   - {fileID: 11400000, guid: 75eb76a40e5a8b742811d94fd8cf0da5, type: 2}
+  - {fileID: 11400000, guid: fe6639b190bac404f99a3a4004bc1efa, type: 2}
+  - {fileID: 11400000, guid: df3a945ce2db5b049be70b56be9457c1, type: 2}
+  - {fileID: 11400000, guid: 9869d2cd6e340184a83c484b744c7c7d, type: 2}
+  - {fileID: 11400000, guid: ca93e8a3e2773674ba14c1c258f1a1ee, type: 2}
+  - {fileID: 11400000, guid: c8afddebda0c57a45972c899bb04e0b6, type: 2}
+  - {fileID: 11400000, guid: e007f3e8716ae7a4ebd780e3b4052223, type: 2}
+  - {fileID: 11400000, guid: 549e74d41c274db45b8f938fbea755a8, type: 2}
+  - {fileID: 11400000, guid: c90df0d347cb58447a78b4a2898fb2ab, type: 2}
+  - {fileID: 11400000, guid: ef3ee0da61ff22546bc1f930cdfbddac, type: 2}
+  - {fileID: 11400000, guid: 6d343c6f62c59c844b6392abb8038015, type: 2}

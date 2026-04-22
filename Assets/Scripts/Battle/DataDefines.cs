@@ -7,7 +7,7 @@ using UnityEngine;
 // ==========================================
 public enum SkillType { Attack, Defend, Dodge, Special, Item }
 public enum SectionLevel { Level0, Level1, Level2, Level3, Level4, Level5, Level6, Level99 }
-public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy }
+public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked }
 public enum AttributeType { Life, Stamina, Strength, Mentality }
 
 // ==========================================
@@ -233,6 +233,13 @@ public class ApplyStatusEffect : SkillEffect
             case StatusType.Agile: statusName = "Áé¶¯"; break;
             case StatusType.Gathering: statusName = "¾ÛÆø"; break;
             case StatusType.Dizzy: statusName = "Ñ£ÔÎ"; break;
+            case StatusType.Impatient: statusName = "¼±Ôê"; break;
+            case StatusType.Excited: statusName = "¿º·Ü"; break;
+            case StatusType.Tenacious: statusName = "¼áÍ¦"; break;
+            case StatusType.Overdrawn: statusName = "Í¸Ö§"; break;
+            case StatusType.Obscured: statusName = "ÕÚ±Î"; break;
+            case StatusType.Spikes: statusName = "¶¤´Ì"; break;
+            case StatusType.Smoked: statusName = "ÑÌÄ»"; break;
         }
 
         // ¡¾ºËÐÄÐÞ¸´¡¿£ººô½Ð×´Ì¬UIË¢ÐÂ£¬²¢ÐÞÕýÆ®×ÖÎ»ÖÃ
@@ -466,6 +473,9 @@ public class ApplyStatusOnHitLevelEffect : SkillEffect
                     case StatusType.Agile: statusName = "Áé¶¯"; break;
                     case StatusType.Gathering: statusName = "¾ÛÆø"; break;
                     case StatusType.Dizzy: statusName = "Ñ£ÔÎ"; break;
+                    case StatusType.Obscured: statusName = "ÕÚ±Î"; break;
+                    case StatusType.Spikes: statusName = "¶¤´Ì"; break;
+                    case StatusType.Smoked: statusName = "ÑÌÄ»"; break;
                 }
 
                 // Ë¢ÐÂUIºÍÆ®×Ö

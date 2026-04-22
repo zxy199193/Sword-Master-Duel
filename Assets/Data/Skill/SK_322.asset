@@ -17,7 +17,7 @@ MonoBehaviour:
   skillIcon: {fileID: 21300000, guid: 413253281d5376b4c847c4879c2e4829, type: 3}
   skillType: 3
   animationTriggerName: Attack
-  staminaCosts: 010000000100000000000000
+  staminaCosts: 020000000200000001000000
   basicDamages:
   - 0
   - 0
@@ -47,6 +47,6 @@ MonoBehaviour:
     - rid: 2591120357824135170
       type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        statusType: 0
+        statusType: 6
         baseDurations: 010000000200000002000000
-        applyToSelf: 0
+        applyToSelf: 1

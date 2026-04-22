@@ -13,6 +13,9 @@ public class BattleEntity : MonoBehaviour
     public int currentExtraLife;
     public int currentStamina;
 
+    // 【核心新增】：透支带来的永久体力上限衰减
+    public int staminaMaxPenalty = 0;
+
     [HideInInspector]
     public List<SkillSlot> runtimeSkills = new List<SkillSlot>();
 
@@ -37,6 +40,7 @@ public class BattleEntity : MonoBehaviour
     {
         roleData = data;
         isPlayer = playerFlag;
+        staminaMaxPenalty = 0; // 重置透支惩罚
 
         // ==========================================
         // 【核心新增】：动态替换专属动画控制器！
@@ -145,16 +149,26 @@ public class BattleEntity : MonoBehaviour
         return finalMen;
     }
 
-    // 【保留修复】：动态体力上限
+    // 【修改】：动态体力上限，加入“透支”的永久惩罚
     public int GetFinalMaxStamina()
     {
-        if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalMaxStamina();
-        return roleData.maxStamina;
+        int baseMax = (isPlayer && GameManager.Instance != null) ? GameManager.Instance.playerProfile.GetFinalMaxStamina() : roleData.maxStamina;
+        // 减去透支惩罚，保底至少为1点体力上限
+        return Mathf.Max(1, baseMax - staminaMaxPenalty);
     }
 
     // ==========================================
-    // 打击条速度计算 (加入眩晕波动)
+    // 时间与速度计算
     // ==========================================
+
+    // 【核心新增】：急躁状态的时间缩短
+    public float GetFinalActionTime(float baseTime)
+    {
+        // 嘲讽效果：急躁状态下，操作时间强行减少 60%
+        if (activeStatuses.ContainsKey(StatusType.Impatient)) return baseTime * 0.4f;
+        return baseTime;
+    }
+
     public float GetFinalHitBarSpeed(float globalBaseSpeed)
     {
         int mentality = GetFinalMentality();
@@ -168,14 +182,9 @@ public class BattleEntity : MonoBehaviour
         if (activeStatuses.ContainsKey(StatusType.Tension)) statusMultiplier += 0.3f;
         if (activeStatuses.ContainsKey(StatusType.Focus)) statusMultiplier -= 0.3f;
 
-        // ==========================================
-        // 【核心新增】：眩晕状态的忽快忽慢逻辑
-        // ==========================================
+        // 眩晕状态的忽快忽慢逻辑
         if (activeStatuses.ContainsKey(StatusType.Dizzy))
         {
-            // 使用柏林噪声 (PerlinNoise) 生成随时间连续变化的随机数
-            // Mathf.PerlinNoise 返回 0~1。减去 0.5 变成 -0.5~0.5，再乘以 0.6 变成 -0.3~0.3 (即 ±30%)
-            // Time.time * 3f 控制的是波动的剧烈程度，数字越大速度变化越快
             float dizzyFluctuation = (Mathf.PerlinNoise(Time.time * 5f, 0f) - 0.5f) * 1f;
             statusMultiplier += dizzyFluctuation;
         }
@@ -206,6 +215,7 @@ public class BattleEntity : MonoBehaviour
     // 战斗与状态逻辑
     // ==========================================
     public void ResetTurnData() { tempDamageReduction = 0; tempHitWidthModifier = 0; isImmuneToSubSkills = false; }
+
     public void TakeDamage(int rawDamage)
     {
         int remainingDamage = rawDamage;
@@ -214,8 +224,18 @@ public class BattleEntity : MonoBehaviour
             if (currentExtraLife >= remainingDamage) { currentExtraLife -= remainingDamage; remainingDamage = 0; }
             else { remainingDamage -= currentExtraLife; currentExtraLife = 0; Debug.Log($"[{roleData.roleName}] 的防具破损！"); }
         }
+
         if (remainingDamage > 0)
         {
+            // ==========================================
+            // 【核心新增】：坚挺状态的极限锁血！
+            // ==========================================
+            if (activeStatuses.ContainsKey(StatusType.Tenacious) && currentBasicLife > 1 && remainingDamage >= currentBasicLife)
+            {
+                remainingDamage = currentBasicLife - 1; // 强行把伤害压到只剩1滴血
+                Debug.Log($"<color=#FF0000>[{roleData.roleName}] 触发了【坚挺】，强行锁血 1 点！</color>");
+            }
+
             currentBasicLife -= remainingDamage;
             if (currentBasicLife <= 0) { currentBasicLife = 0; OnHpChanged?.Invoke(); Die(); PlayDieAnim(); return; }
         }
@@ -243,7 +263,7 @@ public class BattleEntity : MonoBehaviour
         if (currentStamina > maxStam) currentStamina = maxStam;
 
         OnStaminaChanged?.Invoke();
-        TickStatuses();
+        TickStatuses(); // TickStatuses必须在最后调用，因为里面可能触发“透支结束扣上限”逻辑
     }
 
     public void AddStatus(StatusType type, int duration)
@@ -257,7 +277,26 @@ public class BattleEntity : MonoBehaviour
     {
         var toRemove = new List<StatusType>();
         var keys = new List<StatusType>(activeStatuses.Keys);
-        foreach (var key in keys) { activeStatuses[key]--; if (activeStatuses[key] <= 0) toRemove.Add(key); }
+        foreach (var key in keys)
+        {
+            activeStatuses[key]--;
+            if (activeStatuses[key] <= 0)
+            {
+                toRemove.Add(key);
+
+                // ==========================================
+                // 【核心新增】：透支状态结束时的永久惩罚！
+                // ==========================================
+                if (key == StatusType.Overdrawn)
+                {
+                    staminaMaxPenalty += 10;
+                    int newMax = GetFinalMaxStamina();
+                    if (currentStamina > newMax) currentStamina = newMax; // 如果当前体力超标了，也要切掉
+                    OnStaminaChanged?.Invoke();
+                    Debug.Log($"<color=#FF0000>[{roleData.roleName}] 的【透支】状态结束，体力上限永久扣除 10 点！</color>");
+                }
+            }
+        }
         foreach (var key in toRemove) { activeStatuses.Remove(key); }
         OnStatusChanged?.Invoke();
     }
@@ -267,6 +306,7 @@ public class BattleEntity : MonoBehaviour
         float modifier = 0f;
         if (activeStatuses.ContainsKey(StatusType.Tension)) modifier -= 6f;
         if (activeStatuses.ContainsKey(StatusType.Focus)) modifier += 6f;
+        if (activeStatuses.ContainsKey(StatusType.Smoked)) modifier -= 10f;
         return modifier;
     }
 

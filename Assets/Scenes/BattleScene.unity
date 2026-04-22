@@ -2142,38 +2142,29 @@ MonoBehaviour:
     currentStamina: 10
     currentExtraLife: 0
     totalGold: 500
-    equippedWeapon: {fileID: 11400000, guid: e4de47acb132f5748933bfb9ccf3f8ea, type: 2}
-    equippedArmor: {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
+    equippedWeapon: {fileID: 11400000, guid: e9a8e0899bf2822428921a3b9b4ff9b2, type: 2}
+    equippedArmor: {fileID: 11400000, guid: 6f0b2ed08393b4146a13d7bcf9a28506, type: 2}
     equippedAccessories:
     - {fileID: 0}
     - {fileID: 0}
     equippedAttackSkills:
-    - skillData: {fileID: 11400000, guid: 2d6b68eb1787720469af13354f4c328c, type: 2}
+    - skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
       level: 1
       quantity: 0
     - skillData: {fileID: 11400000, guid: 71f0d27139a6ee7478e95946f2344d08, type: 2}
       level: 1
       quantity: 0
-    - skillData: {fileID: 11400000, guid: 5daf620929a442e4ab3f48622b19a29a, type: 2}
+    - skillData: {fileID: 11400000, guid: c8c81fcc60cc9ce4694de3d313541bf2, type: 2}
       level: 1
       quantity: 0
     equippedDefendSkills:
-    - skillData: {fileID: 11400000, guid: 56110b0a913fda24a9abb3f143d74b8e, type: 2}
+    - skillData: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
       level: 1
       quantity: 0
     - skillData: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
       level: 1
       quantity: 0
-    equippedSpecialSkills:
-    - skillData: {fileID: 11400000, guid: 8046ae447ea2a124abc8447e31372e38, type: 2}
-      level: 1
-      quantity: 0
-    - skillData: {fileID: 11400000, guid: cd9fdddebd7538f4a92dc81b83bf5b10, type: 2}
-      level: 1
-      quantity: 0
-    - skillData: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
-      level: 1
-      quantity: 0
+    equippedSpecialSkills: []
     equippedItems: []
     storageEquipments: []
     storageSkillsAndItems: []
@@ -2512,6 +2503,7 @@ MonoBehaviour:
   currentBasicLife: 0
   currentExtraLife: 0
   currentStamina: 0
+  staminaMaxPenalty: 0
   runtimeSkills: []
   tempDamageReduction: 0
   tempHitWidthModifier: 0
@@ -2579,6 +2571,7 @@ MonoBehaviour:
   currentBasicLife: 0
   currentExtraLife: 0
   currentStamina: 0
+  staminaMaxPenalty: 0
   runtimeSkills: []
   tempDamageReduction: 0
   tempHitWidthModifier: 0

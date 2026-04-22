@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
-  m_Name: Weapon_101
+  m_Name: Armour_100
   m_EditorClassIdentifier: 
-  equipName: "\u76F4\u5251"
+  equipName: "\u5E03\u8863"
   description: 
-  icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
-  equipType: 0
+  icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
+  equipType: 1
   quality: 0
-  weight: 6
-  price: 20
+  weight: 3
+  price: 10
   bonusLife: 0
   bonusStamina: 0
   bonusStrength: 0
   bonusMentality: 0
-  atkFactor: 1.2
-  durability: 0
+  atkFactor: 0
+  durability: 5
   equipEffects: []
   references:
     version: 2
