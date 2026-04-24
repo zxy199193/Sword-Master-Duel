@@ -113,7 +113,7 @@ public class SkillItemUI : MonoBehaviour
                 var equip = boundCaster.roleData?.equippedWeapon;
                 if (equip != null) weaponFactor = equip.atkFactor;
             }
-            int modifiedDamage = Mathf.RoundToInt((baseDamage + boundCaster.GetFinalStrength() * 2) * weaponFactor);
+            int modifiedDamage = Mathf.RoundToInt((baseDamage + boundCaster.GetFinalStrength() * 1) * weaponFactor);
             SetNodeText(damageNode, damageText, modifiedDamage.ToString());
 
             // 修正体力：走 GetActualSkillCost 逻辑
@@ -155,12 +155,17 @@ public class SkillItemUI : MonoBehaviour
     private void SetupDodgeSkill(bool showModified)
     {
         int staminaCost = boundSlot.skillData.GetStaminaCost(boundSlot.level);
+        float hitAmend = boundSlot.skillData.GetHitAmend(boundSlot.level);
 
         if (showModified && boundCaster != null && boundManager != null)
+        {
             staminaCost = boundManager.GetActualSkillCost(boundCaster, boundSlot);
+            float agileBonus = boundCaster.activeStatuses.ContainsKey(StatusType.Agile) ? 6f : 0f;
+            hitAmend = hitAmend - boundCaster.GetFinalMentality() - agileBonus;
+        }
 
         SetNodeText(staminaPureNode, staminaPureText, staminaCost.ToString());
-        SetNodeText(hitAmendIconNode, hitAmendIconText, boundSlot.skillData.GetHitAmend(boundSlot.level).ToString());
+        SetNodeText(hitAmendIconNode, hitAmendIconText, hitAmend.ToString());
     }
 
     private void SetupSpecialSkill(bool showModified)

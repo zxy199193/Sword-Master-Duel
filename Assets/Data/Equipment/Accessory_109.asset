@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Accessory_109
   m_EditorClassIdentifier: 
   equipName: "\u91D1\u5E01\u6212\u6307"
-  description: "\u6BCF\u573A\u6218\u6597\u80DC\u5229\u540E\u91D1\u5E01+3"
+  description: "\u6BCF\u573A\u6218\u6597\u80DC\u5229\u540E\u91D1\u5E01+10"
   icon: {fileID: 21300000, guid: 0cda919111e50b3469fe247bad91e8d7, type: 3}
   equipType: 2
   quality: 0
@@ -21,11 +21,20 @@ MonoBehaviour:
   price: 10
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 3
   bonusMentality: 0
   atkFactor: 1
   durability: 0
-  equipEffects: []
+  equipEffects:
+  - rid: 2591120646924664841
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2591120646924664841
+      type: {class: GlobalBattleRules/RewardModifierEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 3
+        isGold: 1
+        bonusAmount: 10

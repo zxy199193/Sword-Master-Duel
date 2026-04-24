@@ -7,12 +7,18 @@ public class ShopListUI : MonoBehaviour
 {
     [Header("UI References")]
     public Text titleText;
-    public Transform contentRoot;
+    public Transform permanentContentRoot;
+    public Transform randomContentRoot;
     public Button closeBtn;
 
     [Header("Prefabs")]
     public GameObject shopEquipPrefab;
     public GameObject shopSkillPrefab;
+
+    [Header("Shop Refresh UI")]
+    public GameObject refreshArea;
+    public Button refreshBtn;
+    public Text refreshCostText;
 
     private ShopConfig currentConfig;
     private RestUIManager restUIManager;
@@ -45,22 +51,27 @@ public class ShopListUI : MonoBehaviour
     public void OpenLearnSkill()
     {
         gameObject.SetActive(true); 
-        titleText.text = "道场 - 招式学习"; 
+        titleText.text = "道场 - 招式学习 (耗时1天)"; 
+        if (refreshArea) refreshArea.SetActive(false);
+        if (randomContentRoot) randomContentRoot.gameObject.SetActive(false);
         ClearList();
         
         var profile = GameManager.Instance.playerProfile;
 
-        foreach (var skill in currentConfig.availableSkills)
+        foreach (var skill in GameManager.Instance.currentDojoSkills)
         {
             if (HasSkill(skill, profile)) continue;
 
             SkillSlot tempSlot = new SkillSlot { skillData = skill, level = 1, quantity = 1 };
-            CreateSkillUI(tempSlot, skill.price, "学习", () =>
+            bool canAfford = profile.totalGold >= skill.price && profile.currentRestDays >= 1;
+
+            CreateSkillUI(tempSlot, skill.price, "学习", canAfford, permanentContentRoot, () =>
             {
-                if (profile.ConsumeGold(skill.price))
+                if (profile.currentRestDays >= 1 && profile.ConsumeGold(skill.price))
                 {
-                    profile.storageSkillsAndItems.Add(new SkillSlot { skillData = skill, level = 1, quantity = 1 });
-                    Debug.Log($"学习了新招式: {skill.skillName}");
+                    profile.currentRestDays -= 1;
+                    TryAutoEquipSkill(skill, profile);
+                    Debug.Log($"购买并尝试装备招式: {skill.skillName}");
                     OpenLearnSkill();
                     restUIManager.RefreshPlayerStatusUI();
                 }
@@ -71,7 +82,9 @@ public class ShopListUI : MonoBehaviour
     public void OpenUpgradeSkill()
     {
         gameObject.SetActive(true); 
-        titleText.text = "道场 - 招式进阶 (Lv.1 -> Lv.2)"; 
+        titleText.text = "道场 - 招式进阶 (Lv.1 -> Lv.2) (耗时1天)"; 
+        if (refreshArea) refreshArea.SetActive(false);
+        if (randomContentRoot) randomContentRoot.gameObject.SetActive(false);
         ClearList();
         
         var profile = GameManager.Instance.playerProfile;
@@ -81,13 +94,15 @@ public class ShopListUI : MonoBehaviour
         {
             int cost = slot.skillData.price;
             SkillSlot previewSlot = new SkillSlot { skillData = slot.skillData, level = 2, quantity = slot.quantity };
+            bool canAfford = profile.totalGold >= cost && profile.currentRestDays >= 1;
 
-            CreateSkillUI(previewSlot, cost, "进阶", () =>
+            CreateSkillUI(previewSlot, cost, "进阶", canAfford, permanentContentRoot, () =>
             {
-                if (profile.ConsumeGold(cost))
+                if (profile.currentRestDays >= 1 && profile.ConsumeGold(cost))
                 {
+                    profile.currentRestDays -= 1;
                     slot.level = 2;
-                    Debug.Log($"招式进阶成功: {slot.skillData.skillName} 升至 Lv.2");
+                    Debug.Log($"招式进阶成功: {slot.skillData.skillName}升至 Lv.2");
                     OpenUpgradeSkill();
                     restUIManager.RefreshPlayerStatusUI();
                 }
@@ -98,7 +113,9 @@ public class ShopListUI : MonoBehaviour
     public void OpenMasterSkill()
     {
         gameObject.SetActive(true); 
-        titleText.text = "道场 - 招式精通 (Lv.2 -> Lv.3)"; 
+        titleText.text = "道场 - 招式精通 (Lv.2 -> Lv.3) (耗时2天)"; 
+        if (refreshArea) refreshArea.SetActive(false);
+        if (randomContentRoot) randomContentRoot.gameObject.SetActive(false);
         ClearList();
         
         var profile = GameManager.Instance.playerProfile;
@@ -108,13 +125,15 @@ public class ShopListUI : MonoBehaviour
         {
             int cost = slot.skillData.price * 2;
             SkillSlot previewSlot = new SkillSlot { skillData = slot.skillData, level = 3, quantity = slot.quantity };
+            bool canAfford = profile.totalGold >= cost && profile.currentRestDays >= 2;
 
-            CreateSkillUI(previewSlot, cost, "精通", () =>
+            CreateSkillUI(previewSlot, cost, "精通", canAfford, permanentContentRoot, () =>
             {
-                if (profile.ConsumeGold(cost))
+                if (profile.currentRestDays >= 2 && profile.ConsumeGold(cost))
                 {
+                    profile.currentRestDays -= 2;
                     slot.level = 3;
-                    Debug.Log($"招式精通成功: {slot.skillData.skillName} 升至 Lv.3");
+                    Debug.Log($"招式精通成功: {slot.skillData.skillName}升至 Lv.3");
                     OpenMasterSkill();
                     restUIManager.RefreshPlayerStatusUI();
                 }
@@ -122,63 +141,74 @@ public class ShopListUI : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // Public Methods - Shop Actions
-    // ==========================================
-
-    public void OpenBuyEquipment()
+    public void OpenShop(ShopCategory category)
     {
-        gameObject.SetActive(true); 
-        titleText.text = "商店 - 购买装备"; 
+        gameObject.SetActive(true);
+        titleText.text = $"商店 - {GetCategoryName(category)}";
+
+        if (refreshArea)
+        {
+            refreshArea.SetActive(true);
+            if (refreshCostText) refreshCostText.text = $"刷新耗费: {currentConfig.refreshCost}";
+            if (refreshBtn)
+            {
+                refreshBtn.onClick.RemoveAllListeners();
+                refreshBtn.onClick.AddListener(() =>
+                {
+                    if (GameManager.Instance.ManualRefreshShop())
+                    {
+                        OpenShop(category);
+                        restUIManager.RefreshPlayerStatusUI();
+                    }
+                });
+            }
+        }
+        if (randomContentRoot) randomContentRoot.gameObject.SetActive(true);
+
         ClearList();
-        
         var profile = GameManager.Instance.playerProfile;
 
-        foreach (var equip in currentConfig.availableEquipments)
+        // 加载装备或道具
+        if (category == ShopCategory.Item)
         {
-            if (HasEquipment(equip, profile)) continue;
+            foreach (var item in GameManager.Instance.permItems) CreateSkillShopUI(item, profile, permanentContentRoot, category);
+            foreach (var item in GameManager.Instance.randItems) CreateSkillShopUI(item, profile, randomContentRoot, category);
+        }
+        else
+        {
+            List<EquipmentData> perm = new List<EquipmentData>();
+            List<EquipmentData> rand = new List<EquipmentData>();
 
-            CreateEquipUI(equip, "购买", () =>
+            switch (category)
             {
-                if (profile.ConsumeGold(equip.price))
-                {
-                    profile.storageEquipments.Add(equip);
-                    Debug.Log($"购买了装备: {equip.equipName}");
-                    OpenBuyEquipment();
-                    restUIManager.RefreshPlayerStatusUI();
-                }
-            });
+                case ShopCategory.Weapon:
+                    perm = GameManager.Instance.permWeapons;
+                    rand = GameManager.Instance.randWeapons;
+                    break;
+                case ShopCategory.Armor:
+                    perm = GameManager.Instance.permArmors;
+                    rand = GameManager.Instance.randArmors;
+                    break;
+                case ShopCategory.Accessory:
+                    perm = GameManager.Instance.permAccessories;
+                    rand = GameManager.Instance.randAccessories;
+                    break;
+            }
+
+            foreach (var item in perm) CreateEquipShopUI(item, profile, permanentContentRoot, category);
+            foreach (var item in rand) CreateEquipShopUI(item, profile, randomContentRoot, category);
         }
     }
 
-    public void OpenBuyItem()
+    private string GetCategoryName(ShopCategory category)
     {
-        gameObject.SetActive(true); 
-        titleText.text = "商店 - 购买道具"; 
-        ClearList();
-        
-        var profile = GameManager.Instance.playerProfile;
-
-        foreach (var item in currentConfig.availableItems)
+        switch (category)
         {
-            int ownedCount = 0;
-            if (profile.equippedItems != null)
-                ownedCount += profile.equippedItems.Where(s => s != null && s.skillData == item).Sum(s => s.quantity);
-            if (profile.storageSkillsAndItems != null)
-                ownedCount += profile.storageSkillsAndItems.Where(s => s != null && s.skillData == item).Sum(s => s.quantity);
-
-            SkillSlot tempSlot = new SkillSlot { skillData = item, level = 1, quantity = ownedCount };
-
-            CreateSkillUI(tempSlot, item.price, "购买", () =>
-            {
-                if (profile.ConsumeGold(item.price))
-                {
-                    AddOrStackItem(item, profile);
-                    Debug.Log($"购买了道具: {item.skillName}");
-                    OpenBuyItem();
-                    restUIManager.RefreshPlayerStatusUI();
-                }
-            });
+            case ShopCategory.Weapon: return "武器";
+            case ShopCategory.Armor: return "防具";
+            case ShopCategory.Accessory: return "饰品";
+            case ShopCategory.Item: return "道具";
+            default: return "物品";
         }
     }
 
@@ -188,27 +218,137 @@ public class ShopListUI : MonoBehaviour
 
     private void ClearList()
     {
-        foreach (Transform child in contentRoot) 
+        if (permanentContentRoot)
         {
-            Destroy(child.gameObject);
+            foreach (Transform child in permanentContentRoot) Destroy(child.gameObject);
+        }
+        if (randomContentRoot)
+        {
+            foreach (Transform child in randomContentRoot) Destroy(child.gameObject);
         }
     }
 
-    private void CreateEquipUI(EquipmentData equip, string btnText, System.Action onClick)
+    private void CreateEquipShopUI(EquipmentData equip, PlayerProfile profile, Transform targetRoot, ShopCategory category)
     {
-        var go = Instantiate(shopEquipPrefab, contentRoot);
+        if (HasEquipment(equip, profile)) return;
+        bool canAfford = profile.totalGold >= equip.price;
+        CreateEquipUI(equip, "购买", canAfford, targetRoot, () =>
+        {
+            if (profile.ConsumeGold(equip.price))
+            {
+                TryAutoEquipEquipment(equip, profile);
+                OpenShop(category);
+                restUIManager.RefreshPlayerStatusUI();
+            }
+        });
+    }
+
+    private void CreateSkillShopUI(SkillData skill, PlayerProfile profile, Transform targetRoot, ShopCategory category)
+    {
+        bool canAfford = profile.totalGold >= skill.price;
+        SkillSlot tempSlot = new SkillSlot { skillData = skill, level = 1, quantity = 0 };
+        CreateSkillUI(tempSlot, skill.price, "购买", canAfford, targetRoot, () =>
+        {
+            if (profile.ConsumeGold(skill.price))
+            {
+                TryAutoEquipSkill(skill, profile);
+                OpenShop(category);
+                restUIManager.RefreshPlayerStatusUI();
+            }
+        });
+    }
+
+    private void TryAutoEquipEquipment(EquipmentData equip, PlayerProfile profile)
+    {
+        bool equipped = false;
+        if (equip.equipType == EquipmentType.Weapon && profile.equippedWeapon == null)
+        {
+            profile.equippedWeapon = equip;
+            equipped = true;
+        }
+        else if (equip.equipType == EquipmentType.Armor && profile.equippedArmor == null)
+        {
+            profile.equippedArmor = equip;
+            profile.currentExtraLife = equip.durability;
+            equipped = true;
+        }
+        else if (equip.equipType == EquipmentType.Accessory && profile.equippedAccessories.Count < 3)
+        {
+            profile.equippedAccessories.Add(equip);
+            equipped = true;
+        }
+
+        if (!equipped)
+        {
+            profile.storageEquipments.Add(equip);
+            Debug.Log($"已放入仓库: {equip.equipName}");
+        }
+        else
+        {
+            Debug.Log($"已自动装备: {equip.equipName}");
+        }
+    }
+
+    private void TryAutoEquipSkill(SkillData skill, PlayerProfile profile)
+    {
+        bool equipped = false;
+        SkillSlot newSlot = new SkillSlot { skillData = skill, level = 1, quantity = 1 };
+
+        if (skill.skillType == SkillType.Item)
+        {
+            // 道具：先尝试堆叠
+            foreach (var s in profile.equippedItems)
+            {
+                if (s != null && s.skillData == skill) { s.quantity++; equipped = true; break; }
+            }
+            // 堆叠失败则看是否有空位
+            if (!equipped && profile.equippedItems.Count < 4)
+            {
+                profile.equippedItems.Add(newSlot);
+                equipped = true;
+            }
+        }
+        else
+        {
+            // 招式类
+            List<SkillSlot> targetList = null;
+            int limit = 0;
+            if (skill.skillType == SkillType.Attack) { targetList = profile.equippedAttackSkills; limit = 4; }
+            else if (skill.skillType == SkillType.Defend || skill.skillType == SkillType.Dodge) { targetList = profile.equippedDefendSkills; limit = 2; }
+            else if (skill.skillType == SkillType.Special) { targetList = profile.equippedSpecialSkills; limit = 1; }
+
+            if (targetList != null && targetList.Count < limit)
+            {
+                targetList.Add(newSlot);
+                equipped = true;
+            }
+        }
+
+        if (!equipped)
+        {
+            // 放入仓库
+            AddOrStackItem(skill, profile);
+            Debug.Log($"已放入仓库: {skill.skillName}");
+        }
+        else
+        {
+            Debug.Log($"已自动装备: {skill.skillName}");
+        }
+    }
+
+    private void CreateEquipUI(EquipmentData equip, string btnText, bool canAfford, Transform targetRoot, System.Action onClick)
+    {
+        var go = Instantiate(shopEquipPrefab, targetRoot);
         var ui = go.GetComponent<EquipItemUI>();
-        bool canAfford = GameManager.Instance.playerProfile.totalGold >= equip.price;
 
         System.Action<EquipmentData> clickWrapper = (e) => onClick?.Invoke();
         ui.SetupForShop(equip, equip.price, canAfford, btnText, clickWrapper);
     }
 
-    private void CreateSkillUI(SkillSlot slot, int price, string btnText, System.Action onClick)
+    private void CreateSkillUI(SkillSlot slot, int price, string btnText, bool canAfford, Transform targetRoot, System.Action onClick)
     {
-        var go = Instantiate(shopSkillPrefab, contentRoot);
+        var go = Instantiate(shopSkillPrefab, targetRoot);
         var ui = go.GetComponent<RoleSkillItemUI>();
-        bool canAfford = GameManager.Instance.playerProfile.totalGold >= price;
 
         System.Action<SkillSlot> clickWrapper = (s) => onClick?.Invoke();
         ui.SetupForShop(slot, price, canAfford, btnText, clickWrapper);

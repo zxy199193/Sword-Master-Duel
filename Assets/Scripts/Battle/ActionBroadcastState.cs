@@ -10,6 +10,7 @@ public class ActionBroadcastState : BattleState
     public override void Enter()
     {
         Debug.Log("<color=cyan>[ActionBroadcastState] 开始播放双方战斗演出队列...</color>");
+        battleManager.ShowBroadcast("战斗阶段");
         battleManager.StartCoroutine(battleManager.RoutineActionBroadcast());
     }
 }

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 608e1027dbec7dc4a8438b4248abfb17, type: 3}
+  m_Name: ATK_502
+  m_EditorClassIdentifier: 
+  skillName: "\u8FDE\u7EED\u731B\u51FB"
+  description: "\u5A01\u529B\u4F4E\uFF0C\u547D\u4E2D\u7387\u4E2D\r\n\u8FDE\u7EED\u653B\u51FB\u591A\u6B21"
+  skillIcon: {fileID: 21300000, guid: 38d513935403092408d114a995fcfa42, type: 3}
+  skillType: 0
+  animationTriggerName: Attack
+  staminaCosts: 0a0000000a00000009000000
+  basicDamages:
+  - 2
+  - 3
+  - 4
+  basicDefends:
+  - 0
+  - 0
+  - 0
+  hitAmends:
+  - 0
+  - 0
+  - 0
+  isConsumable: 0
+  price: 100
+  hitTimes: 4
+  hitBarConfig:
+    baseSpeed: 100
+    baseSlowdown: 100
+    actionTime: 10
+    sections:
+    - level: 1
+      axisPosition: 50
+      width: 30
+  castEffectPrefab: {fileID: 0}
+  effects: []
+  references:
+    version: 2
+    RefIds: []

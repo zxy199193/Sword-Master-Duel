@@ -12,29 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Armour_104
   m_EditorClassIdentifier: 
-  equipName: "\u968F\u4ECE\u62A4\u5177"
+  equipName: "\u9501\u5B50\u7532"
   description: 
   icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
   equipType: 1
   quality: 0
-  weight: 8
+  weight: 12
   price: 20
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
   atkFactor: 0
-  durability: 12
-  equipEffects:
-  - rid: 2591120534691905544
+  durability: 18
+  equipEffects: []
   references:
     version: 2
-    RefIds:
-    - rid: 2591120534691905544
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
-      data:
-        triggerTiming: 2
-        condition: 2
-        targetLevelMin: 2
-        targetLevelMax: 3
-        damageModifier: -10
+    RefIds: []

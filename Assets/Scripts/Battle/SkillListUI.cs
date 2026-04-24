@@ -66,7 +66,11 @@ public class SkillListUI : MonoBehaviour
                 ? battleManager.GetActualSkillCost(caster, slot) 
                 : Mathf.RoundToInt(slot.skillData.GetStaminaCost(slot.level));
             bool isNoStamina = (actualCost > availableStamina);
-            itemUI.SetAvailable(!isExhausted && !isNoStamina);
+            
+            // 麻痹判定：无法使用闪避技能
+            bool isParalyzed = caster.activeStatuses.ContainsKey(StatusType.Paralyzed) && slot.skillData.skillType == SkillType.Dodge;
+            
+            itemUI.SetAvailable(!isExhausted && !isNoStamina && !isParalyzed);
 
             // 按当前 Toggle 状态初始渲染
             itemUI.RefreshStats(showModified);

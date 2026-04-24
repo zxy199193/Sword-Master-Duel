@@ -20,13 +20,7 @@ public class BattleInitState : BattleState
         battleManager.enemyEntity.RecoverStamina();
 
         // 清理残留飘字
-        if (battleManager.floatingTextCanvas != null)
-        {
-            foreach (Transform child in battleManager.floatingTextCanvas.transform)
-            {
-                GameObject.Destroy(child.gameObject);
-            }
-        }
+        battleManager.ClearAllPopups();
 
         // UI 绑定
         if (battleManager.playerInfoUI != null) battleManager.playerInfoUI.BindEntity(battleManager.playerEntity);

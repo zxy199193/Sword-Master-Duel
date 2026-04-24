@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e36239bdf90eef4b9aeb698d13592be, type: 3}
+  m_Name: Soldier_203
+  m_EditorClassIdentifier: 
+  roleName: "\u91CD\u9A91\u58EB"
+  roleDescription: 
+  roleModel: {fileID: -1932133131, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  animatorController: {fileID: 9100000, guid: 37ef1b5d491edd34ba52154a056db91e, type: 2}
+  maxBasicLife: 10
+  maxStamina: 5
+  vitality: 0
+  endurance: 4
+  strength: 10
+  mentality: 7
+  staminaRecoverPerTurn: 3
+  equippedWeapon: {fileID: 11400000, guid: f38db799145616248b13dd9eb1ea3e21, type: 2}
+  equippedArmor: {fileID: 11400000, guid: 568f6511ca1932647b8584ffb2656a38, type: 2}
+  equippedAccessories: []
+  aiReactionTolerance: 0.4
+  npcSkills:
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: c8c81fcc60cc9ce4694de3d313541bf2, type: 2}
+      level: 0
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: f504015147a24fb4f9a49f1ba4e50ea6, type: 2}
+      level: 0
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 886cef935987f7c4694d1d60bbb13dfc, type: 2}
+      level: 0
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 08901a3ef1e892e46997bb27a9004bcf, type: 2}
+      level: 1
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 474a10b183cccc64c9891f818273ec54, type: 2}
+      level: 1
+      quantity: 2
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: f17287398bf6a46469bca1bd08f0976b, type: 2}
+      level: 1
+      quantity: 2
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 309fbf6a33108a940a6a8b1fe7845098, type: 2}
+      level: 0
+      quantity: 2
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  subSkillProbabilities:
+  - 0.5
+  - -1
+  - -1
+  - -1
+  isBoss: 0
+  goldReward: 60
+  expReward: 70

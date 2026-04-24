@@ -10,6 +10,7 @@ public class RestUIManager : MonoBehaviour
     public Text hpText;
     public Text goldText;
     public Text attrPointsText;
+    public Text daysText;
 
     [Header("UI References - Shop/Dojo Systems")]
     public ShopListUI shopListUI;
@@ -18,12 +19,32 @@ public class RestUIManager : MonoBehaviour
     public Button openRolePanelBtn;
     public RoleUIManager roleUIManager;
 
-    [Header("UI References - Rest Actions")]
-    public Button sleepBtn;
-    public Button massageBtn;
+    [Header("UI References - Main Menus")]
+    public Button homeMenuBtn;
+    public Button dojoMenuBtn;
+    public Button shopMenuBtn;
+    public Button tavernMenuBtn;
+    public Button mountainMenuBtn;
+    public Button boardMenuBtn;
+
+    [Header("UI References - Panels")]
+    public GameObject homePanel;
+    public GameObject dojoPanel;
+    public GameObject shopPanel;
+    public GameObject tavernPanel;
+    public GameObject mountainPanel;
+    public GameObject boardPanel;
+    public Button bgMaskBtn;
+
+    [Header("UI References - Continue Confirm")]
+    public GameObject continueConfirmPanel;
+    public Text continueConfirmText;
+    public Button confirmContinueBtn;
+    public Button cancelContinueBtn;
+
+    [Header("UI References - Home Actions")]
+    public Button restBtn;
     public Button workoutBtn;
-    public Button waterfallBtn;
-    public Button gachaBtn;
 
     [Header("UI References - Dojo Actions")]
     public Button learnSkillBtn;
@@ -31,8 +52,17 @@ public class RestUIManager : MonoBehaviour
     public Button masterSkillBtn;
 
     [Header("UI References - Shop Actions")]
-    public Button buyEquipBtn;
+    public Button buyWeaponBtn;
+    public Button buyArmorBtn;
+    public Button buyAccessoryBtn;
     public Button buyItemBtn;
+
+    [Header("UI References - Tavern & Board")]
+    public Button drinkBtn;
+    public Button taskBtn;
+
+    [Header("UI References - Mountain Actions")]
+    public Button waterfallBtn;
 
     [Header("UI References - Flow Control")]
     public Button continueBtn;
@@ -47,11 +77,22 @@ public class RestUIManager : MonoBehaviour
 
         if (openRolePanelBtn) openRolePanelBtn.onClick.AddListener(OnOpenRolePanelClicked);
 
-        if (sleepBtn) sleepBtn.onClick.AddListener(OnSleepClicked);
-        if (massageBtn) massageBtn.onClick.AddListener(OnMassageClicked);
+        // Bind main menus
+        if (homeMenuBtn) homeMenuBtn.onClick.AddListener(() => OpenPanel(homePanel));
+        if (dojoMenuBtn) dojoMenuBtn.onClick.AddListener(() => OpenPanel(dojoPanel));
+        if (shopMenuBtn) shopMenuBtn.onClick.AddListener(() => OpenPanel(shopPanel));
+        if (tavernMenuBtn) tavernMenuBtn.onClick.AddListener(() => OpenPanel(tavernPanel));
+        if (mountainMenuBtn) mountainMenuBtn.onClick.AddListener(() => OpenPanel(mountainPanel));
+        if (boardMenuBtn) boardMenuBtn.onClick.AddListener(() => OpenPanel(boardPanel));
+
+        // Bind actions
+        if (restBtn) restBtn.onClick.AddListener(OnRestClicked);
         if (workoutBtn) workoutBtn.onClick.AddListener(OnWorkoutClicked);
         if (waterfallBtn) waterfallBtn.onClick.AddListener(OnWaterfallClicked);
-        if (gachaBtn) gachaBtn.onClick.AddListener(OnGachaClicked);
+        if (drinkBtn) drinkBtn.onClick.AddListener(OnDrinkClicked);
+        if (taskBtn) taskBtn.onClick.AddListener(OnTaskClicked);
+
+        if (bgMaskBtn) bgMaskBtn.onClick.AddListener(CloseSubPanel);
 
         if (shopListUI) shopListUI.Init(currentShopConfig, this);
 
@@ -59,10 +100,21 @@ public class RestUIManager : MonoBehaviour
         if (upgradeSkillBtn) upgradeSkillBtn.onClick.AddListener(() => shopListUI.OpenUpgradeSkill());
         if (masterSkillBtn) masterSkillBtn.onClick.AddListener(() => shopListUI.OpenMasterSkill());
 
-        if (buyEquipBtn) buyEquipBtn.onClick.AddListener(() => shopListUI.OpenBuyEquipment());
-        if (buyItemBtn) buyItemBtn.onClick.AddListener(() => shopListUI.OpenBuyItem());
+        if (shopMenuBtn) shopMenuBtn.onClick.AddListener(() => shopListUI.OpenShop(ShopCategory.Weapon));
+
+        // 原有的分类按钮也全部指向统一商店的不同分类
+        if (buyWeaponBtn) buyWeaponBtn.onClick.AddListener(() => shopListUI.OpenShop(ShopCategory.Weapon));
+        if (buyArmorBtn) buyArmorBtn.onClick.AddListener(() => shopListUI.OpenShop(ShopCategory.Armor));
+        if (buyAccessoryBtn) buyAccessoryBtn.onClick.AddListener(() => shopListUI.OpenShop(ShopCategory.Accessory));
+        if (buyItemBtn) buyItemBtn.onClick.AddListener(() => shopListUI.OpenShop(ShopCategory.Item));
 
         if (continueBtn) continueBtn.onClick.AddListener(OnContinueClicked);
+        if (confirmContinueBtn) confirmContinueBtn.onClick.AddListener(OnConfirmContinue);
+        if (cancelContinueBtn) cancelContinueBtn.onClick.AddListener(OnCancelContinue);
+
+        // Hide panels by default
+        OpenPanel(null);
+        if (continueConfirmPanel) continueConfirmPanel.SetActive(false);
     }
 
     // ==========================================
@@ -73,6 +125,7 @@ public class RestUIManager : MonoBehaviour
     {
         gameObject.SetActive(true);
         RefreshPlayerStatusUI();
+        OpenPanel(null);
     }
 
     public void ClosePanel()
@@ -87,15 +140,76 @@ public class RestUIManager : MonoBehaviour
         var profile = GameManager.Instance.playerProfile;
 
         if (hpText) hpText.text = $"生命: {profile.currentHp} / {profile.GetFinalMaxLife()}";
-        if (goldText) goldText.text = $"金币: {profile.totalGold}";
-        if (attrPointsText) attrPointsText.text = $"未分配点数: {profile.unallocatedPoints}";
+        if (goldText) goldText.text = $"{profile.totalGold}";
+        if (attrPointsText) attrPointsText.text = $"{profile.unallocatedPoints}";
+        if (daysText) daysText.text = $"第{profile.currentRestDays}/{profile.maxRestDays}天";
     }
 
     // ==========================================
     // Private Methods - Event Handlers
     // ==========================================
 
+    public void CloseSubPanel()
+    {
+        OpenPanel(null);
+    }
+
+    private void OpenPanel(GameObject targetPanel)
+    {
+        if (bgMaskBtn) bgMaskBtn.gameObject.SetActive(targetPanel != null);
+
+        if (homePanel) homePanel.SetActive(homePanel == targetPanel);
+        if (dojoPanel) dojoPanel.SetActive(dojoPanel == targetPanel);
+        if (shopPanel) shopPanel.SetActive(shopPanel == targetPanel);
+        if (tavernPanel) tavernPanel.SetActive(tavernPanel == targetPanel);
+        if (mountainPanel) mountainPanel.SetActive(mountainPanel == targetPanel);
+        if (boardPanel) boardPanel.SetActive(boardPanel == targetPanel);
+    }
+
     private void OnContinueClicked()
+    {
+        var profile = GameManager.Instance.playerProfile;
+        if (profile.currentRestDays > 0)
+        {
+            if (continueConfirmPanel) 
+            {
+                continueConfirmPanel.SetActive(true);
+                if (continueConfirmText) continueConfirmText.text = $"距离决斗还有{profile.currentRestDays}天，是否【休息】到决斗？";
+            }
+            else ProceedToNextLevel();
+        }
+        else
+        {
+            ProceedToNextLevel();
+        }
+    }
+
+    private void OnConfirmContinue()
+    {
+        var profile = GameManager.Instance.playerProfile;
+        int remainingDays = profile.currentRestDays;
+        
+        if (remainingDays > 0)
+        {
+            int healAmountPerDay = Mathf.FloorToInt(profile.baseMaxLife * 0.4f);
+            int totalHeal = healAmountPerDay * remainingDays;
+            
+            profile.currentRestDays = 0;
+            profile.currentHp = Mathf.Min(profile.currentHp + totalHeal, profile.GetFinalMaxLife());
+            
+            Debug.Log($"一键休息：消耗了{remainingDays}天，恢复了{totalHeal}点生命。");
+        }
+
+        if (continueConfirmPanel) continueConfirmPanel.SetActive(false);
+        ProceedToNextLevel();
+    }
+
+    private void OnCancelContinue()
+    {
+        if (continueConfirmPanel) continueConfirmPanel.SetActive(false);
+    }
+
+    private void ProceedToNextLevel()
     {
         ClosePanel();
         if (GameManager.Instance != null)
@@ -106,193 +220,133 @@ public class RestUIManager : MonoBehaviour
 
     private void OnOpenRolePanelClicked()
     {
-        if (roleUIManager != null)
-        {
-            roleUIManager.ShowPanel();
-        }
-        else
-        {
-            Debug.LogWarning("未绑定 RoleUIManager，无法打开角色面板！");
-        }
+        if (roleUIManager != null) roleUIManager.ShowPanel();
+        else Debug.LogWarning("未绑定 RoleUIManager，无法打开角色面板！");
     }
 
     // ==========================================
-    // Private Methods - Rest Actions
+    // Private Methods - Actions
     // ==========================================
 
-    private void OnSleepClicked()
+    private void OnRestClicked()
     {
         var profile = GameManager.Instance.playerProfile;
-        if (profile.ConsumeGold(10))
+        if (profile.currentRestDays >= 1)
         {
-            profile.currentHp = Mathf.Min(profile.currentHp + 5, profile.GetFinalMaxLife());
-            Debug.Log("睡觉休息：花费10金币，恢复5点生命。");
+            profile.currentRestDays -= 1;
+            int healAmount = Mathf.FloorToInt(profile.baseMaxLife * 0.4f);
+            profile.currentHp = Mathf.Min(profile.currentHp + healAmount, profile.GetFinalMaxLife());
+            Debug.Log($"家里休息：消耗1天，恢复40%基础生命值 ({healAmount}点)。");
             RefreshPlayerStatusUI();
         }
-        else Debug.Log("金币不足，无法睡觉！");
-    }
-
-    private void OnMassageClicked()
-    {
-        var profile = GameManager.Instance.playerProfile;
-        if (profile.ConsumeGold(35))
-        {
-            profile.currentHp = Mathf.Min(profile.currentHp + 20, profile.GetFinalMaxLife());
-            profile.hasMassageBuff = true;
-            Debug.Log("舒筋活血：花费35金币，恢复20点生命，并获得[精力充沛]Buff。");
-            RefreshPlayerStatusUI();
-        }
-        else Debug.Log("金币不足，无法按摩！");
+        else Debug.Log("天数不足，无法休息！");
     }
 
     private void OnWorkoutClicked()
     {
         var profile = GameManager.Instance.playerProfile;
-        if (profile.ConsumeGold(25))
+        if (profile.currentRestDays >= 2)
         {
+            profile.currentRestDays -= 2;
             profile.unallocatedPoints += 1;
-            Debug.Log("挥汗如雨：花费25金币，获得1点自由属性点。");
+            Debug.Log("家里锻炼：消耗2天，获得1点自由属性点。");
             RefreshPlayerStatusUI();
         }
-        else Debug.Log("金币不足，无法锻炼！");
+        else Debug.Log("天数不足，无法锻炼！");
+    }
+
+    private void OnDrinkClicked()
+    {
+        var profile = GameManager.Instance.playerProfile;
+        if (profile.currentRestDays >= 1 && profile.totalGold >= 20)
+        {
+            profile.currentRestDays -= 1;
+            profile.ConsumeGold(20);
+            Debug.Log("酒馆饮酒：消耗1天，花费20金币。效果待定 TODO");
+            RefreshPlayerStatusUI();
+        }
+        else Debug.Log("天数或金币不足，无法饮酒！");
+    }
+
+    private void OnTaskClicked()
+    {
+        var profile = GameManager.Instance.playerProfile;
+        if (profile.currentRestDays >= 1)
+        {
+            profile.currentRestDays -= 1;
+            Debug.Log("告示牌任务：消耗1天。效果待定 TODO");
+            RefreshPlayerStatusUI();
+        }
+        else Debug.Log("天数不足，无法接任务！");
     }
 
     private void OnWaterfallClicked()
     {
         var profile = GameManager.Instance.playerProfile;
-        if (profile.currentHp > 6)
+        if (profile.currentRestDays < 1)
         {
-            profile.ConsumeHpSafely(6);
-            int gain = Random.Range(1, 3);
-            int attr = Random.Range(0, 4);
+            Debug.Log("天数不足，无法瀑布冥想！");
+            return;
+        }
 
-            switch (attr)
+        if (profile.currentHp > 5)
+        {
+            profile.currentRestDays -= 1;
+            profile.ConsumeHpSafely(5);
+            
+            int roll = Random.Range(0, 100);
+            if (roll < 30)
             {
-                case 0: profile.baseStrength += gain; Debug.Log($"瀑布冥想：损失6生命，顿悟！力量 +{gain}"); break;
-                case 1: profile.vitality += gain; Debug.Log($"瀑布冥想：损失6生命，顿悟！活力 +{gain}"); break;
-                case 2: profile.endurance += gain; Debug.Log($"瀑布冥想：损失6生命，顿悟！耐力 +{gain}"); break;
-                case 3: profile.baseMentality += gain; Debug.Log($"瀑布冥想：损失6生命，顿悟！精神 +{gain}"); break;
+                Debug.Log("瀑布冥想：消耗1天、5生命，什么也没发生...");
             }
+            else if (roll < 70) // 40%
+            {
+                int attr = Random.Range(0, 4);
+                switch (attr)
+                {
+                    case 0: profile.baseStrength += 1; Debug.Log($"瀑布冥想：力量 +1"); break;
+                    case 1: profile.vitality += 1; Debug.Log($"瀑布冥想：活力 +1"); break;
+                    case 2: profile.endurance += 1; Debug.Log($"瀑布冥想：耐力 +1"); break;
+                    case 3: profile.baseMentality += 1; Debug.Log($"瀑布冥想：精神 +1"); break;
+                }
+            }
+            else if (roll < 90) // 20%
+            {
+                var lv1Skills = GetUpgradableSkills(profile, 1);
+                if (lv1Skills.Count > 0)
+                {
+                    var target = lv1Skills[Random.Range(0, lv1Skills.Count)];
+                    target.level++;
+                    Debug.Log($"瀑布冥想：1级招式 [{target.skillData.skillName}] 升到了Lv.2");
+                }
+                else Debug.Log("瀑布冥想：本该升级1级招式，但没有符合条件的招式。");
+            }
+            else // 10%
+            {
+                var lv2Skills = GetUpgradableSkills(profile, 2);
+                if (lv2Skills.Count > 0)
+                {
+                    var target = lv2Skills[Random.Range(0, lv2Skills.Count)];
+                    target.level++;
+                    Debug.Log($"瀑布冥想：2级招式 [{target.skillData.skillName}] 升到了Lv.3");
+                }
+                else Debug.Log("瀑布冥想：本该升级2级招式，但没有符合条件的招式。");
+            }
+
             RefreshPlayerStatusUI();
         }
         else Debug.Log("生命体征过低，无法承受瀑布的冲击！");
     }
 
-    private void OnGachaClicked()
+    private System.Collections.Generic.List<SkillSlot> GetUpgradableSkills(PlayerProfile profile, int levelReq)
     {
-        var profile = GameManager.Instance.playerProfile;
-        if (!profile.ConsumeGold(10))
-        {
-            Debug.Log("金币不足，无法摇奖！");
-            return;
-        }
+        var list = new System.Collections.Generic.List<SkillSlot>();
+        if (profile.equippedAttackSkills != null) list.AddRange(profile.equippedAttackSkills);
+        if (profile.equippedDefendSkills != null) list.AddRange(profile.equippedDefendSkills);
+        if (profile.equippedSpecialSkills != null) list.AddRange(profile.equippedSpecialSkills);
+        if (profile.storageSkillsAndItems != null) list.AddRange(profile.storageSkillsAndItems);
 
-        int roll = Random.Range(0, 100);
-
-        if (roll < 40)
-        {
-            profile.currentHp = Mathf.Min(profile.currentHp + 3, profile.GetFinalMaxLife());
-            Debug.Log("摇奖结果：获得微小恢复，生命 +3");
-        }
-        else if (roll < 60)
-        {
-            profile.unallocatedPoints += 1;
-            Debug.Log("摇奖结果：灵光一闪，未分配属性点 +1");
-        }
-        else if (roll < 80)
-        {
-            if (currentShopConfig != null && currentShopConfig.availableItems.Count > 0)
-            {
-                var randomItem = currentShopConfig.availableItems[Random.Range(0, currentShopConfig.availableItems.Count)];
-                
-                // 修复：直接实现添加道具或叠加数量的逻辑
-                bool found = false;
-                if (profile.equippedItems != null)
-                {
-                    foreach (var slot in profile.equippedItems)
-                    {
-                        if (slot != null && slot.skillData == randomItem) { slot.quantity++; found = true; break; }
-                    }
-                }
-                if (!found && profile.storageSkillsAndItems != null)
-                {
-                    foreach (var slot in profile.storageSkillsAndItems)
-                    {
-                        if (slot != null && slot.skillData == randomItem) { slot.quantity++; found = true; break; }
-                    }
-                }
-                if (!found)
-                {
-                    profile.storageSkillsAndItems.Add(new SkillSlot { skillData = randomItem, level = 1, quantity = 1 });
-                }
-                Debug.Log($"摇奖结果：获得道具 [{randomItem.skillName}]");
-            }
-            else 
-            {
-                profile.totalGold += 10;
-                Debug.Log("摇奖结果：道具池为空，退还10金币");
-            }
-        }
-        else if (roll < 90)
-        {
-            if (currentShopConfig != null && currentShopConfig.availableSkills.Count > 0)
-            {
-                var randomSkill = currentShopConfig.availableSkills[Random.Range(0, currentShopConfig.availableSkills.Count)];
-                
-                // 修复：检查是否已有该招式，如果没有才添加
-                bool alreadyHas = false;
-                var allSlots = new System.Collections.Generic.List<SkillSlot>();
-                if (profile.equippedAttackSkills != null) allSlots.AddRange(profile.equippedAttackSkills);
-                if (profile.equippedDefendSkills != null) allSlots.AddRange(profile.equippedDefendSkills);
-                if (profile.equippedSpecialSkills != null) allSlots.AddRange(profile.equippedSpecialSkills);
-                if (profile.storageSkillsAndItems != null) allSlots.AddRange(profile.storageSkillsAndItems);
-
-                foreach (var slot in allSlots)
-                {
-                    if (slot != null && slot.skillData == randomSkill) { alreadyHas = true; break; }
-                }
-
-                if (!alreadyHas)
-                {
-                    profile.storageSkillsAndItems.Add(new SkillSlot { skillData = randomSkill, level = 1, quantity = 1 });
-                    Debug.Log($"摇奖结果：获得招式秘籍 [{randomSkill.skillName}]");
-                }
-                else
-                {
-                    // 如果已经有了，转换成 20 金币
-                    profile.totalGold += 20;
-                    Debug.Log($"摇奖结果：获得了已有的招式秘籍 [{randomSkill.skillName}]，自动转化为 20 金币");
-                }
-            }
-            else 
-            {
-                profile.totalGold += 10;
-                Debug.Log("摇奖结果：招式池为空，退还10金币");
-            }
-        }
-        else
-        {
-            // 修复：随机找一个等级小于3的已装备招式提升1级
-            var upgradeCandidates = new System.Collections.Generic.List<SkillSlot>();
-            if (profile.equippedAttackSkills != null) upgradeCandidates.AddRange(profile.equippedAttackSkills);
-            if (profile.equippedDefendSkills != null) upgradeCandidates.AddRange(profile.equippedDefendSkills);
-            if (profile.equippedSpecialSkills != null) upgradeCandidates.AddRange(profile.equippedSpecialSkills);
-
-            upgradeCandidates.RemoveAll(s => s == null || s.skillData == null || s.level >= 3 || s.skillData.skillType == SkillType.Item);
-
-            if (upgradeCandidates.Count > 0)
-            {
-                var targetSlot = upgradeCandidates[Random.Range(0, upgradeCandidates.Count)];
-                targetSlot.level++;
-                Debug.Log($"摇奖结果：神秘力量涌入，你装备的招式 [{targetSlot.skillData.skillName}] 提升到了 Lv.{targetSlot.level}！");
-            }
-            else
-            {
-                profile.totalGold += 10;
-                Debug.Log("摇奖结果：你的装备中没有可以升级的招式，神秘力量散去，退还10金币。");
-            }
-        }
-
-        RefreshPlayerStatusUI();
+        list.RemoveAll(s => s == null || s.skillData == null || s.skillData.skillType == SkillType.Item || s.level != levelReq);
+        return list;
     }
 }

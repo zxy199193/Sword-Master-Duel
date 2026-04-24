@@ -13,19 +13,30 @@ MonoBehaviour:
   m_Name: Armour_201
   m_EditorClassIdentifier: 
   equipName: "\u677F\u7532"
-  description: 
+  description: "\u95EA\u907F\u62DB\u5F0FHit Down+6"
   icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
   equipType: 1
   quality: 1
-  weight: 18
+  weight: 20
   price: 30
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
   atkFactor: 0
   durability: 35
-  equipEffects: []
+  equipEffects:
+  - rid: 2591120632697323523
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2591120632697323523
+      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 2
+        condition: 1
+        targetLevelMin: 1
+        targetLevelMax: 1
+        damageModifier: -999

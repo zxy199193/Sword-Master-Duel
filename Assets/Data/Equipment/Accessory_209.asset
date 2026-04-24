@@ -21,11 +21,19 @@ MonoBehaviour:
   price: 30
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 3
   bonusMentality: 0
   atkFactor: 1
   durability: 0
-  equipEffects: []
+  equipEffects:
+  - rid: 2591120646924664849
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2591120646924664849
+      type: {class: GlobalBattleRules/StatusImmunityEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 0
+        immuneStatus: 16

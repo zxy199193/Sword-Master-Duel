@@ -2430,7 +2430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8252468561662332031, guid: 8806d3d4f9100b3429157db6f84f452f, type: 3}
       propertyPath: m_Text
-      value: "\u6BCF\u70B9\u6D3B\u529B\uFF1A\n-\u589E\u52A05\u70B9\u751F\u547D\u503C\u4E0A\u9650\n-\u589E\u52A01\u70B9\u751F\u547D\u6062\u590D"
+      value: "\u6BCF\u70B9\u6D3B\u529B\uFF1A\n-\u589E\u52A05\u70B9\u751F\u547D\u503C\u4E0A\u9650\n\n\u6BCF2\u70B9\u6D3B\u529B\uFF1A\n-\u589E\u52A01\u70B9\u751F\u547D\u6062\u590D"
       objectReference: {fileID: 0}
     - target: {fileID: 8252468561662332031, guid: 8806d3d4f9100b3429157db6f84f452f, type: 3}
       propertyPath: m_FontData.m_FontSize
@@ -7762,7 +7762,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8252468561662332031, guid: 8806d3d4f9100b3429157db6f84f452f, type: 3}
       propertyPath: m_Text
-      value: "\u6BCF\u70B9\u529B\u91CF\uFF1A\n-\u63D0\u5347\u653B\u51FB\u62DB\u5F0F2\u70B9\u57FA\u7840\u4F24\u5BB3"
+      value: "\u6BCF\u70B9\u529B\u91CF\uFF1A\n-\u63D0\u5347\u653B\u51FB\u62DB\u5F0F1\u70B9\u57FA\u7840\u4F24\u5BB3"
       objectReference: {fileID: 0}
     - target: {fileID: 8870709495815096347, guid: 8806d3d4f9100b3429157db6f84f452f, type: 3}
       propertyPath: m_Pivot.x
@@ -9688,7 +9688,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Text
-      value: "\r\n\u8F7B\uFF08< 30%\uFF09\r\n-\u6253\u51FB\u6761\u6ED1\u5757\u51CF\u901F\u5EA6+30%\uFF1B\r\n-\u653B\u51FB/\u9632\u5FA1/\u95EA\u907F\u62DB\u5F0F\u7684\u4F53\u529B\u6D88\u8017-1\r\n\r\n\u9002\u4E2D\uFF0830%~100%\uFF09\r\n-\u65E0\u989D\u5916\u6548\u679C\r\n\r\n\u8D85\u91CD\uFF08100%~150%\uFF09\r\n-\u6253\u51FB\u6761\u6ED1\u5757\u51CF\u901F\u5EA6-30%\uFF1B\r\n-\u653B\u51FB/\u9632\u5FA1/\u95EA\u907F\u62DB\u5F0F\u7684\u4F53\u529B\u6D88\u8017+1\r\n\r\n\u6781\u91CD\uFF08>150%\uFF09\r\n-\u6253\u51FB\u6761\u6ED1\u5757\u51CF\u901F\u5EA6-60%\uFF1B\r\n-\u653B\u51FB/\u9632\u5FA1/\u95EA\u907F\u62DB\u5F0F\u7684\u4F53\u529B\u6D88\u8017+2"
+      value: "\r\n\u8F7B\uFF08< 30%\uFF09\r\n-\u6253\u51FB\u6761\u6ED1\u5757\u51CF\u901F\u5EA6+30%\uFF1B\r\n-\u653B\u51FB/\u95EA\u907F\u62DB\u5F0F\u7684\u4F53\u529B\u6D88\u8017-1\r\n\r\n\u9002\u4E2D\uFF0830%~100%\uFF09\r\n-\u65E0\u989D\u5916\u6548\u679C\r\n\r\n\u8D85\u91CD\uFF08100%~150%\uFF09\r\n-\u6253\u51FB\u6761\u6ED1\u5757\u51CF\u901F\u5EA6-30%\uFF1B\r\n-\u653B\u51FB/\u95EA\u907F\u62DB\u5F0F\u7684\u4F53\u529B\u6D88\u8017+1\r\n\r\n\u6781\u91CD\uFF08>150%\uFF09\r\n-\u6253\u51FB\u6761\u6ED1\u5757\u51CF\u901F\u5EA6-60%\uFF1B\r\n-\u653B\u51FB/\u95EA\u907F\u62DB\u5F0F\u7684\u4F53\u529B\u6D88\u8017+2"
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_FontData.m_MinSize

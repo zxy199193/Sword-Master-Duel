@@ -12,6 +12,8 @@ public class SkillSlot
 
     [Tooltip("持有数量 (仅道具/消耗品有效)")]
     public int quantity = 1;
+
+    [HideInInspector] public SkillSlot sourceSlot; // 引用原始存档位，用于同步消耗
 }
 
 [CreateAssetMenu(fileName = "NewRole", menuName = "SwordMaster/Role Data")]

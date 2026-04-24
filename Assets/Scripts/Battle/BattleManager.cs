@@ -15,9 +15,21 @@ public class BattleManager : MonoBehaviour
     public RoleInfoUI playerInfoUI;
     public RoleInfoUI enemyInfoUI;
 
-    [Header("固定飘字位置 (UI Anchors)")]
+    [Header("飘字挂点 (1) 通用 - Miss/Debuff等提示文字")]
+    public Transform playerGeneralAnchor;
+    public Transform enemyGeneralAnchor;
+    [Header("飘字挂点 (2) 战斗伤害 - 随机偏移")]
     public Transform playerDamageAnchor;
     public Transform enemyDamageAnchor;
+    [Header("飘字挂点 (3) 体力恢复")]
+    public Transform playerStaminaRecoverAnchor;
+    public Transform enemyStaminaRecoverAnchor;
+    [Header("飘字挂点 (4) 生命恢复")]
+    public Transform playerHpRecoverAnchor;
+    public Transform enemyHpRecoverAnchor;
+    [Header("飘字挂点 (5) 行动信息")]
+    public Transform playerActionInfoAnchor;
+    public Transform enemyActionInfoAnchor;
 
     [Header("特效预制体 (Effect Prefabs)")]
     public GameObject hitEffectPrefab;
@@ -28,7 +40,7 @@ public class BattleManager : MonoBehaviour
     public UnityEngine.UI.Text broadcastText;
 
     [Header("VFX & Prefabs")]
-    public Canvas floatingTextCanvas;
+    public GameObject actionInfoPrefab;
     public GameObject normalDamagePrefab;
     public GameObject critDamagePrefab;
     public GameObject missPrefab;
@@ -196,7 +208,7 @@ public class BattleManager : MonoBehaviour
                 if (skill.skillData.skillType == SkillType.Attack || skill.skillData.skillType == SkillType.Dodge)
                 {
                     entity.TakeDamage(3);
-                    SpawnDamagePopup(entity.isPlayer, "<color=#8B0000>扎伤 -3</color>", 1);
+                    SpawnGeneralPopup(entity.isPlayer, "<color=#8B0000>扎伤 -3</color>");
                     Debug.Log($"[场地魔法] {entity.roleData.roleName} 因为动作幅度过大，触发了钉刺，受到 3 点伤害！");
                 }
             }
@@ -216,35 +228,23 @@ public class BattleManager : MonoBehaviour
         ChangeState(new ActionBroadcastState(this));
     }
 
-    public void SpawnDamagePopup(Vector3 targetPosition, string textContent, int hitLevel)
-    {
-        GameObject prefabToSpawn = normalDamagePrefab;
-        if (hitLevel == 0) prefabToSpawn = missPrefab;
-        else if (hitLevel >= 2) prefabToSpawn = critDamagePrefab;
 
-        if (prefabToSpawn == null || floatingTextCanvas == null) return;
-        Vector3 worldPos = targetPosition + Vector3.up * 1.5f;
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
-        GameObject popupObj = Instantiate(prefabToSpawn, floatingTextCanvas.transform);
-        popupObj.transform.position = new Vector3(screenPos.x, screenPos.y, 0);
-
-        DamagePopup popupScript = popupObj.GetComponent<DamagePopup>();
-        if (popupScript != null) popupScript.Setup(textContent);
-    }
     private void ApplyNonAttackSkills(BattleEntity entity, SkillSlot slot)
     {
         if (slot == null || slot.skillData == null) return;
 
         if (slot.skillData.skillType == SkillType.Defend)
         {
-            entity.tempDamageReduction = slot.skillData.GetBasicDefend(slot.level) + entity.GetFinalEndurance();
+            int equipBonus = GetSkillTypeBonus(entity, SkillType.Defend);
+            entity.tempDamageReduction = slot.skillData.GetBasicDefend(slot.level) + entity.GetFinalEndurance() + equipBonus;
             entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level);
         }
         else if (slot.skillData.skillType == SkillType.Dodge)
         {
             // 如果有灵动状态，额外提供 6 点判定缩减！
             float agileBonus = entity.activeStatuses.ContainsKey(StatusType.Agile) ? 6f : 0f;
-            entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level) - entity.GetFinalMentality() - agileBonus;
+            float equipBonus = GetSkillTypeBonus(entity, SkillType.Dodge);
+            entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level) - entity.GetFinalMentality() - agileBonus - equipBonus;
         }
 
         // 触发闪避/防御技能自带的特效 (比如启动免疫状态)
@@ -266,6 +266,7 @@ public class BattleManager : MonoBehaviour
         {
             if (slot.quantity <= 0) return;
             slot.quantity--;
+            if (slot.sourceSlot != null) slot.sourceSlot.quantity--;
         }
 
         if (slot.skillData.castEffectPrefab != null)
@@ -280,7 +281,7 @@ public class BattleManager : MonoBehaviour
                 // 免疫拦截机制：如果是害人的特效，且目标处于后撤步的免疫状态，直接没收效果！
                 if (effect.IsHarmfulToTarget() && target.isImmuneToSubSkills)
                 {
-                    SpawnDamagePopup(target.isPlayer, "<color=#888888>免疫!</color>", 0);
+                    SpawnGeneralPopup(target.isPlayer, "<color=#888888>免疫!</color>");
                     Debug.Log($"[战术拦截] {target.roleData.roleName} 通过后撤步免疫了 {slot.skillData.skillName} 的负面效果！");
                     continue;
                 }
@@ -308,6 +309,96 @@ public class BattleManager : MonoBehaviour
 
         DamagePopup popupScript = popupObj.GetComponent<DamagePopup>();
         if (popupScript != null) popupScript.Setup(textContent);
+    }
+
+    public void SpawnRecoverPopup(bool isPlayer, string textContent, bool isHp)
+    {
+        if (normalDamagePrefab == null) return;
+
+        Transform targetAnchor = isPlayer
+            ? (isHp ? playerHpRecoverAnchor : playerStaminaRecoverAnchor)
+            : (isHp ? enemyHpRecoverAnchor : enemyStaminaRecoverAnchor);
+
+        if (targetAnchor == null) return;
+
+        GameObject popupObj = Instantiate(normalDamagePrefab, targetAnchor);
+        popupObj.transform.localPosition = Vector3.zero;
+
+        DamagePopup popupScript = popupObj.GetComponent<DamagePopup>();
+        if (popupScript != null) popupScript.Setup(textContent);
+    }
+
+    /// <summary>
+    /// 通用飘字：固定挂点，用于 Miss、状态提示、特效文字等非伤害数值信息
+    /// </summary>
+    public void SpawnGeneralPopup(bool isPlayer, string textContent)
+    {
+        if (normalDamagePrefab == null) return;
+
+        Transform targetAnchor = isPlayer ? playerGeneralAnchor : enemyGeneralAnchor;
+        if (targetAnchor == null) return;
+
+        GameObject popupObj = Instantiate(normalDamagePrefab, targetAnchor);
+        popupObj.transform.localPosition = Vector3.zero;
+
+        DamagePopup popupScript = popupObj.GetComponent<DamagePopup>();
+        if (popupScript != null) popupScript.Setup(textContent);
+    }
+
+    // ==========================================
+    // 行动信息工具方法
+    // ==========================================
+
+    /// <summary>
+    /// 根据技能类型返回带颜色标签的技能名，用于行动信息文字
+    /// </summary>
+    private string GetSkillNameColored(SkillData skill)
+    {
+        if (skill == null) return "???";
+        string colorHex = skill.skillType switch
+        {
+            SkillType.Attack  => "#FF4444",
+            SkillType.Defend  => "#4499FF",
+            SkillType.Dodge   => "#4499FF",
+            SkillType.Special => "#44CC44",
+            SkillType.Item    => "#CD853F",
+            _                 => "#FFFFFF"
+        };
+        return $"<color={colorHex}>《{skill.skillName}》</color>";
+    }
+
+    /// <summary>
+    /// 在指定挂点生成行动信息气泡（1s显示 + 0.5s淡出）
+    /// </summary>
+    private void SpawnActionInfo(Transform anchor, string text)
+    {
+        if (actionInfoPrefab == null || anchor == null) return;
+        GameObject obj = Instantiate(actionInfoPrefab, anchor);
+        obj.transform.localPosition = Vector3.zero;
+        ActionInfoPopup popup = obj.GetComponent<ActionInfoPopup>();
+        if (popup != null) popup.Setup(text);
+    }
+
+    /// <summary>
+    /// 清理所有挂点下的残留飘字（战斗开始/结束时调用）
+    /// </summary>
+    public void ClearAllPopups()
+    {
+        Transform[] allAnchors = new Transform[]
+        {
+            playerGeneralAnchor,        enemyGeneralAnchor,
+            playerDamageAnchor,         enemyDamageAnchor,
+            playerStaminaRecoverAnchor, enemyStaminaRecoverAnchor,
+            playerHpRecoverAnchor,      enemyHpRecoverAnchor,
+            playerActionInfoAnchor,     enemyActionInfoAnchor,
+        };
+
+        foreach (var anchor in allAnchors)
+        {
+            if (anchor == null) continue;
+            foreach (Transform child in anchor)
+                GameObject.Destroy(child.gameObject);
+        }
     }
 
     public void SpawnHitEffect(Transform characterRoot)
@@ -368,12 +459,12 @@ public class BattleManager : MonoBehaviour
             cost = Mathf.Max(0, cost - 1);
         }
 
-        // 负重效果：仅对攻击/防御/闪避招式生效（仅玩家）
+        // 负重效果：仅对攻击/闪避招式生效，防御招式不受负重影响（仅玩家）
         var skillType = slot.skillData.skillType;
-        bool isMainSkillType = (skillType == SkillType.Attack || skillType == SkillType.Defend || skillType == SkillType.Dodge);
-        if (isMainSkillType && entity.isPlayer && GameManager.Instance != null)
+        bool isMainSkillType = (skillType == SkillType.Attack || skillType == SkillType.Dodge);
+        if (isMainSkillType && entity.isPlayer)
         {
-            var loadState = GameManager.Instance.playerProfile.GetLoadWeightState();
+            var loadState = entity.GetEffectiveLoadState();
             switch (loadState)
             {
                 case GlobalBattleRules.LoadWeightState.Light:   cost = Mathf.Max(0, cost - 1); break;
@@ -437,58 +528,53 @@ public class BattleManager : MonoBehaviour
         bool pSubIsSelf = currentPlayerSubSkill != null && IsSelfTargetSkill(currentPlayerSubSkill.skillData);
         bool eSubIsSelf = currentEnemySubSkill != null && IsSelfTargetSkill(currentEnemySubSkill.skillData);
 
-        // (1) 我方 - 增益/恢复道具 (如：步法、调息)
-        if (currentPlayerSubSkill != null && pSubIsSelf)
+        // 阶段 A：双方自身目的恢复道具（同时显示）
+        bool pHasSelfSub = currentPlayerSubSkill != null && pSubIsSelf;
+        bool eHasSelfSub = currentEnemySubSkill != null && eSubIsSelf;
+        if (pHasSelfSub || eHasSelfSub)
         {
-            ShowBroadcast($"我方使用了【{currentPlayerSubSkill.skillData.skillName}】");
-            yield return new WaitForSeconds(1.5f);
-            ExecuteSecondaryAction(playerEntity, enemyEntity, currentPlayerSubSkill);
-        }
-
-        // (2) 敌方 - 增益/恢复道具
-        if (currentEnemySubSkill != null && eSubIsSelf)
-        {
-            ShowBroadcast($"对方使用了【{currentEnemySubSkill.skillData.skillName}】");
-            yield return new WaitForSeconds(1.5f);
-            ExecuteSecondaryAction(enemyEntity, playerEntity, currentEnemySubSkill);
-        }
-
-        // (3) & (4) 我方和敌方 - 防御/闪避
-        if (currentPlayerSkill != null && currentPlayerSkill.skillData != null && (currentPlayerSkill.skillData.skillType == SkillType.Defend || currentPlayerSkill.skillData.skillType == SkillType.Dodge))
-        {
-            ShowBroadcast($"我方使用了【{currentPlayerSkill.skillData.skillName}】");
+            if (pHasSelfSub) SpawnActionInfo(playerActionInfoAnchor, $"使用{GetSkillNameColored(currentPlayerSubSkill.skillData)}");
+            if (eHasSelfSub) SpawnActionInfo(enemyActionInfoAnchor,  $"使用{GetSkillNameColored(currentEnemySubSkill.skillData)}");
             yield return new WaitForSeconds(1f);
-            ApplyNonAttackSkills(playerEntity, currentPlayerSkill);
+            if (pHasSelfSub) ExecuteSecondaryAction(playerEntity, enemyEntity, currentPlayerSubSkill);
+            if (eHasSelfSub) ExecuteSecondaryAction(enemyEntity, playerEntity, currentEnemySubSkill);
+            yield return new WaitForSeconds(0.5f);
         }
 
-        if (currentEnemySkill != null && currentEnemySkill.skillData != null && (currentEnemySkill.skillData.skillType == SkillType.Defend || currentEnemySkill.skillData.skillType == SkillType.Dodge))
+        // 阶段 B：双方防守/闪避主技能（同时显示）
+        bool pDefends = currentPlayerSkill != null && currentPlayerSkill.skillData != null &&
+                        (currentPlayerSkill.skillData.skillType == SkillType.Defend ||
+                         currentPlayerSkill.skillData.skillType == SkillType.Dodge);
+        bool eDefends = currentEnemySkill != null && currentEnemySkill.skillData != null &&
+                        (currentEnemySkill.skillData.skillType == SkillType.Defend ||
+                         currentEnemySkill.skillData.skillType == SkillType.Dodge);
+        if (pDefends || eDefends)
         {
-            ShowBroadcast($"对方使用了【{currentEnemySkill.skillData.skillName}】");
+            if (pDefends) SpawnActionInfo(playerActionInfoAnchor, $"使用{GetSkillNameColored(currentPlayerSkill.skillData)}");
+            if (eDefends) SpawnActionInfo(enemyActionInfoAnchor,  $"使用{GetSkillNameColored(currentEnemySkill.skillData)}");
             yield return new WaitForSeconds(1f);
-            ApplyNonAttackSkills(enemyEntity, currentEnemySkill);
+            if (pDefends) ApplyNonAttackSkills(playerEntity, currentPlayerSkill);
+            if (eDefends) ApplyNonAttackSkills(enemyEntity,  currentEnemySkill);
+            yield return new WaitForSeconds(0.5f);
         }
 
-        // (5) 我方 - 有害特殊/道具 (如：炸弹)
-        if (currentPlayerSubSkill != null && !pSubIsSelf)
+        // 阶段 C：双方有害副技能（同时显示）
+        bool pHasHarmSub = currentPlayerSubSkill != null && !pSubIsSelf;
+        bool eHasHarmSub = currentEnemySubSkill != null && !eSubIsSelf;
+        if (pHasHarmSub || eHasHarmSub)
         {
-            ShowBroadcast($"我方使用了【{currentPlayerSubSkill.skillData.skillName}】");
-            yield return new WaitForSeconds(1.5f);
-            ExecuteSecondaryAction(playerEntity, enemyEntity, currentPlayerSubSkill);
+            if (pHasHarmSub) SpawnActionInfo(playerActionInfoAnchor, $"使用{GetSkillNameColored(currentPlayerSubSkill.skillData)}");
+            if (eHasHarmSub) SpawnActionInfo(enemyActionInfoAnchor,  $"使用{GetSkillNameColored(currentEnemySubSkill.skillData)}");
+            yield return new WaitForSeconds(1f);
+            if (pHasHarmSub) ExecuteSecondaryAction(playerEntity, enemyEntity, currentPlayerSubSkill);
+            if (eHasHarmSub) ExecuteSecondaryAction(enemyEntity, playerEntity, currentEnemySubSkill);
+            yield return new WaitForSeconds(0.5f);
         }
 
-        // (6) 敌方 - 有害特殊/道具
-        if (currentEnemySubSkill != null && !eSubIsSelf)
-        {
-            ShowBroadcast($"对方使用了【{currentEnemySubSkill.skillData.skillName}】");
-            yield return new WaitForSeconds(1.5f);
-            ExecuteSecondaryAction(enemyEntity, playerEntity, currentEnemySubSkill);
-        }
-
-        HideBroadcast();
         isPlayerAttackResolved = false;
         isEnemyAttackResolved = false;
 
-        // (7) & (8) 进入攻击互砍结算
+        // 阶段 D+E：攻击阶段（由 ProceedNextAttack 驱动）
         ProceedNextAttack();
     }
 
@@ -503,25 +589,25 @@ public class BattleManager : MonoBehaviour
         if (!isPlayerAttackResolved && currentPlayerSkill != null && currentPlayerSkill.skillData != null && currentPlayerSkill.skillData.skillType == SkillType.Attack)
         {
             isPlayerAttackResolved = true;
-            StartCoroutine(DelayAttackState(new HitBarActionState(this), $"我方发动了攻击，使用【{currentPlayerSkill.skillData.skillName}】"));
+            StartCoroutine(DelayAttackState(new HitBarActionState(this), currentPlayerSkill.skillData, true));
             return;
         }
 
         if (!isEnemyAttackResolved && currentEnemySkill != null && currentEnemySkill.skillData != null && currentEnemySkill.skillData.skillType == SkillType.Attack)
         {
             isEnemyAttackResolved = true;
-            StartCoroutine(DelayAttackState(new EnemyActionState(this), $"对方发动了攻击，使用【{currentEnemySkill.skillData.skillName}】"));
+            StartCoroutine(DelayAttackState(new EnemyActionState(this), currentEnemySkill.skillData, false));
             return;
         }
 
         CheckBattleEndOrNextTurn();
     }
 
-    private IEnumerator DelayAttackState(BattleState nextState, string msg)
+    private IEnumerator DelayAttackState(BattleState nextState, SkillData attackSkill, bool isPlayerAttacking)
     {
-        ShowBroadcast(msg);
-        yield return new WaitForSeconds(1f);
-        HideBroadcast();
+        Transform anchor = isPlayerAttacking ? playerActionInfoAnchor : enemyActionInfoAnchor;
+        SpawnActionInfo(anchor, $"发动{GetSkillNameColored(attackSkill)}");
+        yield return new WaitForSeconds(1.5f); // 1s显示 + 0.5s淡出，完全消失后进入下一状态
         ChangeState(nextState);
     }
 
@@ -555,10 +641,16 @@ public class BattleManager : MonoBehaviour
 
         int totalMod = 0;
         totalMod += RunEquipEffect(profile.equippedWeapon, timing, hitLevel);
-        totalMod += RunEquipEffect(profile.equippedArmor, timing, hitLevel);
-        foreach (var acc in profile.equippedAccessories)
+        if (playerEntity.currentExtraLife > 0)
         {
-            totalMod += RunEquipEffect(acc, timing, hitLevel);
+            totalMod += RunEquipEffect(profile.equippedArmor, timing, hitLevel);
+        }
+        if (profile.equippedAccessories != null)
+        {
+            foreach (var acc in profile.equippedAccessories)
+            {
+                totalMod += RunEquipEffect(acc, timing, hitLevel);
+            }
         }
         return totalMod;
     }
@@ -575,5 +667,34 @@ public class BattleManager : MonoBehaviour
             }
         }
         return mod;
+    }
+
+    public int GetSkillTypeBonus(BattleEntity entity, SkillType type)
+    {
+        if (!entity.isPlayer || GameManager.Instance == null) return 0;
+        PlayerProfile profile = GameManager.Instance.playerProfile;
+
+        int totalBonus = 0;
+        System.Action<EquipmentData> checkEquip = (equip) =>
+        {
+            if (equip == null || equip.equipEffects == null) return;
+            foreach (var effect in equip.equipEffects)
+            {
+                if (effect is GlobalBattleRules.SkillTypeModifierEquipEffect mod && mod.targetSkillType == type)
+                    totalBonus += mod.bonusValue;
+            }
+        };
+
+        checkEquip(profile.equippedWeapon);
+        if (entity.currentExtraLife > 0)
+        {
+            checkEquip(profile.equippedArmor);
+        }
+        if (profile.equippedAccessories != null)
+        {
+            foreach (var acc in profile.equippedAccessories) checkEquip(acc);
+        }
+
+        return totalBonus;
     }
 }

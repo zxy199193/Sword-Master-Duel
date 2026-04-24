@@ -44,8 +44,8 @@ public class RoleInfoUI : MonoBehaviour
         if (roleNameText != null) roleNameText.text = entity.roleData.roleName;
 
         // 初始化基础数值
-        basicHpSlider.maxValue = entity.roleData.maxBasicLife;
-        staminaSlider.maxValue = entity.roleData.maxStamina;
+        basicHpSlider.maxValue = entity.GetFinalMaxLife();
+        staminaSlider.maxValue = entity.GetFinalMaxStamina();
 
         // 订阅事件
         entity.OnHpChanged += UpdateHpUI;
@@ -65,7 +65,9 @@ public class RoleInfoUI : MonoBehaviour
     private void UpdateHpUI()
     {
         // 1. 处理基础血条 (Basic HP)
-        float basicWidth = targetEntity.roleData.maxBasicLife * hpToWidthMultiplier;
+        int finalMaxHp = targetEntity.GetFinalMaxLife();
+        basicHpSlider.maxValue = finalMaxHp;
+        float basicWidth = finalMaxHp * hpToWidthMultiplier;
         SetRectWidth(basicHpSlider.GetComponent<RectTransform>(), basicWidth);
 
         basicHpSlider.value = targetEntity.currentBasicLife;

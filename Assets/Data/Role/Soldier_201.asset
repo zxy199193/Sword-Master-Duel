@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e36239bdf90eef4b9aeb698d13592be, type: 3}
+  m_Name: Soldier_201
+  m_EditorClassIdentifier: 
+  roleName: "\u536B\u5175"
+  roleDescription: 
+  roleModel: {fileID: -1178385027, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  animatorController: {fileID: 9100000, guid: 8bbb17bb48cd18940b8bca5f343e5bd6, type: 2}
+  maxBasicLife: 10
+  maxStamina: 5
+  vitality: 1
+  endurance: 2
+  strength: 1
+  mentality: 1
+  staminaRecoverPerTurn: 3
+  equippedWeapon: {fileID: 11400000, guid: 4161d1e11d59a3940b9ef16f7150ae73, type: 2}
+  equippedArmor: {fileID: 11400000, guid: f7a213886925a5343b497fd431ee8930, type: 2}
+  equippedAccessories: []
+  aiReactionTolerance: 0.5
+  npcSkills:
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 71f0d27139a6ee7478e95946f2344d08, type: 2}
+      level: 0
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: c8c81fcc60cc9ce4694de3d313541bf2, type: 2}
+      level: 0
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
+      level: 0
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
+      level: 0
+      quantity: 2
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  subSkillProbabilities:
+  - 0.5
+  - -1
+  - -1
+  - -1
+  isBoss: 0
+  goldReward: 20
+  expReward: 35

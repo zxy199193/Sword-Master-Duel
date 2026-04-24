@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Accessory_202
   m_EditorClassIdentifier: 
   equipName: "\u51B7\u9759\u624B\u73AF"
-  description: "\u6218\u6597\u5F00\u59CB\u83B7\u5F97\u3010\u51B7\u9759\u3011\u72B6\u60012\u56DE\u5408"
+  description: "\u6218\u6597\u5F00\u59CB\u83B7\u5F97\u3010\u96C6\u4E2D\u3011\u72B6\u60012\u56DE\u5408"
   icon: {fileID: 21300000, guid: 0cda919111e50b3469fe247bad91e8d7, type: 3}
   equipType: 2
   quality: 1
@@ -21,11 +21,21 @@ MonoBehaviour:
   price: 30
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 3
   bonusMentality: 0
   atkFactor: 1
   durability: 0
-  equipEffects: []
+  equipEffects:
+  - rid: 2591120646924664842
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2591120646924664842
+      type: {class: GlobalBattleRules/ApplyStatusEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 0
+        statusType: 1
+        duration: 2
+        applyToSelf: 1

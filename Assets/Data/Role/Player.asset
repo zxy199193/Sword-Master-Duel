@@ -22,7 +22,7 @@ MonoBehaviour:
   endurance: 0
   strength: 1
   mentality: 1
-  staminaRecoverPerTurn: 2
+  staminaRecoverPerTurn: 3
   equippedWeapon: {fileID: 0}
   equippedArmor: {fileID: 0}
   equippedAccessories: []

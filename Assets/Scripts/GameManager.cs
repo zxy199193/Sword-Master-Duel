@@ -25,6 +25,10 @@ public class PlayerProfile
     public int currentExtraLife; // 护甲耐久度
     public int totalGold;
 
+    [Header("休息场景 (Rest Scene)")]
+    public int maxRestDays = 3;
+    public int currentRestDays = 3;
+
     [Header("当前装备 (Equipped)")]
     public EquipmentData equippedWeapon;
     public EquipmentData equippedArmor;
@@ -79,7 +83,7 @@ public class PlayerProfile
     {
         int total = baseMaxLife + GetFinalVitality() * 5;
         if (equippedWeapon != null) total += equippedWeapon.bonusLife;
-        if (equippedArmor != null) total += equippedArmor.bonusLife;
+        if (equippedArmor != null && currentExtraLife > 0) total += equippedArmor.bonusLife;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusLife;
         return total;
     }
@@ -88,7 +92,7 @@ public class PlayerProfile
     {
         int total = baseMaxStamina + GetFinalEndurance() * 2;
         if (equippedWeapon != null) total += equippedWeapon.bonusStamina;
-        if (equippedArmor != null) total += equippedArmor.bonusStamina;
+        if (equippedArmor != null && currentExtraLife > 0) total += equippedArmor.bonusStamina;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusStamina;
         return total;
     }
@@ -97,7 +101,7 @@ public class PlayerProfile
     {
         int total = vitality;
         if (equippedWeapon != null) total += equippedWeapon.bonusVitality;
-        if (equippedArmor != null) total += equippedArmor.bonusVitality;
+        if (equippedArmor != null && currentExtraLife > 0) total += equippedArmor.bonusVitality;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusVitality;
         return total;
     }
@@ -106,7 +110,7 @@ public class PlayerProfile
     {
         int total = endurance;
         if (equippedWeapon != null) total += equippedWeapon.bonusEndurance;
-        if (equippedArmor != null) total += equippedArmor.bonusEndurance;
+        if (equippedArmor != null && currentExtraLife > 0) total += equippedArmor.bonusEndurance;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusEndurance;
         return total;
     }
@@ -115,7 +119,7 @@ public class PlayerProfile
     {
         int total = baseStrength;
         if (equippedWeapon != null) total += equippedWeapon.bonusStrength;
-        if (equippedArmor != null) total += equippedArmor.bonusStrength;
+        if (equippedArmor != null && currentExtraLife > 0) total += equippedArmor.bonusStrength;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusStrength;
         return total;
     }
@@ -124,14 +128,14 @@ public class PlayerProfile
     {
         int total = baseMentality;
         if (equippedWeapon != null) total += equippedWeapon.bonusMentality;
-        if (equippedArmor != null) total += equippedArmor.bonusMentality;
+        if (equippedArmor != null && currentExtraLife > 0) total += equippedArmor.bonusMentality;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusMentality;
         return total;
     }
 
-    public int GetHpRecoverPerBattle()
+    public int GetHpRecoverPerTurn()
     {
-        return GetFinalVitality();
+        return Mathf.FloorToInt(GetFinalVitality() / 2f);
     }
 
     public int GetStaminaRecoverPerTurn()
@@ -195,6 +199,21 @@ public class GameManager : MonoBehaviour
     [HideInInspector] 
     public List<RoleData> currentLevelEnemies = new List<RoleData>();
 
+    [HideInInspector] public List<SkillData> currentDojoSkills = new List<SkillData>();
+
+    // 武器商店 (运行时)
+    [HideInInspector] public List<EquipmentData> permWeapons = new List<EquipmentData>();
+    [HideInInspector] public List<EquipmentData> randWeapons = new List<EquipmentData>();
+    // 防具商店 (运行时)
+    [HideInInspector] public List<EquipmentData> permArmors = new List<EquipmentData>();
+    [HideInInspector] public List<EquipmentData> randArmors = new List<EquipmentData>();
+    // 饰品商店 (运行时)
+    [HideInInspector] public List<EquipmentData> permAccessories = new List<EquipmentData>();
+    [HideInInspector] public List<EquipmentData> randAccessories = new List<EquipmentData>();
+    // 道具商店 (运行时)
+    [HideInInspector] public List<SkillData> permItems = new List<SkillData>();
+    [HideInInspector] public List<SkillData> randItems = new List<SkillData>();
+
     // ==========================================
     // Unity Lifecycle
     // ==========================================
@@ -231,11 +250,13 @@ public class GameManager : MonoBehaviour
         playerProfile.currentHp = playerProfile.baseMaxLife;
         playerProfile.currentStamina = playerProfile.baseMaxStamina;
         playerProfile.currentExtraLife = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.durability : 0;
+        playerProfile.currentRestDays = playerProfile.maxRestDays;
 
         currentMainLevelIndex = 0;
         currentNodeIndex = 0;
 
         RollEnemiesForCurrentLevel();
+        RefreshShopAndDojo();
         EnterLevelNodeUI();
     }
 
@@ -257,8 +278,10 @@ public class GameManager : MonoBehaviour
         // 进入新关卡时，回复100%体力，重置护甲耐久
         playerProfile.currentStamina = playerProfile.GetFinalMaxStamina();
         playerProfile.currentExtraLife = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.durability : 0;
+        playerProfile.currentRestDays = playerProfile.maxRestDays;
 
         RollEnemiesForCurrentLevel();
+        RefreshShopAndDojo();
         EnterLevelNodeUI();
     }
 
@@ -284,17 +307,31 @@ public class GameManager : MonoBehaviour
     {
         if (isWin)
         {
-            playerProfile.totalGold += goldReward;
-            playerProfile.AddExp(expReward);
+            int finalGold = goldReward;
+            int finalExp = expReward;
+
+            // 扫描饰品效果
+            if (playerProfile.equippedAccessories != null)
+            {
+                foreach (var acc in playerProfile.equippedAccessories)
+                {
+                    if (acc == null || acc.equipEffects == null) continue;
+                    foreach (var effect in acc.equipEffects)
+                    {
+                        if (effect is GlobalBattleRules.RewardModifierEquipEffect rewardMod)
+                        {
+                            if (rewardMod.isGold) finalGold += rewardMod.bonusAmount;
+                            else finalExp += rewardMod.bonusAmount;
+                        }
+                    }
+                }
+            }
+
+            playerProfile.totalGold += finalGold;
+            playerProfile.AddExp(finalExp);
             
             SavePlayerBattleState();
 
-            // 战后自动恢复生命 (每点活力 +1)
-            int autoHeal = playerProfile.GetFinalVitality();
-            if (autoHeal > 0)
-            {
-                playerProfile.currentHp = Mathf.Min(playerProfile.currentHp + autoHeal, playerProfile.GetFinalMaxLife());
-            }
 
             if (battleResultUI != null) battleResultUI.ShowResult(goldReward);
             else AdvanceToNextNode();
@@ -331,6 +368,102 @@ public class GameManager : MonoBehaviour
             Debug.LogError($"关卡 {currentLevel.levelTitle} 没有配置有效的敌人组！");
             currentLevelEnemies = new List<RoleData>();
         }
+    }
+
+    private void RefreshShopAndDojo()
+    {
+        currentDojoSkills.Clear();
+        if (restUIManager == null || restUIManager.currentShopConfig == null) return;
+        var shopConfig = restUIManager.currentShopConfig;
+
+        // 1. 道场招式：随机8个
+        if (shopConfig.availableSkills != null)
+        {
+            var skillsPool = new List<SkillData>(shopConfig.availableSkills);
+            for (int i = 0; i < 8 && skillsPool.Count > 0; i++)
+            {
+                int idx = Random.Range(0, skillsPool.Count);
+                currentDojoSkills.Add(skillsPool[idx]);
+                skillsPool.RemoveAt(idx);
+            }
+        }
+
+        // 2. 刷新所有分类商店
+        RefreshAllCategorizedShops(false);
+    }
+
+    public bool ManualRefreshShop()
+    {
+        if (restUIManager == null || restUIManager.currentShopConfig == null) return false;
+        var shopConfig = restUIManager.currentShopConfig;
+
+        if (playerProfile.ConsumeGold(shopConfig.refreshCost))
+        {
+            RefreshAllCategorizedShops(true);
+            return true;
+        }
+        return false;
+    }
+
+    private void RefreshAllCategorizedShops(bool ensureDifferent)
+    {
+        var config = restUIManager.currentShopConfig;
+
+        // 武器
+        permWeapons = new List<EquipmentData>(config.weaponShop.permanentEquips);
+        randWeapons = RollRandomEquips(config.weaponShop.randomEquipsPool, randWeapons, config.weaponShop.randomCount, ensureDifferent);
+
+        // 防具
+        permArmors = new List<EquipmentData>(config.armorShop.permanentEquips);
+        randArmors = RollRandomEquips(config.armorShop.randomEquipsPool, randArmors, config.armorShop.randomCount, ensureDifferent);
+
+        // 饰品
+        permAccessories = new List<EquipmentData>(config.accessoryShop.permanentEquips);
+        randAccessories = RollRandomEquips(config.accessoryShop.randomEquipsPool, randAccessories, config.accessoryShop.randomCount, ensureDifferent);
+
+        // 道具
+        permItems = new List<SkillData>(config.itemShop.permanentItems);
+        randItems = RollRandomSkills(config.itemShop.randomItemsPool, randItems, config.itemShop.randomCount, ensureDifferent);
+        
+        Debug.Log("所有分类商店商品已刷新 (直接类型)");
+    }
+
+    private List<EquipmentData> RollRandomEquips(List<EquipmentData> pool, List<EquipmentData> current, int count, bool ensureDifferent)
+    {
+        if (pool == null || pool.Count == 0) return new List<EquipmentData>();
+        List<EquipmentData> workingPool = new List<EquipmentData>(pool);
+        int finalCount = Mathf.Min(count, pool.Count);
+        if (ensureDifferent && pool.Count > finalCount)
+        {
+            foreach (var item in current) workingPool.Remove(item);
+        }
+        List<EquipmentData> result = new List<EquipmentData>();
+        for (int i = 0; i < finalCount && workingPool.Count > 0; i++)
+        {
+            int idx = Random.Range(0, workingPool.Count);
+            result.Add(workingPool[idx]);
+            workingPool.RemoveAt(idx);
+        }
+        return result;
+    }
+
+    private List<SkillData> RollRandomSkills(List<SkillData> pool, List<SkillData> current, int count, bool ensureDifferent)
+    {
+        if (pool == null || pool.Count == 0) return new List<SkillData>();
+        List<SkillData> workingPool = new List<SkillData>(pool);
+        int finalCount = Mathf.Min(count, pool.Count);
+        if (ensureDifferent && pool.Count > finalCount)
+        {
+            foreach (var item in current) workingPool.Remove(item);
+        }
+        List<SkillData> result = new List<SkillData>();
+        for (int i = 0; i < finalCount && workingPool.Count > 0; i++)
+        {
+            int idx = Random.Range(0, workingPool.Count);
+            result.Add(workingPool[idx]);
+            workingPool.RemoveAt(idx);
+        }
+        return result;
     }
 
     private void SavePlayerBattleState()

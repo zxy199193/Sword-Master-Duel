@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 608e1027dbec7dc4a8438b4248abfb17, type: 3}
+  m_Name: ITEM_301
+  m_EditorClassIdentifier: 
+  skillName: "\u4E07\u80FD\u836F"
+  description: "\u57FA\u7840\u751F\u547D+12\uFF0C\u4F53\u529B\u503C+6\r\n\u79FB\u9664\u81EA\u8EAB\u6240\u6709\u8D1F\u9762\u72B6\u6001"
+  skillIcon: {fileID: 21300000, guid: a8e241c2801359c4f8770af071d0dbca, type: 3}
+  skillType: 4
+  animationTriggerName: Attack
+  staminaCosts: 000000000000000000000000
+  basicDamages:
+  - 0
+  - 0
+  - 0
+  basicDefends:
+  - 0
+  - 0
+  - 0
+  hitAmends:
+  - 0
+  - 0
+  - 0
+  isConsumable: 1
+  price: 20
+  hitTimes: 1
+  hitBarConfig:
+    baseSpeed: 0
+    baseSlowdown: 0
+    actionTime: 0
+    sections: []
+  castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
+  effects:
+  - rid: 2591120646924664852
+  - rid: 2591120646924664853
+  - rid: 2591120648514043905
+  references:
+    version: 2
+    RefIds:
+    - rid: 2591120646924664852
+      type: {class: HealEffect, ns: , asm: Assembly-CSharp}
+      data:
+        healAmounts: 140000001400000014000000
+    - rid: 2591120646924664853
+      type: {class: RecoverStaminaEffect, ns: , asm: Assembly-CSharp}
+      data:
+        staminaAmounts: 0c0000000c0000000c000000
+    - rid: 2591120648514043905
+      type: {class: RemoveStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        removeAllNegative: 1
+        specificTypes: 

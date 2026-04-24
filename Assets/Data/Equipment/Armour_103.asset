@@ -21,10 +21,12 @@ MonoBehaviour:
   price: 20
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
   atkFactor: 0
-  durability: 16
+  durability: 10
   equipEffects: []
   references:
     version: 2

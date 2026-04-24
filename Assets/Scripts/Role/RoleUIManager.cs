@@ -163,7 +163,7 @@ public class RoleUIManager : MonoBehaviour
         if (strengthText) strengthText.text = profile.GetFinalStrength().ToString();
         if (mentalityText) mentalityText.text = profile.GetFinalMentality().ToString();
         if (staminaRecoverText) staminaRecoverText.text = $"{profile.GetStaminaRecoverPerTurn()} 点/回合";
-        if (hpRecoverText) hpRecoverText.text = $"{profile.GetHpRecoverPerBattle()} 点/场";
+        if (hpRecoverText) hpRecoverText.text = $"{profile.GetHpRecoverPerTurn()} 点/回合";
 
         // Allocate Points
         if (unallocatedPointsText) unallocatedPointsText.text = $"{profile.unallocatedPoints}";

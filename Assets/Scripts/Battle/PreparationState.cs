@@ -14,6 +14,7 @@ public class PreparationState : BattleState
         if (battleManager.actionPanelUI != null)
         {
             battleManager.actionPanelUI.ShowPanel();
+            battleManager.ShowBroadcast("决策阶段");
         }
         else
         {

@@ -95,17 +95,36 @@ public class DamageSettleState : BattleState
 
         bool isPlayerTakingDamage = !battleManager.isPlayerAttacking;
 
-        if (hit.HasValue && skill != null)
+        // 看破机制判定：如果防御方有看破，且攻击方技能与上回合一致，则必定闪避
+        bool isInsightDodged = false;
+        if (defender.activeStatuses.ContainsKey(StatusType.Insight) && skill != null && skill == attacker.lastUsedAttackSkill)
+        {
+            isInsightDodged = true;
+            Debug.Log($"<color=#00FFFF>[看破触发] {defender.roleData.roleName} 看穿了 {attacker.roleData.roleName} 的招式 {skill.skillName}！</color>");
+        }
+
+        if (hit.HasValue && skill != null && !isInsightDodged)
         {
             float multiplier = GlobalBattleRules.GetHitMultiplier(hit.Value.level);
-            int finalStrength = attacker.roleData.strength;
+            int finalStrength = attacker.GetFinalStrength();
             float weaponAtkFactor = 1.0f;
 
             if (battleManager.isPlayerAttacking && GameManager.Instance != null)
             {
                 PlayerProfile profile = GameManager.Instance.playerProfile;
-                finalStrength = profile.GetFinalStrength();
                 if (profile.equippedWeapon != null) weaponAtkFactor = profile.equippedWeapon.atkFactor;
+            }
+            else
+            {
+                // 敌人：从 roleData 上的装备读取武器攻击倍率
+                if (attacker.roleData.equippedWeapon != null)
+                    weaponAtkFactor = attacker.roleData.equippedWeapon.atkFactor;
+            }
+
+            // 磨刀石效果：锐化状态增加 0.5 倍率
+            if (attacker.activeStatuses.ContainsKey(StatusType.Sharpened))
+            {
+                weaponAtkFactor += 0.5f;
             }
 
             if (skill.effects != null && skill.effects.Count > 0)
@@ -156,7 +175,9 @@ public class DamageSettleState : BattleState
             }
 
             // 3. 计算最终伤害: (总攻击力 - 总减伤) × 武器倍率 × 打击条倍率
-            float totalBaseDamage = skill.GetBasicDamage(level) + (finalStrength * 2) + equipDamageModifier + skillEffectBaseDamageMod;
+            int attackTypeBonus = battleManager.GetSkillTypeBonus(attacker, SkillType.Attack);
+            float totalBaseDamage = skill.GetBasicDamage(level) + (finalStrength * 1) + equipDamageModifier + skillEffectBaseDamageMod + attackTypeBonus;
+
             
             if (attacker.activeStatuses.ContainsKey(StatusType.Excited))
             {
@@ -168,8 +189,23 @@ public class DamageSettleState : BattleState
             float netBaseDamage = Mathf.Max(0, totalBaseDamage - totalReduction);
             int finalDamage = Mathf.RoundToInt(weaponAtkFactor * multiplier * netBaseDamage);
 
+            // 分身增伤：伤害翻倍
+            if (attacker.activeStatuses.ContainsKey(StatusType.Clone))
+            {
+                finalDamage *= 2;
+                Debug.Log($"<color=cyan>[{attacker.roleData.roleName}] 触发分身！伤害翻倍 -> {finalDamage}</color>");
+            }
+
             // 造成最终伤害
             defender.TakeDamage(finalDamage);
+
+            // 火焰附加特效：命中时给对方上 1 回合灼烧
+            if (attacker.activeStatuses.ContainsKey(StatusType.FireEnchant))
+            {
+                defender.AddStatus(StatusType.Burn, 1);
+                battleManager.SpawnGeneralPopup(defender.isPlayer, "[灼烧]");
+                Debug.Log($"<color=orange>[{attacker.roleData.roleName}] 触发火焰附加！给 [{defender.roleData.roleName}] 施加了 1 回合灼烧。</color>");
+            }
 
             // 播放音效
             int hitSoundType = 1; // 正常命中
@@ -201,6 +237,18 @@ public class DamageSettleState : BattleState
                 }
             }
 
+            // 触发防御方的 OnBeingHit 钩子 (用于受击反制类技能)
+            if (defendSkill != null && defendSkill.effects != null && defendSkill.effects.Count > 0)
+            {
+                foreach (var effect in defendSkill.effects)
+                {
+                    if (effect != null)
+                    {
+                        effect.OnBeingHit(defender, attacker, battleManager, defendLevel, hit.Value.level);
+                    }
+                }
+            }
+
             // 判断生死与动画
             if (defender.currentBasicLife <= 0) defender.PlayDieAnim();
             else defender.PlayHitAnim();
@@ -209,7 +257,7 @@ public class DamageSettleState : BattleState
         {
             Debug.Log($"[DamageSettleState] {attacker.roleData.roleName} 的该段攻击 Miss！");
             defender.PlayMissAnim();
-            battleManager.SpawnDamagePopup(isPlayerTakingDamage, "MISS", 0);
+            battleManager.SpawnGeneralPopup(isPlayerTakingDamage, "MISS");
 
             if (AudioManager.Instance != null)
             {
@@ -250,6 +298,14 @@ public class DamageSettleState : BattleState
 
     private void FinishStateAndTurn()
     {
+        // 更新上回合使用的攻击技能记录（仅限攻击技能）
+        BattleEntity attacker = battleManager.isPlayerAttacking ? battleManager.playerEntity : battleManager.enemyEntity;
+        SkillSlot attackSlot = battleManager.isPlayerAttacking ? battleManager.currentPlayerSkill : battleManager.currentEnemySkill;
+        if (attackSlot != null && attackSlot.skillData != null && attackSlot.skillData.skillType == SkillType.Attack)
+        {
+            attacker.lastUsedAttackSkill = attackSlot.skillData;
+        }
+
         battleManager.ProceedNextAttack();
     }
 }

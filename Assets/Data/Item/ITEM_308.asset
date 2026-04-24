@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 608e1027dbec7dc4a8438b4248abfb17, type: 3}
+  m_Name: ITEM_308
+  m_EditorClassIdentifier: 
+  skillName: "\u7206\u71C3\u74F6"
+  description: "\u5BF9\u65B9\u751F\u547D\u503C-10\r\n\u5BF9\u65B9\u8FDB\u5165\u3010\u707C\u70E7\u3011\u72B6\u6001\uFF0C\u6301\u7EED2\u56DE\u5408"
+  skillIcon: {fileID: 21300000, guid: 413253281d5376b4c847c4879c2e4829, type: 3}
+  skillType: 4
+  animationTriggerName: Attack
+  staminaCosts: 000000000000000000000000
+  basicDamages:
+  - 0
+  - 0
+  - 0
+  basicDefends:
+  - 0
+  - 0
+  - 0
+  hitAmends:
+  - 0
+  - 0
+  - 0
+  isConsumable: 1
+  price: 20
+  hitTimes: 1
+  hitBarConfig:
+    baseSpeed: 0
+    baseSlowdown: 0
+    actionTime: 0
+    sections: []
+  castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
+  effects:
+  - rid: 2591120648514043914
+  - rid: 2591120648514043915
+  references:
+    version: 2
+    RefIds:
+    - rid: 2591120648514043914
+      type: {class: DirectDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmounts: 0a0000000a0000000a000000
+    - rid: 2591120648514043915
+      type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusType: 12
+        baseDurations: 020000000200000002000000
+        applyToSelf: 0
+        ignoreMentalityBonus: 0

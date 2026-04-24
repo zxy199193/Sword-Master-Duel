@@ -9,7 +9,9 @@ public class BattleEndState : BattleState
 
     public override void Enter()
     {
-        battleManager.ShowBroadcast("战斗结束！");
+        // 清理残留飘字
+        battleManager.ClearAllPopups();
+
 
         bool isPlayerDead = battleManager.playerEntity.currentBasicLife <= 0;
         bool isEnemyDead = battleManager.enemyEntity.currentBasicLife <= 0;
@@ -17,23 +19,21 @@ public class BattleEndState : BattleState
         if (isPlayerDead && isEnemyDead)
         {
             Debug.Log("<color=yellow>[BattleEnd] 双方同归于尽，算作败北！</color>");
-            battleManager.ShowBroadcast("同归于尽...");
+            battleManager.ShowBroadcast("平手");
             GameManager.Instance.OnBattleResolution(false); 
         }
         else if (isPlayerDead)
         {
             Debug.Log("<color=red>[BattleEnd] 我方败北！</color>");
-            battleManager.ShowBroadcast("我方败北！");
+            battleManager.ShowBroadcast("失败");
             GameManager.Instance.OnBattleResolution(false);
         }
         else
         {
             Debug.Log("<color=green>[BattleEnd] 战斗胜利！</color>");
-            battleManager.ShowBroadcast("战斗胜利！");
-
+            battleManager.ShowBroadcast("胜利");
             int gold = battleManager.enemyEntity.roleData.goldReward;
-            int exp = battleManager.enemyEntity.roleData.expReward;
-
+            int exp  = battleManager.enemyEntity.roleData.expReward;
             GameManager.Instance.OnBattleResolution(true, gold, exp);
         }
     }

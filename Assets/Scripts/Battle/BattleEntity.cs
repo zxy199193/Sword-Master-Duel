@@ -23,6 +23,7 @@ public class BattleEntity : MonoBehaviour
 
     [HideInInspector]
     public Dictionary<SkillSlot, int[]> runtimeSkillWeights = new Dictionary<SkillSlot, int[]>();
+    [HideInInspector] public SkillData lastUsedAttackSkill; // 用于“看破”状态判定
 
     [Header("Turn Temporary Data")]
     public float tempDamageReduction = 0;
@@ -70,7 +71,7 @@ public class BattleEntity : MonoBehaviour
             if (roleData != null)
             {
                 currentBasicLife = GetFinalMaxLife();
-                currentStamina = GetFinalMaxStamina() / 2;
+                currentStamina = GetFinalMaxStamina();
                 if (roleData.equippedArmor != null) currentExtraLife = roleData.equippedArmor.durability;
                 else currentExtraLife = 0;
             }
@@ -88,7 +89,7 @@ public class BattleEntity : MonoBehaviour
                 {
                     if (slot == null || slot.skillData == null) continue;
                     SkillData inst = Instantiate(slot.skillData);
-                    SkillSlot runtimeSlot = new SkillSlot { skillData = inst, level = slot.level, quantity = slot.quantity };
+                    SkillSlot runtimeSlot = new SkillSlot { skillData = inst, level = slot.level, quantity = slot.quantity, sourceSlot = slot };
                     runtimeSkills.Add(runtimeSlot);
                 }
             };
@@ -158,7 +159,7 @@ public class BattleEntity : MonoBehaviour
 
         int finalStr = roleData.strength;
         if (roleData.equippedWeapon != null) finalStr += roleData.equippedWeapon.bonusStrength;
-        if (roleData.equippedArmor != null) finalStr += roleData.equippedArmor.bonusStrength;
+        if (roleData.equippedArmor != null && currentExtraLife > 0) finalStr += roleData.equippedArmor.bonusStrength;
 
         if (roleData.equippedAccessories != null)
         {
@@ -173,7 +174,7 @@ public class BattleEntity : MonoBehaviour
 
         int finalVit = roleData.vitality;
         if (roleData.equippedWeapon != null) finalVit += roleData.equippedWeapon.bonusVitality;
-        if (roleData.equippedArmor != null) finalVit += roleData.equippedArmor.bonusVitality;
+        if (roleData.equippedArmor != null && currentExtraLife > 0) finalVit += roleData.equippedArmor.bonusVitality;
 
         if (roleData.equippedAccessories != null)
         {
@@ -188,7 +189,7 @@ public class BattleEntity : MonoBehaviour
 
         int finalEnd = roleData.endurance;
         if (roleData.equippedWeapon != null) finalEnd += roleData.equippedWeapon.bonusEndurance;
-        if (roleData.equippedArmor != null) finalEnd += roleData.equippedArmor.bonusEndurance;
+        if (roleData.equippedArmor != null && currentExtraLife > 0) finalEnd += roleData.equippedArmor.bonusEndurance;
 
         if (roleData.equippedAccessories != null)
         {
@@ -202,7 +203,7 @@ public class BattleEntity : MonoBehaviour
         if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalMentality();
         int finalMen = roleData.mentality;
         if (roleData.equippedWeapon != null) finalMen += roleData.equippedWeapon.bonusMentality;
-        if (roleData.equippedArmor != null) finalMen += roleData.equippedArmor.bonusMentality;
+        if (roleData.equippedArmor != null && currentExtraLife > 0) finalMen += roleData.equippedArmor.bonusMentality;
         if (roleData.equippedAccessories != null)
         {
             foreach (var acc in roleData.equippedAccessories) if (acc != null) finalMen += acc.bonusMentality;
@@ -216,7 +217,7 @@ public class BattleEntity : MonoBehaviour
         
         int total = roleData.maxBasicLife + GetFinalVitality() * 5;
         if (roleData.equippedWeapon != null) total += roleData.equippedWeapon.bonusLife;
-        if (roleData.equippedArmor != null) total += roleData.equippedArmor.bonusLife;
+        if (roleData.equippedArmor != null && currentExtraLife > 0) total += roleData.equippedArmor.bonusLife;
         if (roleData.equippedAccessories != null)
         {
             foreach (var acc in roleData.equippedAccessories) if (acc != null) total += acc.bonusLife;
@@ -241,7 +242,19 @@ public class BattleEntity : MonoBehaviour
                 foreach (var acc in roleData.equippedAccessories) if (acc != null) baseMax += acc.bonusStamina;
             }
         }
+        
+        // 加上饰品的额外体力上限
+        if (roleData.equippedAccessories != null)
+        {
+            foreach (var acc in roleData.equippedAccessories) if (acc != null) baseMax += acc.bonusStamina;
+        }
+
         return Mathf.Max(1, baseMax - staminaMaxPenalty);
+    }
+
+    public int GetHpRecoverPerTurn()
+    {
+        return GetFinalVitality() / 2;
     }
 
     public float GetFinalActionTime(float baseTime)
@@ -270,20 +283,35 @@ public class BattleEntity : MonoBehaviour
         return globalBaseSpeed * mentalMultiplier * statusMultiplier;
     }
 
+    public GlobalBattleRules.LoadWeightState GetEffectiveLoadState()
+    {
+        if (isPlayer && GameManager.Instance != null)
+        {
+            int currentLoad = GameManager.Instance.playerProfile.GetCurrentLoadWeight();
+            if (activeStatuses.ContainsKey(StatusType.Frozen)) currentLoad += 6;
+            if (activeStatuses.ContainsKey(StatusType.Lightweight)) currentLoad -= 20;
+            
+            int maxLoad = GameManager.Instance.playerProfile.GetMaxLoad();
+            float ratio = maxLoad > 0 ? (float)currentLoad / maxLoad : 0f;
+
+            if (ratio < 0.3f) return GlobalBattleRules.LoadWeightState.Light;
+            if (ratio <= 1.0f) return GlobalBattleRules.LoadWeightState.Medium;
+            if (ratio <= 1.5f) return GlobalBattleRules.LoadWeightState.Heavy;
+            return GlobalBattleRules.LoadWeightState.Extreme;
+        }
+        return GlobalBattleRules.LoadWeightState.Medium;
+    }
+
     public float GetFinalHitBarSlowdown(float globalBaseSlowdown)
     {
         float loadMultiplier = 1.0f;
-
-        if (isPlayer && GameManager.Instance != null)
+        var loadState = GetEffectiveLoadState();
+        switch (loadState)
         {
-            var loadState = GameManager.Instance.playerProfile.GetLoadWeightState();
-            switch (loadState)
-            {
-                case GlobalBattleRules.LoadWeightState.Light: loadMultiplier = 1.3f; break;
-                case GlobalBattleRules.LoadWeightState.Medium: loadMultiplier = 1.0f; break;
-                case GlobalBattleRules.LoadWeightState.Heavy: loadMultiplier = 0.7f; break;
-                case GlobalBattleRules.LoadWeightState.Extreme: loadMultiplier = 0.4f; break;
-            }
+            case GlobalBattleRules.LoadWeightState.Light: loadMultiplier = 1.3f; break;
+            case GlobalBattleRules.LoadWeightState.Medium: loadMultiplier = 1.0f; break;
+            case GlobalBattleRules.LoadWeightState.Heavy: loadMultiplier = 0.7f; break;
+            case GlobalBattleRules.LoadWeightState.Extreme: loadMultiplier = 0.4f; break;
         }
         return globalBaseSlowdown * loadMultiplier;
     }
@@ -301,20 +329,33 @@ public class BattleEntity : MonoBehaviour
 
     public void TakeDamage(int rawDamage)
     {
+        // 分身防御拦截
+        if (rawDamage > 0 && activeStatuses.ContainsKey(StatusType.Clone))
+        {
+            activeStatuses.Remove(StatusType.Clone);
+            OnStatusChanged?.Invoke();
+            BattleManager bm = GameObject.FindObjectOfType<BattleManager>();
+            if (bm != null) bm.SpawnGeneralPopup(isPlayer, "<color=cyan>分身抵挡!</color>");
+            Debug.Log($"<color=cyan>[{roleData.roleName}] 的【分身】抵挡了一次伤害并消失了。</color>");
+            return;
+        }
+
         int remainingDamage = rawDamage;
         if (currentExtraLife > 0)
         {
-            if (currentExtraLife >= remainingDamage) 
-            { 
-                currentExtraLife -= remainingDamage; 
-                remainingDamage = 0; 
+            int actualDmg = Mathf.Min(remainingDamage, currentExtraLife);
+            currentExtraLife -= actualDmg;
+            remainingDamage -= actualDmg;
+            
+            if (currentExtraLife <= 0)
+            {
+                currentExtraLife = 0;
+                BattleManager bm = GameObject.FindObjectOfType<BattleManager>();
+                if (bm != null) bm.SpawnGeneralPopup(isPlayer, "<color=red>防具损坏!</color>");
+                Debug.Log($"<color=red>[{roleData.roleName}] 的防具彻底损坏了！</color>");
             }
-            else 
-            { 
-                remainingDamage -= currentExtraLife; 
-                currentExtraLife = 0; 
-                Debug.Log($"[{roleData.roleName}] 的防具破损！"); 
-            }
+            
+            OnHpChanged?.Invoke();
         }
 
         if (remainingDamage > 0)
@@ -351,16 +392,40 @@ public class BattleEntity : MonoBehaviour
 
     public void RecoverStamina()
     {
+        // 记录恢复前的数值用于判断
+        int oldStamina = currentStamina;
+        int oldHp = currentBasicLife;
+
+        // 每回合体力恢复
         int recoverAmount = roleData.staminaRecoverPerTurn + Mathf.FloorToInt(GetFinalMentality() / 6f);
         if (activeStatuses.ContainsKey(StatusType.Gathering))
         {
             recoverAmount += 1;
         }
-
         currentStamina += recoverAmount;
-
         int maxStam = GetFinalMaxStamina();
         if (currentStamina > maxStam) currentStamina = maxStam;
+
+        // 每回合生命恢复
+        int hpRecover = GetHpRecoverPerTurn();
+        if (activeStatuses.ContainsKey(StatusType.Recover)) hpRecover += 3;
+
+        if (hpRecover > 0)
+        {
+            currentBasicLife = Mathf.Min(currentBasicLife + hpRecover, GetFinalMaxLife());
+            OnHpChanged?.Invoke();
+        }
+
+        // 显示恢复飘字
+        BattleManager bm = GameObject.FindObjectOfType<BattleManager>();
+        if (bm != null)
+        {
+            int staminaGained = currentStamina - oldStamina;
+            int hpGained = currentBasicLife - oldHp;
+
+            if (hpGained > 0) bm.SpawnRecoverPopup(isPlayer, $"<color=lime>生命 +{hpGained}</color>", true);
+            if (staminaGained > 0) bm.SpawnRecoverPopup(isPlayer, $"<color=yellow>体力 +{staminaGained}</color>", false);
+        }
 
         OnStaminaChanged?.Invoke();
         TickStatuses(); 
@@ -368,9 +433,52 @@ public class BattleEntity : MonoBehaviour
 
     public void AddStatus(StatusType type, int duration)
     {
+        // 免疫检查
+        if (IsImmuneTo(type))
+        {
+            Debug.Log($"[{roleData.roleName}] 免疫了 {type} 效果！");
+            return;
+        }
+
         if (activeStatuses.ContainsKey(type)) activeStatuses[type] = Mathf.Max(activeStatuses[type], duration);
         else activeStatuses.Add(type, duration);
         OnStatusChanged?.Invoke();
+    }
+
+    private bool IsImmuneTo(StatusType type)
+    {
+        // 检查所有装备的效果
+        List<EquipmentData> allEquips = new List<EquipmentData>();
+        if (GetEquippedWeapon() != null) allEquips.Add(GetEquippedWeapon());
+        
+        // 获取防具
+        if (isPlayer && GameManager.Instance != null && GameManager.Instance.playerProfile.equippedArmor != null)
+        {
+            if (currentExtraLife > 0) allEquips.Add(GameManager.Instance.playerProfile.equippedArmor);
+        }
+        else if (roleData.equippedArmor != null && currentExtraLife > 0)
+        {
+            allEquips.Add(roleData.equippedArmor);
+        }
+
+        // 获取饰品
+        if (isPlayer && GameManager.Instance != null)
+            allEquips.AddRange(GameManager.Instance.playerProfile.equippedAccessories);
+        else if (roleData.equippedAccessories != null)
+            allEquips.AddRange(roleData.equippedAccessories);
+
+        foreach (var equip in allEquips)
+        {
+            if (equip == null || equip.equipEffects == null) continue;
+            foreach (var effect in equip.equipEffects)
+            {
+                if (effect is GlobalBattleRules.StatusImmunityEquipEffect immunityEffect)
+                {
+                    if (immunityEffect.immuneStatus == type) return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void TickStatuses()
@@ -379,10 +487,52 @@ public class BattleEntity : MonoBehaviour
         var keys = new List<StatusType>(activeStatuses.Keys);
         foreach (var key in keys)
         {
+            // 灼烧特殊逻辑：每回合扣除额外生命，若没了则熄灭
+            if (key == StatusType.Burn)
+            {
+                // 分身可以抵挡灼烧伤害
+                if (activeStatuses.ContainsKey(StatusType.Clone))
+                {
+                    activeStatuses.Remove(StatusType.Clone);
+                    OnStatusChanged?.Invoke();
+                    BattleManager bm = GameObject.FindObjectOfType<BattleManager>();
+                    if (bm != null) bm.SpawnGeneralPopup(isPlayer, "<color=cyan>分身抵挡!</color>");
+                    Debug.Log($"<color=cyan>[{roleData.roleName}] 的【分身】抵挡了灼烧伤害！</color>");
+                }
+                else
+                {
+                    int burnDmg = 10;
+                    if (currentExtraLife > 0)
+                    {
+                        BattleManager bm = GameObject.FindObjectOfType<BattleManager>();
+                        int actualBurn = Mathf.Min(currentExtraLife, burnDmg);
+                        currentExtraLife -= actualBurn;
+                        
+                        if (currentExtraLife <= 0)
+                        {
+                            currentExtraLife = 0;
+                            if (bm != null) bm.SpawnGeneralPopup(isPlayer, "<color=red>防具损坏!</color>");
+                            Debug.Log($"<color=red>[{roleData.roleName}] 的防具在灼烧中损坏了！</color>");
+                        }
+
+                        OnHpChanged?.Invoke();
+                        
+                        if (bm != null) bm.SpawnGeneralPopup(isPlayer, $"<color=#FF4500>灼烧 -{actualBurn}</color>");
+                    }
+                }
+                
+                if (currentExtraLife <= 0)
+                {
+                    if (!toRemove.Contains(key)) toRemove.Add(key);
+                    Debug.Log($"<color=#FF4500>[{roleData.roleName}] 的【灼烧】因为失去额外生命而熄灭了。</color>");
+                    continue; // 状态已移除，不再进行常规时长扣减
+                }
+            }
+
             activeStatuses[key]--;
             if (activeStatuses[key] <= 0)
             {
-                toRemove.Add(key);
+                if (!toRemove.Contains(key)) toRemove.Add(key);
 
                 if (key == StatusType.Overdrawn)
                 {
