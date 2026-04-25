@@ -1,0 +1,1544 @@
+fileFormatVersion: 2
+guid: d321d502c122fdb4a8fe66750c49e65a
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Blt_Mag01_0
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 929
+        width: 87
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ab25cd1aa24bd3408400b3041faeb65
+      internalID: -1435261308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_1
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 934
+        width: 83
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 61e99805ae0de844da54d86982845b1e
+      internalID: 1599236765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_2
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 940
+        width: 78
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ab5ea6488500d140b1a4ac100e5a1ee
+      internalID: 1343522776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_3
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 941
+        width: 84
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01709a9e2e50b1947beb28bb72c92a0e
+      internalID: -244427842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_4
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 772
+        width: 101
+        height: 252
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67ea3c2d133a2474e82df04a6e7c883b
+      internalID: -791109809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_5
+      rect:
+        serializedVersion: 2
+        x: 483
+        y: 777
+        width: 87
+        height: 247
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef72102b41350e24b8d75e97456d21f5
+      internalID: -1916147687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_6
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 777
+        width: 81
+        height: 242
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71fbf508e2b777641973617eadef6c9d
+      internalID: -1013212086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_7
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 785
+        width: 50
+        height: 211
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95a61b0b0fabe7a499589604785508c2
+      internalID: -704702257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_8
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 895
+        width: 133
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3281ae9520b30344bc59b065d605d0a
+      internalID: -128587358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_9
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 777
+        width: 158
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 377b8589791972146b4c1b34ab6e0e7e
+      internalID: -2033695420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_10
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 850
+        width: 184
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09d78e2fd6a8f9845906705da3ec9ed9
+      internalID: -1312934746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_11
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 839
+        width: 188
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99892686ee716ce4eb503c64f34d8a69
+      internalID: 998779618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_12
+      rect:
+        serializedVersion: 2
+        x: 765
+        y: 770
+        width: 93
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1754f94af5402f4f8a0cf418a640366
+      internalID: -655811889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_13
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 799
+        width: 31
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acd57c1675c79a74394b933efe069e3f
+      internalID: -1152147979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_14
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 799
+        width: 27
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9078e4275e333024996af3639989bb83
+      internalID: -1908615508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_15
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 800
+        width: 30
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f0cc56dac01b73468f34e9d99a361f8
+      internalID: -1669207702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_16
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 578
+        width: 286
+        height: 247
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 155179bdf076620448b0259b763178a7
+      internalID: -175575439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_17
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 716
+        width: 77
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 232c384c95478b546874d60c1e48e2f2
+      internalID: 331445148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_18
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 708
+        width: 163
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b09623bba329e04ca3b223cd03c02e6
+      internalID: -1193614034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_19
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 712
+        width: 93
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6de646e4fc136644988f1518688ab343
+      internalID: 69589570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_20
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 681
+        width: 137
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fca3e694eb191e5469a765ed5ba3089f
+      internalID: -645135242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_21
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 579
+        width: 91
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7559ae26a72cf2e4cbce3aa0b6122410
+      internalID: 1714417158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_22
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 646
+        width: 173
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce97eea82ed56604aa42190f443322b9
+      internalID: 2054907512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_23
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 644
+        width: 156
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 547f318dc6176b049b53009e5eb2b5f0
+      internalID: 1916380693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_24
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 618
+        width: 141
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f4d7d04d8a4ac64daf9843fd1b540b0
+      internalID: -491402991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_25
+      rect:
+        serializedVersion: 2
+        x: 474
+        y: 582
+        width: 159
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcc55d5ad2edc4b41bc0da1857cb91f0
+      internalID: -1906732870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_26
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 578
+        width: 178
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3d18cbf57fe8d04d9dd44d4d6f2eda6
+      internalID: -134649958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_27
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 482
+        width: 87
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03a96eee2388fee488b4338e08b41354
+      internalID: 836221226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_28
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 487
+        width: 83
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8f685facc681aa4aa9703f550e5d616
+      internalID: 643557228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_29
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 493
+        width: 78
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b3c11432a859594a9702de488070f4d
+      internalID: -981092736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_30
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 502
+        width: 69
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c0cfae8c58b21244db708458d9f7abbd
+      internalID: 109376901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_31
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 516
+        width: 156
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af4b36f6227efb44bbfd852e75592622
+      internalID: 1656076600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_32
+      rect:
+        serializedVersion: 2
+        x: 666
+        y: 481
+        width: 171
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffedfbecf2f465341becb7da86a9fc08
+      internalID: -367516527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_33
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 521
+        width: 152
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ee614cbf391ff14295a0856f74fef54
+      internalID: 320545020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_34
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 321
+        width: 286
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35d3b9c37c70e1044bd928de470d3295
+      internalID: 1255476288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_35
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 255
+        width: 254
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbe84b05ff480004ca0c4087fc257b09
+      internalID: 1588021107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_36
+      rect:
+        serializedVersion: 2
+        x: 529
+        y: 417
+        width: 95
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa1723a9fd02e3943a568b215fb1319c
+      internalID: -1483753785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_37
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 410
+        width: 42
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3f72e3a3e81ec349b07e2db948dc145
+      internalID: 527953560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_38
+      rect:
+        serializedVersion: 2
+        x: 749
+        y: 396
+        width: 73
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a398c7959f11bdf4592c31e5d35eb520
+      internalID: -1164887569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_39
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 387
+        width: 85
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c56a1933e39cc34b9c742799909a793
+      internalID: 1049105279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_40
+      rect:
+        serializedVersion: 2
+        x: 936
+        y: 389
+        width: 83
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3a594d3267871c4b9bcf6a6273184be
+      internalID: 1016556123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_41
+      rect:
+        serializedVersion: 2
+        x: 578
+        y: 290
+        width: 28
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9865ce387328c5845b8e0fa108921579
+      internalID: -76402397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_42
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 292
+        width: 81
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04c107ade9d179744ab62f503015dc3b
+      internalID: 1963745913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_43
+      rect:
+        serializedVersion: 2
+        x: 746
+        y: 332
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d48b2c703fc5654eb8cf4b20b9cf5f2
+      internalID: -257527092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_44
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 355
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f564d36c01d8e942abbe78d25e600f4
+      internalID: 277515440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_45
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 232
+        width: 53
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19b3bba6431994241916338a7986e61e
+      internalID: -1350386333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_46
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 254
+        width: 81
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 451d97a5930816247adb2e50b8c2d204
+      internalID: -1502038803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_47
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 255
+        width: 63
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3603f525d79abc4e9b3ccd4045d34b2
+      internalID: 1435938380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_48
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 296
+        width: 39
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 104c215f773da894591206bbc9461443
+      internalID: -1049483033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_49
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 329
+        width: 26
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0695e4db8e991f14aae54295970a09ac
+      internalID: -1865025885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_50
+      rect:
+        serializedVersion: 2
+        x: 908
+        y: 67
+        width: 108
+        height: 280
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb43727f0c5e7eb4995f4f60a2ade31c
+      internalID: -617251064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_51
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 202
+        width: 109
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ffd1da151d1ce540a11816ae314cc88
+      internalID: 1683489946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_52
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 191
+        width: 124
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1bc23d1c06530b24c8363943fc884a7c
+      internalID: 2146178494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_53
+      rect:
+        serializedVersion: 2
+        x: 581
+        y: 261
+        width: 24
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edda9e1b7c368ff45b7683525120a606
+      internalID: 1067949133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_54
+      rect:
+        serializedVersion: 2
+        x: 652
+        y: 4
+        width: 169
+        height: 276
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3a5c9e6383794142ab0e65c034acd24
+      internalID: -1004450816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_55
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 66
+        width: 123
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 90207cee6ab701c429456ba06706dbd7
+      internalID: 783036695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_56
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 9
+        width: 28
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0707702474477a24e9cb50a54fea5add
+      internalID: 1187693029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_57
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 9
+        width: 28
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e27e52baf6a01594996649c091e30c5e
+      internalID: 1100827349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_58
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 9
+        width: 28
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a464f5edf92e5cd41a706b0c5f682df0
+      internalID: 1583452749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_59
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 6
+        width: 28
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86c2a5a06b9b8be4db847c4754e6db2a
+      internalID: -1987661734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_60
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 8
+        width: 239
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fee952ddf98022748830d9d589b837d4
+      internalID: 1774389548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_61
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 0
+        width: 108
+        height: 250
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ba8ef28f637d6147939ee7e81febaf3
+      internalID: -330359461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_62
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 4
+        width: 63
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86173732518febe46946e34fcbc836ee
+      internalID: 1393683935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_63
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 3
+        width: 121
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0ab2c84501e7c645aa8c90baa0b5f12
+      internalID: -1696476207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blt_Mag01_64
+      rect:
+        serializedVersion: 2
+        x: 914
+        y: 2
+        width: 109
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b7cd7b199fefad4993a1dd39a71ef76
+      internalID: 762920255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Blt_Mag01_0: -1435261308
+      Blt_Mag01_1: 1599236765
+      Blt_Mag01_10: -1312934746
+      Blt_Mag01_11: 998779618
+      Blt_Mag01_12: -655811889
+      Blt_Mag01_13: -1152147979
+      Blt_Mag01_14: -1908615508
+      Blt_Mag01_15: -1669207702
+      Blt_Mag01_16: -175575439
+      Blt_Mag01_17: 331445148
+      Blt_Mag01_18: -1193614034
+      Blt_Mag01_19: 69589570
+      Blt_Mag01_2: 1343522776
+      Blt_Mag01_20: -645135242
+      Blt_Mag01_21: 1714417158
+      Blt_Mag01_22: 2054907512
+      Blt_Mag01_23: 1916380693
+      Blt_Mag01_24: -491402991
+      Blt_Mag01_25: -1906732870
+      Blt_Mag01_26: -134649958
+      Blt_Mag01_27: 836221226
+      Blt_Mag01_28: 643557228
+      Blt_Mag01_29: -981092736
+      Blt_Mag01_3: -244427842
+      Blt_Mag01_30: 109376901
+      Blt_Mag01_31: 1656076600
+      Blt_Mag01_32: -367516527
+      Blt_Mag01_33: 320545020
+      Blt_Mag01_34: 1255476288
+      Blt_Mag01_35: 1588021107
+      Blt_Mag01_36: -1483753785
+      Blt_Mag01_37: 527953560
+      Blt_Mag01_38: -1164887569
+      Blt_Mag01_39: 1049105279
+      Blt_Mag01_4: -791109809
+      Blt_Mag01_40: 1016556123
+      Blt_Mag01_41: -76402397
+      Blt_Mag01_42: 1963745913
+      Blt_Mag01_43: -257527092
+      Blt_Mag01_44: 277515440
+      Blt_Mag01_45: -1350386333
+      Blt_Mag01_46: -1502038803
+      Blt_Mag01_47: 1435938380
+      Blt_Mag01_48: -1049483033
+      Blt_Mag01_49: -1865025885
+      Blt_Mag01_5: -1916147687
+      Blt_Mag01_50: -617251064
+      Blt_Mag01_51: 1683489946
+      Blt_Mag01_52: 2146178494
+      Blt_Mag01_53: 1067949133
+      Blt_Mag01_54: -1004450816
+      Blt_Mag01_55: 783036695
+      Blt_Mag01_56: 1187693029
+      Blt_Mag01_57: 1100827349
+      Blt_Mag01_58: 1583452749
+      Blt_Mag01_59: -1987661734
+      Blt_Mag01_6: -1013212086
+      Blt_Mag01_60: 1774389548
+      Blt_Mag01_61: -330359461
+      Blt_Mag01_62: 1393683935
+      Blt_Mag01_63: -1696476207
+      Blt_Mag01_64: 762920255
+      Blt_Mag01_7: -704702257
+      Blt_Mag01_8: -128587358
+      Blt_Mag01_9: -2033695420
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

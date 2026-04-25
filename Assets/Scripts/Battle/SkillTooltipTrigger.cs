@@ -49,4 +49,12 @@ public class SkillTooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
             StatusTooltipManager.Instance.HideTooltip();
         }
     }
+
+    private void OnDisable()
+    {
+        if (StatusTooltipManager.Instance != null)
+        {
+            StatusTooltipManager.Instance.HideTooltip();
+        }
+    }
 }

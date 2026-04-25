@@ -41,6 +41,8 @@ MonoBehaviour:
   castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
   effects:
   - rid: 2591120357824135170
+  - rid: 2591120668570681347
+  - rid: 2591120668570681348
   references:
     version: 2
     RefIds:
@@ -50,4 +52,18 @@ MonoBehaviour:
         statusType: 13
         baseDurations: 020000000300000003000000
         applyToSelf: 1
+        ignoreMentalityBonus: 0
+    - rid: 2591120668570681347
+      type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusType: 0
+        baseDurations: 000000000000000000000000
+        applyToSelf: 0
+        ignoreMentalityBonus: 0
+    - rid: 2591120668570681348
+      type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusType: 17
+        baseDurations: 000000000000000000000000
+        applyToSelf: 0
         ignoreMentalityBonus: 0
