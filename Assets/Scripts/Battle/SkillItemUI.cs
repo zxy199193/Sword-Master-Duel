@@ -60,6 +60,9 @@ public class SkillItemUI : MonoBehaviour
         selectButton.onClick.RemoveAllListeners();
         selectButton.onClick.AddListener(OnSelectClicked);
 
+        var tooltipTrigger = GetComponent<SkillTooltipTrigger>();
+        if (tooltipTrigger != null) tooltipTrigger.BindSkill(skillData);
+
         // 默认以修正模式刷新
         RefreshStats(showModified: true);
     }

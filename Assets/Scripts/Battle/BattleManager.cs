@@ -82,7 +82,7 @@ public class BattleManager : MonoBehaviour
     public void OnPlayerSelectedAction() { }
 
     // 参数类型改为 SkillSlot
-    public void OnPlayerActionConfirmed(SkillSlot mainSkill, SkillSlot subSkill)
+    public void OnPlayerActionConfirmed(SkillSlot mainSkill, SkillSlot subSkill, bool isAutoCast = false)
     {
         playerEntity.ResetTurnData();
         enemyEntity.ResetTurnData();
@@ -187,7 +187,7 @@ public class BattleManager : MonoBehaviour
         // 动态获取费用并扣除体力
         if (currentPlayerSkill != null) 
         {
-            int cost = isBothDefensive ? 0 : GetActualSkillCost(playerEntity, currentPlayerSkill, currentPlayerSubSkill);
+            int cost = isAutoCast ? 0 : (isBothDefensive ? 0 : GetActualSkillCost(playerEntity, currentPlayerSkill, currentPlayerSubSkill));
             playerEntity.ConsumeStamina(cost);
         }
         if (currentPlayerSubSkill != null) playerEntity.ConsumeStamina(GetActualSkillCost(playerEntity, currentPlayerSubSkill));
@@ -207,9 +207,12 @@ public class BattleManager : MonoBehaviour
             {
                 if (skill.skillData.skillType == SkillType.Attack || skill.skillData.skillType == SkillType.Dodge)
                 {
-                    entity.TakeDamage(3);
-                    SpawnGeneralPopup(entity.isPlayer, "<color=#8B0000>扎伤 -3</color>");
-                    Debug.Log($"[场地魔法] {entity.roleData.roleName} 因为动作幅度过大，触发了钉刺，受到 3 点伤害！");
+                    bool hitLanded = entity.TakeDamage(3);
+                    if (hitLanded)
+                    {
+                        SpawnGeneralPopup(entity.isPlayer, "<color=#8B0000>扎伤 -3</color>");
+                        Debug.Log($"[场地魔法] {entity.roleData.roleName} 因为动作幅度过大，触发了钉刺，受到 3 点伤害！");
+                    }
                 }
             }
         }
@@ -574,7 +577,32 @@ public class BattleManager : MonoBehaviour
         isPlayerAttackResolved = false;
         isEnemyAttackResolved = false;
 
-        // 阶段 D+E：攻击阶段（由 ProceedNextAttack 驱动）
+        // 阶段 D：双方攻击主技能信息展示（同时显示）
+        bool pAttacks = currentPlayerSkill != null && currentPlayerSkill.skillData != null && currentPlayerSkill.skillData.skillType == SkillType.Attack;
+        bool eAttacks = currentEnemySkill != null && currentEnemySkill.skillData != null && currentEnemySkill.skillData.skillType == SkillType.Attack;
+
+        bool pIsChargingTurn1 = false;
+        if (pAttacks) TryProcessChargeAttack(playerEntity, currentPlayerSkill, true, out pIsChargingTurn1);
+
+        bool eIsChargingTurn1 = false;
+        if (eAttacks) TryProcessChargeAttack(enemyEntity, currentEnemySkill, true, out eIsChargingTurn1);
+
+        if (pAttacks || eAttacks)
+        {
+            if (pAttacks) 
+            {
+                if (pIsChargingTurn1) SpawnActionInfo(playerActionInfoAnchor, "<color=#FF8C00>正在蓄力...</color>");
+                else SpawnActionInfo(playerActionInfoAnchor, $"发动{GetSkillNameColored(currentPlayerSkill.skillData)}");
+            }
+            if (eAttacks) 
+            {
+                if (eIsChargingTurn1) SpawnActionInfo(enemyActionInfoAnchor, "<color=#FF8C00>正在蓄力...</color>");
+                else SpawnActionInfo(enemyActionInfoAnchor,  $"发动{GetSkillNameColored(currentEnemySkill.skillData)}");
+            }
+            yield return new WaitForSeconds(1.5f);
+        }
+
+        // 阶段 E：攻击判定阶段（由 ProceedNextAttack 驱动）
         ProceedNextAttack();
     }
 
@@ -589,26 +617,79 @@ public class BattleManager : MonoBehaviour
         if (!isPlayerAttackResolved && currentPlayerSkill != null && currentPlayerSkill.skillData != null && currentPlayerSkill.skillData.skillType == SkillType.Attack)
         {
             isPlayerAttackResolved = true;
-            StartCoroutine(DelayAttackState(new HitBarActionState(this), currentPlayerSkill.skillData, true));
+            if (TryProcessChargeAttack(playerEntity, currentPlayerSkill, false, out bool isChargingNow) && isChargingNow)
+            {
+                // 第一回合蓄力，直接跳过攻击判定阶段
+                ProceedNextAttack();
+                return;
+            }
+            ChangeState(new HitBarActionState(this));
             return;
         }
 
         if (!isEnemyAttackResolved && currentEnemySkill != null && currentEnemySkill.skillData != null && currentEnemySkill.skillData.skillType == SkillType.Attack)
         {
             isEnemyAttackResolved = true;
-            StartCoroutine(DelayAttackState(new EnemyActionState(this), currentEnemySkill.skillData, false));
+            if (TryProcessChargeAttack(enemyEntity, currentEnemySkill, false, out bool isChargingNow) && isChargingNow)
+            {
+                // 第一回合蓄力，直接跳过攻击判定阶段
+                ProceedNextAttack();
+                return;
+            }
+            ChangeState(new EnemyActionState(this));
             return;
         }
 
         CheckBattleEndOrNextTurn();
     }
 
-    private IEnumerator DelayAttackState(BattleState nextState, SkillData attackSkill, bool isPlayerAttacking)
+    private bool TryProcessChargeAttack(BattleEntity entity, SkillSlot skill, bool isCheckOnly, out bool isChargingNow)
     {
-        Transform anchor = isPlayerAttacking ? playerActionInfoAnchor : enemyActionInfoAnchor;
-        SpawnActionInfo(anchor, $"发动{GetSkillNameColored(attackSkill)}");
-        yield return new WaitForSeconds(1.5f); // 1s显示 + 0.5s淡出，完全消失后进入下一状态
-        ChangeState(nextState);
+        isChargingNow = false;
+        if (skill == null || skill.skillData == null || skill.skillData.effects == null) return false;
+
+        ChargeAttackEffect chargeEffect = null;
+        foreach (var effect in skill.skillData.effects)
+        {
+            if (effect is ChargeAttackEffect ce)
+            {
+                chargeEffect = ce;
+                break;
+            }
+        }
+
+        if (chargeEffect != null)
+        {
+            if (!entity.activeStatuses.ContainsKey(StatusType.Charging))
+            {
+                isChargingNow = true;
+                if (!isCheckOnly)
+                {
+                    // 第一回合：进入蓄力状态（由于回合结束会立刻扣除1回合，因此给2回合寿命，确保下回合还在）
+                    entity.AddStatus(StatusType.Charging, 2);
+                    entity.lockedNextTurnSkill = skill;
+                    
+                    // 应用防御向宽度修正
+                    int idx = Mathf.Clamp(skill.level - 1, 0, chargeEffect.defenseWidthModifiers.Length - 1);
+                    float modifier = chargeEffect.defenseWidthModifiers.Length > 0 ? chargeEffect.defenseWidthModifiers[idx] : 0;
+                    entity.tempHitWidthModifier += modifier;
+                    
+                    Debug.Log($"[{entity.roleData.roleName}] 开始蓄力！临时防御修正：{modifier}");
+                }
+                return true;
+            }
+            else
+            {
+                // 第二回合：执行真正的攻击，并在结算前清除蓄力状态
+                if (!isCheckOnly)
+                {
+                    entity.activeStatuses.Remove(StatusType.Charging);
+                    entity.OnStatusChanged?.Invoke();
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     public void CheckBattleEndOrNextTurn()

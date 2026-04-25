@@ -48,5 +48,6 @@ MonoBehaviour:
       type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         statusType: 8
-        baseDurations: 010000000200000002000000
+        baseDurations: 020000000200000003000000
         applyToSelf: 1
+        ignoreMentalityBonus: 0

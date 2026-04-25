@@ -86,6 +86,8 @@ GameObject:
   - component: {fileID: 2452349099197704018}
   - component: {fileID: 7019819390029051822}
   - component: {fileID: 5480292058749471946}
+  - component: {fileID: 7717244026903046482}
+  - component: {fileID: 5701942721855737420}
   m_Layer: 5
   m_Name: ui_role_skill_item
   m_TagString: Untagged
@@ -200,6 +202,30 @@ MonoBehaviour:
   quantityText: {fileID: 1836136083424231996}
   miniHitBarRoot: {fileID: 7774861147583089593}
   miniSectionPrefab: {fileID: 4492960053444335311, guid: 50c08e90771ca7348a8e9723913ecaf9, type: 3}
+--- !u!114 &7717244026903046482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2452349099197704019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 062cf2b5220a76248ba310925cb31a89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5701942721855737420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2452349099197704019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 062cf2b5220a76248ba310925cb31a89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5246343592553922961
 GameObject:
   m_ObjectHideFlags: 0

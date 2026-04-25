@@ -55,4 +55,4 @@ MonoBehaviour:
       data:
         statusType: 4
         minTriggerLevel: 3
-        durations: 010000000100000002000000
+        durations: 020000000200000003000000

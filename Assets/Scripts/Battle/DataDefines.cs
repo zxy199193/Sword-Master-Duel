@@ -8,7 +8,7 @@ using System.Linq;
 // ==========================================
 public enum SkillType { Attack, Defend, Dodge, Special, Item }
 public enum SectionLevel { Level0, Level1, Level2, Level3, Level4, Level5, Level6, Level99 }
-public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked, Burn, Clone, FireEnchant, Recover, Paralyzed, Frozen, Insight, Sharpened, Lightweight }
+public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked, Burn, Clone, FireEnchant, Recover, Paralyzed, Frozen, Insight, Sharpened, Lightweight, Charging }
 
 public enum ShopCategory { Weapon, Armor, Accessory, Item }
 public enum AttributeType { Vitality, Endurance, Strength, Mentality }
@@ -202,10 +202,13 @@ public class DirectDamageEffect : SkillEffect
     {
         int idx = Mathf.Clamp(skillLevel - 1, 0, damageAmounts.Length - 1);
         int finalDamage = damageAmounts.Length > 0 ? damageAmounts[idx] : 0;
-        target.TakeDamage(finalDamage);
-        target.PlayHitAnim();
-        manager.SpawnDamagePopup(target.isPlayer, finalDamage.ToString(), 2);
-        if (target.currentBasicLife <= 0) target.PlayDieAnim();
+        bool hitLanded = target.TakeDamage(finalDamage);
+        if (hitLanded)
+        {
+            target.PlayHitAnim();
+            manager.SpawnDamagePopup(target.isPlayer, finalDamage.ToString(), 2);
+            if (target.currentBasicLife <= 0) target.PlayDieAnim();
+        }
     }
 }
 
@@ -429,22 +432,25 @@ public class CounterAttackOnEvadeEffect : SkillEffect
             int finalDamage = baseDmg + defender.GetFinalStrength();
 
             // 扣血（作为惩罚性反击，这里直接造成伤害，无视对方此时的临时防御，突出一个“破绽真实伤害”）
-            attacker.TakeDamage(finalDamage);
+            bool hitLanded = attacker.TakeDamage(finalDamage);
 
-            // 让被反击的人播受击动画和飙血特效
-            attacker.PlayHitAnim();
-            manager.SpawnHitEffect(attacker.transform);
-
-            // 飘字表现：防守方头上冒出“燕返！”，攻击方头上爆出红色的反击伤害数字
-            manager.SpawnGeneralPopup(defender.isPlayer, "<color=#FF4500>燕返!</color>");
-            manager.SpawnDamagePopup(attacker.isPlayer, finalDamage.ToString(), 2); // 传2让它用暴击样式的数字
-
-            Debug.Log($"[{defender.roleData.roleName}] 触发燕返！成功闪避并反斩，对 [{attacker.roleData.roleName}] 造成了 {finalDamage} 点真实伤害！");
-
-            // 万一这一下直接把对方反击死了，得让他倒下
-            if (attacker.currentBasicLife <= 0)
+            if (hitLanded)
             {
-                attacker.PlayDieAnim();
+                // 让被反击的人播受击动画和飙血特效
+                attacker.PlayHitAnim();
+                manager.SpawnHitEffect(attacker.transform);
+
+                // 飘字表现：防守方头上冒出“燕返！”，攻击方头上爆出红色的反击伤害数字
+                manager.SpawnGeneralPopup(defender.isPlayer, "<color=#FF4500>燕返!</color>");
+                manager.SpawnDamagePopup(attacker.isPlayer, finalDamage.ToString(), 2); // 传2让它用暴击样式的数字
+
+                Debug.Log($"[{defender.roleData.roleName}] 触发燕返！成功闪避并反斩，对 [{attacker.roleData.roleName}] 造成了 {finalDamage} 点真实伤害！");
+
+                // 万一这一下直接把对方反击死了，得让他倒下
+                if (attacker.currentBasicLife <= 0)
+                {
+                    attacker.PlayDieAnim();
+                }
             }
         }
     }
@@ -490,6 +496,49 @@ public class AntiShieldDamageEffect : SkillEffect
         // 留空，核心破盾逻辑已在 OnPreDamageSettle 完成
     }
 }
+
+[Serializable]
+public class HeavyLoadExtraDamageEffect : SkillEffect
+{
+    [Tooltip("各等级下，超重或极重时增加的基础伤害 (请填入3个值，如 5, 8, 12)")]
+    public int[] heavyLoadDamages = new int[3];
+
+    public override int GetBaseDamageModifier(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        var loadState = caster.GetEffectiveLoadState();
+        if (loadState == GlobalBattleRules.LoadWeightState.Heavy || loadState == GlobalBattleRules.LoadWeightState.Extreme)
+        {
+            int idx = Mathf.Clamp(skillLevel - 1, 0, heavyLoadDamages.Length - 1);
+            int bonus = heavyLoadDamages.Length > 0 ? heavyLoadDamages[idx] : 0;
+            if (bonus > 0)
+            {
+                manager.SpawnGeneralPopup(caster.isPlayer, "<color=#FF8C00>力劈华山!</color>");
+                Debug.Log($"[{caster.roleData.roleName}] 触发超重增伤！当前负重状态 {loadState}，额外增加 {bonus} 点基础伤害！");
+            }
+            return bonus;
+        }
+        return 0;
+    }
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 留空，核心增伤逻辑已在 GetBaseDamageModifier 中完成
+    }
+}
+
+[Serializable]
+public class ChargeAttackEffect : SkillEffect
+{
+    [Tooltip("各等级下，第一回合蓄力时使对方命中区间改变的宽度 (正数使对方更容易打中，负数使对方更难打中，推荐填负数，如 -5)")]
+    public float[] defenseWidthModifiers = new float[3];
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 核心逻辑转移到 BattleManager.ProceedNextAttack 和 RoutineActionBroadcast 中处理
+    }
+}
+
+
 [Serializable]
 public class ApplyStatusOnHitLevelEffect : SkillEffect
 {

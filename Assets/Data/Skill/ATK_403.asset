@@ -16,7 +16,7 @@ MonoBehaviour:
   description: "\u5A01\u529B\u5F88\u9AD8\uFF0C\u547D\u4E2D\u7387\u9AD8"
   skillIcon: {fileID: 21300000, guid: 38d513935403092408d114a995fcfa42, type: 3}
   skillType: 0
-  animationTriggerName: Attack_306
+  animationTriggerName: Attack
   staminaCosts: 0c0000000b0000000a000000
   basicDamages:
   - 13
@@ -40,7 +40,7 @@ MonoBehaviour:
     sections:
     - level: 1
       axisPosition: 50
-      width: 30
+      width: 80
     - level: 2
       axisPosition: 50
       width: 20
@@ -48,7 +48,17 @@ MonoBehaviour:
       axisPosition: 50
       width: 10
   castEffectPrefab: {fileID: 0}
-  effects: []
+  effects:
+  - rid: 2591120668570681344
+  - rid: 2591120668570681345
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2591120668570681344
+      type: {class: AntiShieldDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        extraShieldDamages: 030000000500000008000000
+    - rid: 2591120668570681345
+      type: {class: HeavyLoadExtraDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        heavyLoadDamages: 060000000600000006000000

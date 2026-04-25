@@ -47,6 +47,7 @@ MonoBehaviour:
     - rid: 2591120357824135170
       type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        statusType: 1
+        statusType: 18
         baseDurations: 020000000300000003000000
         applyToSelf: 1
+        ignoreMentalityBonus: 0

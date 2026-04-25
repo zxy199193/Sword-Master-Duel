@@ -48,7 +48,15 @@ MonoBehaviour:
       axisPosition: 50
       width: 3
   castEffectPrefab: {fileID: 0}
-  effects: []
+  effects:
+  - rid: 2591120668570681346
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2591120668570681346
+      type: {class: ChargeAttackEffect, ns: , asm: Assembly-CSharp}
+      data:
+        defenseWidthModifiers:
+        - 15
+        - 13
+        - 10

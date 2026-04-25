@@ -95,6 +95,29 @@ public class SkillData : ScriptableObject
         }
         return leveledConfig;
     }
+
+    public List<StatusType> GetRelatedStatuses()
+    {
+        List<StatusType> statuses = new List<StatusType>();
+        if (effects == null) return statuses;
+
+        foreach (var effect in effects)
+        {
+            if (effect is ApplyStatusEffect applyStatus)
+            {
+                if (!statuses.Contains(applyStatus.statusType)) statuses.Add(applyStatus.statusType);
+            }
+            else if (effect is ApplyStatusOnHitLevelEffect hitStatus)
+            {
+                if (!statuses.Contains(hitStatus.statusType)) statuses.Add(hitStatus.statusType);
+            }
+            else if (effect is ChargeAttackEffect)
+            {
+                if (!statuses.Contains(StatusType.Charging)) statuses.Add(StatusType.Charging);
+            }
+        }
+        return statuses;
+    }
 }
 
 // ==========================================

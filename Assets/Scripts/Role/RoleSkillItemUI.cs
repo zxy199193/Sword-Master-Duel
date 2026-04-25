@@ -45,6 +45,9 @@ public class RoleSkillItemUI : MonoBehaviour
     {
         PopulateBasicInfo(skillSlot);
 
+        var tooltipTrigger = GetComponent<SkillTooltipTrigger>();
+        if (tooltipTrigger != null) tooltipTrigger.BindSkill(skillSlot.skillData);
+
         if (equippedBadge) equippedBadge.SetActive(isEquipped);
         if (priceNode) priceNode.SetActive(false);
 
@@ -75,6 +78,9 @@ public class RoleSkillItemUI : MonoBehaviour
     public void SetupForShop(SkillSlot skillSlot, int price, bool canAfford, string btnText, Action<SkillSlot> onActionClicked)
     {
         PopulateBasicInfo(skillSlot);
+
+        var tooltipTrigger = GetComponent<SkillTooltipTrigger>();
+        if (tooltipTrigger != null) tooltipTrigger.BindSkill(skillSlot.skillData);
 
         if (equippedBadge) equippedBadge.SetActive(false);
 

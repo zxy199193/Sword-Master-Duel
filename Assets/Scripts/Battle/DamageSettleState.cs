@@ -197,54 +197,57 @@ public class DamageSettleState : BattleState
             }
 
             // 造成最终伤害
-            defender.TakeDamage(finalDamage);
+            bool hitLanded = defender.TakeDamage(finalDamage);
 
-            // 火焰附加特效：命中时给对方上 1 回合灼烧
-            if (attacker.activeStatuses.ContainsKey(StatusType.FireEnchant))
+            if (hitLanded)
             {
-                defender.AddStatus(StatusType.Burn, 1);
-                battleManager.SpawnGeneralPopup(defender.isPlayer, "[灼烧]");
-                Debug.Log($"<color=orange>[{attacker.roleData.roleName}] 触发火焰附加！给 [{defender.roleData.roleName}] 施加了 1 回合灼烧。</color>");
-            }
-
-            // 播放音效
-            int hitSoundType = 1; // 正常命中
-            if (defendSkill != null && defendSkill.skillType == SkillType.Defend)
-            {
-                hitSoundType = 2; // 被防御
-            }
-
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.PlayHitSound(hitSoundType);
-            }
-
-            // 播放特效和飘字
-            battleManager.SpawnHitEffect(defender.transform);
-            int hitLevelTag = (int)hit.Value.level >= 3 ? 2 : 1;
-            battleManager.SpawnDamagePopup(isPlayerTakingDamage, finalDamage.ToString(), hitLevelTag);
-
-            // 触发特效 OnAttackHit 钩子
-            if (skill.effects != null && skill.effects.Count > 0)
-            {
-                foreach (var effect in skill.effects)
+                // 火焰附加特效：命中时给对方上 1 回合灼烧
+                if (attacker.activeStatuses.ContainsKey(StatusType.FireEnchant))
                 {
-                    if (effect != null)
+                    defender.AddStatus(StatusType.Burn, 1);
+                    battleManager.SpawnGeneralPopup(defender.isPlayer, "[灼烧]");
+                    Debug.Log($"<color=orange>[{attacker.roleData.roleName}] 触发火焰附加！给 [{defender.roleData.roleName}] 施加了 1 回合灼烧。</color>");
+                }
+
+                // 播放音效
+                int hitSoundType = 1; // 正常命中
+                if (defendSkill != null && defendSkill.skillType == SkillType.Defend)
+                {
+                    hitSoundType = 2; // 被防御
+                }
+
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayHitSound(hitSoundType);
+                }
+
+                // 播放特效和飘字
+                battleManager.SpawnHitEffect(defender.transform);
+                int hitLevelTag = (int)hit.Value.level >= 3 ? 2 : 1;
+                battleManager.SpawnDamagePopup(isPlayerTakingDamage, finalDamage.ToString(), hitLevelTag);
+
+                // 触发特效 OnAttackHit 钩子
+                if (skill.effects != null && skill.effects.Count > 0)
+                {
+                    foreach (var effect in skill.effects)
                     {
-                        effect.Execute(attacker, defender, battleManager, level);
-                        effect.OnAttackHit(attacker, defender, battleManager, level, hit.Value.level);
+                        if (effect != null)
+                        {
+                            effect.Execute(attacker, defender, battleManager, level);
+                            effect.OnAttackHit(attacker, defender, battleManager, level, hit.Value.level);
+                        }
                     }
                 }
-            }
 
-            // 触发防御方的 OnBeingHit 钩子 (用于受击反制类技能)
-            if (defendSkill != null && defendSkill.effects != null && defendSkill.effects.Count > 0)
-            {
-                foreach (var effect in defendSkill.effects)
+                // 触发防御方的 OnBeingHit 钩子 (用于受击反制类技能)
+                if (defendSkill != null && defendSkill.effects != null && defendSkill.effects.Count > 0)
                 {
-                    if (effect != null)
+                    foreach (var effect in defendSkill.effects)
                     {
-                        effect.OnBeingHit(defender, attacker, battleManager, defendLevel, hit.Value.level);
+                        if (effect != null)
+                        {
+                            effect.OnBeingHit(defender, attacker, battleManager, defendLevel, hit.Value.level);
+                        }
                     }
                 }
             }

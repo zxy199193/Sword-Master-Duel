@@ -24,6 +24,7 @@ public class BattleEntity : MonoBehaviour
     [HideInInspector]
     public Dictionary<SkillSlot, int[]> runtimeSkillWeights = new Dictionary<SkillSlot, int[]>();
     [HideInInspector] public SkillData lastUsedAttackSkill; // 用于“看破”状态判定
+    [HideInInspector] public SkillSlot lockedNextTurnSkill; // 用于蓄力等跨回合技能的动作锁定
 
     [Header("Turn Temporary Data")]
     public float tempDamageReduction = 0;
@@ -78,6 +79,7 @@ public class BattleEntity : MonoBehaviour
         }
 
         runtimeSkills.Clear();
+        lockedNextTurnSkill = null;
 
         if (isPlayer && GameManager.Instance != null)
         {
@@ -327,7 +329,7 @@ public class BattleEntity : MonoBehaviour
         isImmuneToSubSkills = false; 
     }
 
-    public void TakeDamage(int rawDamage)
+    public bool TakeDamage(int rawDamage)
     {
         // 分身防御拦截
         if (rawDamage > 0 && activeStatuses.ContainsKey(StatusType.Clone))
@@ -337,7 +339,7 @@ public class BattleEntity : MonoBehaviour
             BattleManager bm = GameObject.FindObjectOfType<BattleManager>();
             if (bm != null) bm.SpawnGeneralPopup(isPlayer, "<color=cyan>分身抵挡!</color>");
             Debug.Log($"<color=cyan>[{roleData.roleName}] 的【分身】抵挡了一次伤害并消失了。</color>");
-            return;
+            return false;
         }
 
         int remainingDamage = rawDamage;
@@ -373,10 +375,11 @@ public class BattleEntity : MonoBehaviour
                 OnHpChanged?.Invoke(); 
                 Die(); 
                 PlayDieAnim(); 
-                return; 
+                return true; 
             }
         }
         OnHpChanged?.Invoke();
+        return true;
     }
 
     public bool ConsumeStamina(int amount)

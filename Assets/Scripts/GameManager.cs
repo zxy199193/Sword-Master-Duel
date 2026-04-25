@@ -240,15 +240,27 @@ public class GameManager : MonoBehaviour
         playerProfile.unallocatedPoints = 4;
         playerProfile.totalGold = 0;
 
-        playerProfile.baseMaxLife = 10;
-        playerProfile.baseMaxStamina = 5;
-        playerProfile.vitality = 0;
-        playerProfile.endurance = 0;
-        playerProfile.baseStrength = 0;
-        playerProfile.baseMentality = 0;
+        if (playerProfile.playerRoleAsset != null)
+        {
+            playerProfile.baseMaxLife = playerProfile.playerRoleAsset.maxBasicLife;
+            playerProfile.baseMaxStamina = playerProfile.playerRoleAsset.maxStamina;
+            playerProfile.vitality = playerProfile.playerRoleAsset.vitality;
+            playerProfile.endurance = playerProfile.playerRoleAsset.endurance;
+            playerProfile.baseStrength = playerProfile.playerRoleAsset.strength;
+            playerProfile.baseMentality = playerProfile.playerRoleAsset.mentality;
+        }
+        else
+        {
+            playerProfile.baseMaxLife = 10;
+            playerProfile.baseMaxStamina = 5;
+            playerProfile.vitality = 0;
+            playerProfile.endurance = 0;
+            playerProfile.baseStrength = 0;
+            playerProfile.baseMentality = 0;
+        }
 
-        playerProfile.currentHp = playerProfile.baseMaxLife;
-        playerProfile.currentStamina = playerProfile.baseMaxStamina;
+        playerProfile.currentHp = playerProfile.GetFinalMaxLife();
+        playerProfile.currentStamina = playerProfile.GetFinalMaxStamina();
         playerProfile.currentExtraLife = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.durability : 0;
         playerProfile.currentRestDays = playerProfile.maxRestDays;
 

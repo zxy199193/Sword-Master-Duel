@@ -86,6 +86,7 @@ GameObject:
   - component: {fileID: 4133356784529299826}
   - component: {fileID: 2165232203833465806}
   - component: {fileID: 5496225758593464604}
+  - component: {fileID: 318436627973091179}
   m_Layer: 5
   m_Name: ui_level_rest_shop_item
   m_TagString: Untagged
@@ -182,6 +183,18 @@ MonoBehaviour:
   priceText: {fileID: 2424665780445343490}
   actionBtn: {fileID: 2165232203833465806}
   actionBtnText: {fileID: 397106230550966240}
+--- !u!114 &318436627973091179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892558997455490223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 062cf2b5220a76248ba310925cb31a89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1175342661152307019
 GameObject:
   m_ObjectHideFlags: 0
