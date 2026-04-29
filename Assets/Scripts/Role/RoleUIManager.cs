@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -129,6 +130,7 @@ public class RoleUIManager : MonoBehaviour
     { 
         gameObject.SetActive(true); 
         RefreshAllUI(); 
+        ForceRefreshLayout();
     }
 
     public void ClosePanel() 
@@ -207,6 +209,8 @@ public class RoleUIManager : MonoBehaviour
 
         RefreshLoadWeightUI(profile);
         RefreshSkillSlots();
+
+        ForceRefreshLayout();
     }
 
     private void RefreshLoadWeightUI(PlayerProfile profile)
@@ -240,8 +244,10 @@ public class RoleUIManager : MonoBehaviour
                 profile.currentHp += 5;
                 break;
             case AttributeType.Endurance:
+                int oldMaxStam = profile.GetFinalMaxStamina();
                 profile.endurance += 1;
-                profile.currentStamina += 2;
+                int newMaxStam = profile.GetFinalMaxStamina();
+                profile.currentStamina += (newMaxStam - oldMaxStam);
                 break;
             case AttributeType.Strength:
                 profile.baseStrength += 1;
@@ -369,6 +375,7 @@ public class RoleUIManager : MonoBehaviour
     {
         currentSkillTab = tabIndex;
         RefreshSkillSlots();
+        ForceRefreshLayout();
     }
 
     private void RefreshSkillSlots()
@@ -457,5 +464,30 @@ public class RoleUIManager : MonoBehaviour
             }
         }
         RefreshAllUI();
+    }
+
+    private void ForceRefreshLayout()
+    {
+        if (!gameObject.activeInHierarchy) return;
+        StartCoroutine(RefreshLayoutRoutine());
+    }
+
+    private IEnumerator RefreshLayoutRoutine()
+    {
+        // 第一帧：强制同步画布并等待一帧，让 Text 等组件计算出正确大小
+        Canvas.ForceUpdateCanvases();
+        yield return null;
+
+        // 第二帧：递归标记所有布局组为脏，并从子到父强制重绘
+        RectTransform rect = GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            LayoutGroup[] layouts = GetComponentsInChildren<LayoutGroup>(true);
+            for (int i = layouts.Length - 1; i >= 0; i--)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(layouts[i].GetComponent<RectTransform>());
+            }
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
+        }
     }
 }

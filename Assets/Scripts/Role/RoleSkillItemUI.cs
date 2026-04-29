@@ -10,14 +10,15 @@ public class RoleSkillItemUI : MonoBehaviour
     public Text descText;
     public Text levelText;
 
-    [Header("UI 节点 - 操作")]
+    [Header("UI 节点 - 角色界面")]
     public GameObject equippedBadge;
-    public Button actionBtn;
-    public Text actionBtnText;
+    public Button selectBtn;
+    public Button unequipBtn;
 
     [Header("UI 节点 - 商店专属")]
-    public GameObject priceNode;
-    public Text priceText;
+    public Button buyBtn;
+    public Text buyBtnText;
+    public GameObject ownedBadge;
 
     [Header("UI 节点 - 动态属性展示")]
     public GameObject damageNode;
@@ -41,64 +42,75 @@ public class RoleSkillItemUI : MonoBehaviour
     // Public Methods - Setup
     // ==========================================
 
-    public void Setup(SkillSlot skillSlot, bool isEquipped, bool canUnequip, Action<SkillSlot> onActionClicked)
+    /// <summary>角色界面使用</summary>
+    public void Setup(SkillSlot skillSlot, bool isEquipped, bool canUnequip,
+        Action<SkillSlot> onSelect, Action<SkillSlot> onUnequip)
     {
         PopulateBasicInfo(skillSlot);
 
         var tooltipTrigger = GetComponent<SkillTooltipTrigger>();
         if (tooltipTrigger != null) tooltipTrigger.BindSkill(skillSlot.skillData);
 
-        if (equippedBadge) equippedBadge.SetActive(isEquipped);
-        if (priceNode) priceNode.SetActive(false);
+        // 隐藏商店专属节点
+        if (buyBtn) buyBtn.gameObject.SetActive(false);
+        if (ownedBadge) ownedBadge.SetActive(false);
 
-        if (actionBtn != null)
+        if (equippedBadge) equippedBadge.SetActive(isEquipped);
+
+        if (isEquipped)
         {
-            actionBtn.interactable = true;
-            actionBtn.onClick.RemoveAllListeners();
-            
-            if (isEquipped)
+            if (selectBtn) selectBtn.gameObject.SetActive(false);
+            if (unequipBtn)
             {
-                if (!canUnequip) actionBtn.gameObject.SetActive(false);
-                else 
-                { 
-                    actionBtn.gameObject.SetActive(true); 
-                    if (actionBtnText) actionBtnText.text = "卸下"; 
-                }
+                unequipBtn.gameObject.SetActive(true);
+                unequipBtn.interactable = canUnequip;
+                unequipBtn.onClick.RemoveAllListeners();
+                if (canUnequip)
+                    unequipBtn.onClick.AddListener(() => onUnequip?.Invoke(skillSlot));
             }
-            else
+        }
+        else
+        {
+            if (unequipBtn) unequipBtn.gameObject.SetActive(false);
+            if (selectBtn)
             {
-                actionBtn.gameObject.SetActive(true);
-                if (actionBtnText) actionBtnText.text = "装备";
+                selectBtn.gameObject.SetActive(true);
+                selectBtn.onClick.RemoveAllListeners();
+                selectBtn.onClick.AddListener(() => onSelect?.Invoke(skillSlot));
             }
-            
-            actionBtn.onClick.AddListener(() => onActionClicked?.Invoke(skillSlot));
         }
     }
 
-    public void SetupForShop(SkillSlot skillSlot, int price, bool canAfford, string btnText, Action<SkillSlot> onActionClicked)
+    /// <summary>商店界面使用</summary>
+    public void SetupForShop(SkillSlot skillSlot, int price, bool canAfford, bool isOwned,
+        string btnText, Action<SkillSlot> onBuy)
     {
         PopulateBasicInfo(skillSlot);
 
         var tooltipTrigger = GetComponent<SkillTooltipTrigger>();
         if (tooltipTrigger != null) tooltipTrigger.BindSkill(skillSlot.skillData);
 
+        // 隐藏角色界面专属节点
         if (equippedBadge) equippedBadge.SetActive(false);
+        if (selectBtn) selectBtn.gameObject.SetActive(false);
+        if (unequipBtn) unequipBtn.gameObject.SetActive(false);
 
-        if (priceNode) priceNode.SetActive(true);
-        if (priceText)
+        if (isOwned)
         {
-            priceText.text = price.ToString();
-            priceText.color = canAfford ? Color.white : Color.red;
+            if (buyBtn) buyBtn.gameObject.SetActive(false);
+            if (ownedBadge) ownedBadge.SetActive(true);
         }
-
-        if (actionBtn != null)
+        else
         {
-            actionBtn.gameObject.SetActive(true);
-            actionBtn.interactable = canAfford;
-            if (actionBtnText) actionBtnText.text = btnText;
-
-            actionBtn.onClick.RemoveAllListeners();
-            actionBtn.onClick.AddListener(() => onActionClicked?.Invoke(skillSlot));
+            if (ownedBadge) ownedBadge.SetActive(false);
+            if (buyBtn)
+            {
+                buyBtn.gameObject.SetActive(true);
+                buyBtn.interactable = canAfford;
+                if (buyBtnText) buyBtnText.text = price.ToString();
+                buyBtn.onClick.RemoveAllListeners();
+                buyBtn.onClick.AddListener(() => onBuy?.Invoke(skillSlot));
+            }
         }
     }
 
@@ -119,7 +131,7 @@ public class RoleSkillItemUI : MonoBehaviour
         }
 
         HideAllDynamicNodes();
-        
+
         switch (skillSlot.skillData.skillType)
         {
             case SkillType.Attack: SetupAttackSkill(skillSlot); break;
@@ -156,12 +168,12 @@ public class RoleSkillItemUI : MonoBehaviour
         SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
         int baseDur = slot.skillData.GetBaseDuration(slot.level);
         int extraDur = 0;
-        
+
         if (GameManager.Instance != null && GameManager.Instance.playerProfile != null)
         {
             extraDur = Mathf.FloorToInt(GameManager.Instance.playerProfile.GetFinalMentality() / 6f);
         }
-            
+
         SetNodeText(durationNode, durationText, Mathf.Max(1, baseDur + extraDur).ToString());
     }
 
@@ -182,10 +194,10 @@ public class RoleSkillItemUI : MonoBehaviour
 
     private void SetNodeText(GameObject node, Text textComp, string value)
     {
-        if (node != null && textComp != null) 
-        { 
-            node.SetActive(true); 
-            textComp.text = value; 
+        if (node != null && textComp != null)
+        {
+            node.SetActive(true);
+            textComp.text = value;
         }
     }
 
@@ -193,14 +205,14 @@ public class RoleSkillItemUI : MonoBehaviour
     {
         if (miniHitBarRoot == null || miniSectionPrefab == null) return;
 
-        if (slot.skillData.skillType != SkillType.Attack) 
-        { 
-            miniHitBarRoot.SetActive(false); 
-            return; 
+        if (slot.skillData.skillType != SkillType.Attack)
+        {
+            miniHitBarRoot.SetActive(false);
+            return;
         }
 
         miniHitBarRoot.SetActive(true);
-        foreach (Transform child in miniHitBarRoot.transform) 
+        foreach (Transform child in miniHitBarRoot.transform)
         {
             Destroy(child.gameObject);
         }
@@ -214,11 +226,11 @@ public class RoleSkillItemUI : MonoBehaviour
         {
             GameObject go = Instantiate(miniSectionPrefab, miniHitBarRoot.transform);
             RectTransform rt = go.GetComponent<RectTransform>();
-            rt.anchorMin = new Vector2(0.5f, 0f); 
+            rt.anchorMin = new Vector2(0.5f, 0f);
             rt.anchorMax = new Vector2(0.5f, 1f);
             rt.sizeDelta = new Vector2((section.width / 100f) * totalWidth, 0);
             rt.anchoredPosition = new Vector2((section.axisPosition / 100f) * totalWidth - (totalWidth / 2f), 0);
-            
+
             Image img = go.GetComponent<Image>();
             if (img != null) img.color = GlobalBattleRules.GetSectionColor(section.level);
         }

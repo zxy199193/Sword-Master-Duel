@@ -15,14 +15,16 @@ public class BagItemUI : MonoBehaviour
 
     [Header("UI 节点 - 状态与操作")]
     public GameObject equippedBadge;
-    public Button actionBtn;
-    public Text actionBtnText;
+    public Button selectBtn;
+    public Button unequipBtn;
 
     // ==========================================
     // Public Methods
     // ==========================================
 
-    public void Setup(SkillSlot itemSlot, bool isEquipped, Action<SkillSlot> onActionClicked)
+    /// <summary>角色界面使用（道具无卸下限制，始终可卸下）</summary>
+    public void Setup(SkillSlot itemSlot, bool isEquipped,
+        Action<SkillSlot> onSelect, Action<SkillSlot> onUnequip)
     {
         if (nameText) nameText.text = itemSlot.skillData.skillName;
         if (iconImage) iconImage.sprite = itemSlot.skillData.skillIcon;
@@ -33,17 +35,26 @@ public class BagItemUI : MonoBehaviour
 
         if (equippedBadge) equippedBadge.SetActive(isEquipped);
 
-        actionBtn.onClick.RemoveAllListeners();
-
         if (isEquipped)
         {
-            if (actionBtnText) actionBtnText.text = "卸下";
+            if (selectBtn) selectBtn.gameObject.SetActive(false);
+            if (unequipBtn)
+            {
+                unequipBtn.gameObject.SetActive(true);
+                unequipBtn.interactable = true; // 道具无限制，始终可卸下
+                unequipBtn.onClick.RemoveAllListeners();
+                unequipBtn.onClick.AddListener(() => onUnequip?.Invoke(itemSlot));
+            }
         }
         else
         {
-            if (actionBtnText) actionBtnText.text = "携带";
+            if (unequipBtn) unequipBtn.gameObject.SetActive(false);
+            if (selectBtn)
+            {
+                selectBtn.gameObject.SetActive(true);
+                selectBtn.onClick.RemoveAllListeners();
+                selectBtn.onClick.AddListener(() => onSelect?.Invoke(itemSlot));
+            }
         }
-
-        actionBtn.onClick.AddListener(() => onActionClicked?.Invoke(itemSlot));
     }
 }

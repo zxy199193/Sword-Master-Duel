@@ -16,7 +16,6 @@ MonoBehaviour:
   weaponShop:
     categoryName: "\u6B66\u5668"
     permanentEquips:
-    - {fileID: 11400000, guid: e4de47acb132f5748933bfb9ccf3f8ea, type: 2}
     - {fileID: 11400000, guid: a7633d404ba5b604ca4ad8f71ca572a5, type: 2}
     - {fileID: 11400000, guid: 4161d1e11d59a3940b9ef16f7150ae73, type: 2}
     - {fileID: 11400000, guid: 6f2f5c97de1986846b69b1edabf39c89, type: 2}
@@ -28,11 +27,10 @@ MonoBehaviour:
     - {fileID: 11400000, guid: b4b541ebbbdae7242a3794e2e1eccfd2, type: 2}
     - {fileID: 11400000, guid: 61f6aa3af00742e49aa15c249ddec90e, type: 2}
     - {fileID: 11400000, guid: d245855d05dd31b4ab8e7f69c2edd8f7, type: 2}
-    randomCount: 3
+    randomCount: 2
   armorShop:
     categoryName: "\u9632\u5177"
     permanentEquips:
-    - {fileID: 11400000, guid: 6f0b2ed08393b4146a13d7bcf9a28506, type: 2}
     - {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
     - {fileID: 11400000, guid: 119a274c0dcf8324ba46a150dc37aba0, type: 2}
     - {fileID: 11400000, guid: f7a213886925a5343b497fd431ee8930, type: 2}
@@ -42,7 +40,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 843637551ec7eaa499ad82d95434ec66, type: 2}
     - {fileID: 11400000, guid: ecc9859868d87204b98b84f66c2924d4, type: 2}
     - {fileID: 11400000, guid: f30acaabf5db4bf4abee9cfba545c88c, type: 2}
-    randomCount: 3
+    randomCount: 2
   accessoryShop:
     categoryName: "\u9970\u54C1"
     permanentEquips:
@@ -65,7 +63,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 5e2c19106650a7842a809b65cbde8d05, type: 2}
     - {fileID: 11400000, guid: 11262686e8a463e4eb09d398ae80bfdc, type: 2}
     - {fileID: 11400000, guid: a4692f4f71c94eb4b83e793fc7b6c00a, type: 2}
-    randomCount: 3
+    randomCount: 2
   itemShop:
     categoryName: "\u9053\u5177"
     permanentItems:
@@ -90,40 +88,42 @@ MonoBehaviour:
     - {fileID: 11400000, guid: e87486545a0a4134885a881d837c3f1f, type: 2}
     - {fileID: 11400000, guid: 6a06f99ba0e10d3429c5c0e69911a463, type: 2}
     - {fileID: 11400000, guid: 62aa1e1b6028e194da47b310ceda3191, type: 2}
-    randomCount: 3
-  availableSkills:
-  - {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
-  - {fileID: 11400000, guid: 71f0d27139a6ee7478e95946f2344d08, type: 2}
-  - {fileID: 11400000, guid: c8c81fcc60cc9ce4694de3d313541bf2, type: 2}
-  - {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
-  - {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
-  - {fileID: 11400000, guid: 6b1924b78bbd38048a5ff434a711b556, type: 2}
-  - {fileID: 11400000, guid: 6ba3735138f11e74294903884de885e6, type: 2}
-  - {fileID: 11400000, guid: 8d3d602e5f40c704e96da066ecc6d44c, type: 2}
-  - {fileID: 11400000, guid: ba0ab34439291a24a9994854eea2a9a2, type: 2}
-  - {fileID: 11400000, guid: 4b2b6ddb99af39e4b84b08568c55024a, type: 2}
-  - {fileID: 11400000, guid: d29c4ab77970f444c923287ce35543f4, type: 2}
-  - {fileID: 11400000, guid: 56110b0a913fda24a9abb3f143d74b8e, type: 2}
-  - {fileID: 11400000, guid: 5ac0a60a5cdb50544bd2cc6d2173cdb6, type: 2}
-  - {fileID: 11400000, guid: 09b0744b4ae21884b8b6067526e9da6c, type: 2}
-  - {fileID: 11400000, guid: de8521a258b7e074a84426d9b4dd82d2, type: 2}
-  - {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
-  - {fileID: 11400000, guid: a6aa81dd379a97e4dbaa81639de62279, type: 2}
-  - {fileID: 11400000, guid: 8046ae447ea2a124abc8447e31372e38, type: 2}
-  - {fileID: 11400000, guid: cd9fdddebd7538f4a92dc81b83bf5b10, type: 2}
-  - {fileID: 11400000, guid: fea8bac6424aa4e46817ca90543e2adc, type: 2}
-  - {fileID: 11400000, guid: f504015147a24fb4f9a49f1ba4e50ea6, type: 2}
-  - {fileID: 11400000, guid: 5daf620929a442e4ab3f48622b19a29a, type: 2}
-  - {fileID: 11400000, guid: 4597856bd55ad134da929ecf55e0d3c4, type: 2}
-  - {fileID: 11400000, guid: 2d6b68eb1787720469af13354f4c328c, type: 2}
-  - {fileID: 11400000, guid: c3eb73b81c6754c4094bccdb6132482b, type: 2}
-  - {fileID: 11400000, guid: 3550780d426025a4bad45b7d82384c77, type: 2}
-  - {fileID: 11400000, guid: 16fabbc68d175294daad1b0b700633dc, type: 2}
-  - {fileID: 11400000, guid: 5ec93632a710c2d42943edb20a688c60, type: 2}
-  - {fileID: 11400000, guid: 08901a3ef1e892e46997bb27a9004bcf, type: 2}
-  - {fileID: 11400000, guid: 886cef935987f7c4694d1d60bbb13dfc, type: 2}
-  - {fileID: 11400000, guid: 5119037d3db79624da70ac9e9ebca13a, type: 2}
-  - {fileID: 11400000, guid: c5b9034335f70bd498615629811b566c, type: 2}
-  - {fileID: 11400000, guid: 1a14096148fa5134bb20982c9ed3f8e3, type: 2}
-  - {fileID: 11400000, guid: 474a10b183cccc64c9891f818273ec54, type: 2}
-  - {fileID: 11400000, guid: 8f48b6e408c6c6043954b37a05c4f95e, type: 2}
+    randomCount: 2
+  dojoSkillShop:
+    permanentSkills:
+    - {fileID: 11400000, guid: 6b1924b78bbd38048a5ff434a711b556, type: 2}
+    - {fileID: 11400000, guid: 6ba3735138f11e74294903884de885e6, type: 2}
+    - {fileID: 11400000, guid: f504015147a24fb4f9a49f1ba4e50ea6, type: 2}
+    - {fileID: 11400000, guid: 282c28fe5af7ee74281bc58366321726, type: 2}
+    - {fileID: 11400000, guid: fea8bac6424aa4e46817ca90543e2adc, type: 2}
+    - {fileID: 11400000, guid: 2d6b68eb1787720469af13354f4c328c, type: 2}
+    - {fileID: 11400000, guid: 5daf620929a442e4ab3f48622b19a29a, type: 2}
+    - {fileID: 11400000, guid: 4b2b6ddb99af39e4b84b08568c55024a, type: 2}
+    - {fileID: 11400000, guid: 8d3d602e5f40c704e96da066ecc6d44c, type: 2}
+    - {fileID: 11400000, guid: 886cef935987f7c4694d1d60bbb13dfc, type: 2}
+    - {fileID: 11400000, guid: 16fabbc68d175294daad1b0b700633dc, type: 2}
+    - {fileID: 11400000, guid: 5ec93632a710c2d42943edb20a688c60, type: 2}
+    - {fileID: 11400000, guid: 56110b0a913fda24a9abb3f143d74b8e, type: 2}
+    - {fileID: 11400000, guid: de8521a258b7e074a84426d9b4dd82d2, type: 2}
+    - {fileID: 11400000, guid: 5119037d3db79624da70ac9e9ebca13a, type: 2}
+    - {fileID: 11400000, guid: 5ac0a60a5cdb50544bd2cc6d2173cdb6, type: 2}
+    - {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
+    - {fileID: 11400000, guid: a6aa81dd379a97e4dbaa81639de62279, type: 2}
+    - {fileID: 11400000, guid: 172e921df57d7494ab7e873a5aaaaf00, type: 2}
+    - {fileID: 11400000, guid: 474a10b183cccc64c9891f818273ec54, type: 2}
+    - {fileID: 11400000, guid: 8f48b6e408c6c6043954b37a05c4f95e, type: 2}
+    - {fileID: 11400000, guid: c5b9034335f70bd498615629811b566c, type: 2}
+    - {fileID: 11400000, guid: 8046ae447ea2a124abc8447e31372e38, type: 2}
+    - {fileID: 11400000, guid: 80d288ecacf6be647b32fe2b9b5da4b8, type: 2}
+    randomSkillsPool:
+    - {fileID: 11400000, guid: ba0ab34439291a24a9994854eea2a9a2, type: 2}
+    - {fileID: 11400000, guid: d29c4ab77970f444c923287ce35543f4, type: 2}
+    - {fileID: 11400000, guid: 3550780d426025a4bad45b7d82384c77, type: 2}
+    - {fileID: 11400000, guid: c3eb73b81c6754c4094bccdb6132482b, type: 2}
+    - {fileID: 11400000, guid: 4597856bd55ad134da929ecf55e0d3c4, type: 2}
+    - {fileID: 11400000, guid: 08901a3ef1e892e46997bb27a9004bcf, type: 2}
+    - {fileID: 11400000, guid: f5438f747f60a5a4e996f148dc32d15c, type: 2}
+    - {fileID: 11400000, guid: 09b0744b4ae21884b8b6067526e9da6c, type: 2}
+    - {fileID: 11400000, guid: 1a14096148fa5134bb20982c9ed3f8e3, type: 2}
+    - {fileID: 11400000, guid: 971705215a006ed42af7b0c1175e6c45, type: 2}
+    randomCount: 2

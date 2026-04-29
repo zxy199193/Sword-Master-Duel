@@ -13,24 +13,6 @@ MonoBehaviour:
   m_Name: Level_2
   m_EditorClassIdentifier: 
   levelTitle: "\u51B3\u65972"
-  possibleGroups:
-  - groupName: "\u5251\u58EB\u7EC42"
-    enemies:
-    - {fileID: 11400000, guid: 45b65116af273cc49a64972e2dc25cb7, type: 2}
-    - {fileID: 11400000, guid: 45b65116af273cc49a64972e2dc25cb7, type: 2}
-    - {fileID: 11400000, guid: ea04d3292e7c9ac428d376df84b14142, type: 2}
-  - groupName: "\u58EB\u5175\u7EC42"
-    enemies:
-    - {fileID: 11400000, guid: 8b990ebee944e58458fba11f9f0121b8, type: 2}
-    - {fileID: 11400000, guid: 8b990ebee944e58458fba11f9f0121b8, type: 2}
-    - {fileID: 11400000, guid: 2e8f4cc46c9a79e4bad35324ee04cb98, type: 2}
-  - groupName: "\u5F3A\u76D7\u7EC42"
-    enemies:
-    - {fileID: 11400000, guid: 6737812f4ff40be40a7dc4e06dc62b42, type: 2}
-    - {fileID: 11400000, guid: 6737812f4ff40be40a7dc4e06dc62b42, type: 2}
-    - {fileID: 11400000, guid: 47a7205160363234185619d582e91ba8, type: 2}
-  - groupName: "\u5FCD\u8005\u7EC42"
-    enemies:
-    - {fileID: 11400000, guid: 2cedf7e6df6e9514ea2c684202f5adba, type: 2}
-    - {fileID: 11400000, guid: 2cedf7e6df6e9514ea2c684202f5adba, type: 2}
-    - {fileID: 11400000, guid: 3e8e879283083424f8e91c4d49aeaba5, type: 2}
+  node1Difficulty: 1
+  node2Difficulty: 2
+  node3Difficulty: 2

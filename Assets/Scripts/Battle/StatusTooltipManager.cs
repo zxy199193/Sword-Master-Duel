@@ -72,7 +72,7 @@ public class StatusTooltipManager : MonoBehaviour
             tooltipRoot.SetActive(true);
             // 简单的位置偏移：放在目标位置偏右一点的地方
             // 在实际使用中，如果遇到屏幕边缘，可以根据 Canvas 的 RectTransform 做边缘检测和修正
-            tooltipRoot.transform.position = targetPosition + new Vector3(80f, 0, 0); 
+            tooltipRoot.transform.position = targetPosition + new Vector3(0, 150f, 0); 
         }
     }
 

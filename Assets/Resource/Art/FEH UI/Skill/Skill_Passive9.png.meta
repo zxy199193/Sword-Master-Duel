@@ -1,0 +1,3832 @@
+fileFormatVersion: 2
+guid: 0e2b83612c577424eb917b00da9b38c8
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Skill_Passive9_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47efd25fc93d2a241aa3085c27921f5e
+      internalID: -5470825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_1
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89a188b1df2af7747b804dfe61f9ea11
+      internalID: -245889240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_2
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 204ea9939e2742f48921f122b45bb87d
+      internalID: 1025752264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_3
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 053eda4f9638c784fa6abd1385cdc7a3
+      internalID: -430713638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_4
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8596d67aa0c15f48b8ea4cb39da0b82
+      internalID: 81083997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_5
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 311f202b4a736d742a2a5289365da535
+      internalID: -1482988430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_6
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47129673706f1d843842b2c931efb606
+      internalID: -438787929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_7
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 005bc98ed59c3fb4a97e5bf11194d4d7
+      internalID: -479840554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_8
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8da3034c42adb9645a7a0fb291d0535b
+      internalID: -1346217620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_9
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29d4f48c71b748544aa9380ea9014a01
+      internalID: -1769545661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_10
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 257bd68f98db10048aea98716a8d5aad
+      internalID: 286923141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_11
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07ead33771182304684e6911007fe1b5
+      internalID: -340349223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_12
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 948
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31001e9bed959cc4094a77179be1418f
+      internalID: -1164309768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47153df8458ae6349808a7c65f90f292
+      internalID: 285198928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_14
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d48dba7470f47a439088f219a5f6079
+      internalID: -462587820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_15
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03c66cfa5c19c4043b7a07dbd07ff38e
+      internalID: -125263849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_16
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 306cf1da3480f41479e2b5ba0455bb3a
+      internalID: -95475481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_17
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f12121b85aa6d94da41824029a2a1d2
+      internalID: -997161330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_18
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71bb37bc36416b146880630e29f92752
+      internalID: 445007428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_19
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c93009f00d91c04aa3535cb59d987c0
+      internalID: 1353100237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_20
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3849ba0c0effbde4d8f961e48398a4df
+      internalID: -1788696538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_21
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58c06a753f684ba4faacce9370149f1e
+      internalID: -287944474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_22
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8927cf5fb9142f4c8716c51a24ece41
+      internalID: 204284005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_23
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40b695bbdf4f87e499e9cf81dbdbc459
+      internalID: -2116588671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_24
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3de04939e049cb04b83d9d22a88d582a
+      internalID: -1867083876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_25
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 872
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c16bedaf168f6344699025b905a5210e
+      internalID: -219178397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_26
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e3339908bb5abc4f8f0d8be60f072e9
+      internalID: -311453368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_27
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7eeaad876b7f814b994ad39c68653c0
+      internalID: -722999819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_28
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9a29327c5bb4d34b8c516d258e74665
+      internalID: 2043830119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_29
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8052bebeb2ceaeb4484b4919e34a4cd9
+      internalID: -1800602183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_30
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01fab7bd8e1b6174b95c83f5cae73be7
+      internalID: -1372135861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_31
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd87a0e6ccc47bb4c93eebabcc4a6426
+      internalID: 465656591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_32
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d73a2c75d9aab824f82f318b5d994317
+      internalID: 1102789610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_33
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e84238fd908cd5243873b0e1c8b75d5a
+      internalID: -224838660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_34
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9217b510247c61949b4bd70fb5237fa3
+      internalID: -1873219599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_35
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1397b38dafc4ff4890b76ededde1a9b
+      internalID: 1492151284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_36
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81b761bf51d205f499543182c60ef30a
+      internalID: 1012354940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_37
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86f3a4469876bf1428777c079d4af1ea
+      internalID: 939054810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_38
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 796
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2055675be9562334c8eeae112543c441
+      internalID: 1007641994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_39
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7234d999c1e036d4191a5c5e6633f887
+      internalID: 1964492100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_40
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dce63b9d586bb2546abd986feefbe28f
+      internalID: 1628108540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_41
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 996341d182f9d67489282e21aaf8f9d3
+      internalID: 1555983479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_42
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 143d1c14d5c3ebc48b2d53cc370b91f3
+      internalID: -188448837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_43
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d5069bfea385684cb8dc3b78dd300d9
+      internalID: 1011088138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_44
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c4a7fbdca4843e4db3bccbcdd0ca05c
+      internalID: 164683408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_45
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 094e0cc95f8120841a4cefbdb14ac547
+      internalID: -1748688549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_46
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89cff6ed94559fe4dbe00035a0e2eab3
+      internalID: 1892991754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_47
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a30f1e1bdd12d2468a8a937d03db787
+      internalID: 1774151701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_48
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 374dc4598f55cb04188751fd33bab5d7
+      internalID: -1740234935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_49
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58babbc4b1dfdf04cbc7dbd3a848414f
+      internalID: -1706043684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_50
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66928c96a3d537e44995522bbc5185df
+      internalID: -1401762149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_51
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 720
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 916838f3e78e7b447a6768c4a74ddcfa
+      internalID: -1212869886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_52
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92ae53f70fc687742ab6a81b025c7c51
+      internalID: -2084610169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_53
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 852386011e97e0d4388435a6e5d0a1fe
+      internalID: -1877624240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_54
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9690c12acd91974986a0140a6436f98
+      internalID: -1231753748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_55
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a013cf993bb73548bb9fedccec9b28e
+      internalID: 1986775082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_56
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9223e37d552ef844a7bb6559c1c824c
+      internalID: 1012154723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_57
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b6160f322e237a7409e806bf06d7b699
+      internalID: 418606469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_58
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a13a2d3488fde214ab01f73a075a4f34
+      internalID: 819334136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_59
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7beb46d894ac144fa4592a5f4925e5a
+      internalID: -573490586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_60
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f0b012bc1c7f1c42bda1c9efcffb146
+      internalID: 214952868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_61
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9a6ceffef596ca44bb2bc4835659bc3
+      internalID: -1336557893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_62
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b09fd772c684cf64a8faf154ab4a090b
+      internalID: 1891205267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_63
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45d8d456ce7cdea4e809b3a289e60d2e
+      internalID: 1338128342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_64
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 644
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 008fe8730aae84c479a9a98206715fad
+      internalID: -2008578901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_65
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d45c2e0b4a5ffa0469591d9e96ec6e4d
+      internalID: -640199270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_66
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d538670771d78014abdf459e11e3920e
+      internalID: -42569747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_67
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b33d0967a86ded94e94d89cab09a2ec3
+      internalID: 1205174824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_68
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b6e1d920a305e4438b85c338a3ae21f
+      internalID: -1424378790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_69
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a21d38227a9f7054797c06bbc619833c
+      internalID: -1760390990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_70
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9901dc3cf612dc54285554a01719a627
+      internalID: 851542353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_71
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a22d22542945b74789ecf5b0666ff55
+      internalID: -678864287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_72
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50e02757dbd22054b9ac68bc4a901661
+      internalID: 1191663311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_73
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4eef63476bc2a64696b0eef3091ff2e
+      internalID: -624736692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_74
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 187b9b36eb4032c449af6edadcc52c2a
+      internalID: -54187414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_75
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2932365d341ef2542baff01819c5790c
+      internalID: -523703830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_76
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3e6a6cb0d7b89447be90d3b22e8df18
+      internalID: -146478254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_77
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 568
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2f573cfe4341674ab1b7a88dfbb3688
+      internalID: -2087874006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_78
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b301b53014cd16b4d873c317505a1c25
+      internalID: 841355306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_79
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48d33726842f5dc44bb4eae79c19b965
+      internalID: 1546386897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_80
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: daea2210ed72407479807281e68b7e07
+      internalID: 1145574114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_81
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79a05b641a483474ebef8ee266efc788
+      internalID: -2130379286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_82
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96da640e77407f4489a209357c7ed24e
+      internalID: -1355155203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_83
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 547af54d1f076e946b452304bef22001
+      internalID: -1704791515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_84
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b159c60d42d3eb248b8470138a7a76cd
+      internalID: -830505229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_85
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bab76a79404bd764ca39c629068a2310
+      internalID: 1233802695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_86
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0869daba69f2b05438fee7945ecacb4e
+      internalID: -1018407524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_87
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d027d0eec302e042bb9396f3750a7c5
+      internalID: 768417066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_88
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cee834f041cd6544b3206b9031de465
+      internalID: 842954336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_89
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c0fc921e50fff1e4bbfb5aad9e36f103
+      internalID: 284121615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_90
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 492
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 976a126ee1325b448bf4b86570d4cab9
+      internalID: -1108400356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_91
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6dd383fa32a61b43a6eeadf78ecc6d8
+      internalID: 217752227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_92
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92367ab9afbe99345bfb20a672c5efdd
+      internalID: -2067958087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_93
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45a7da0dfef06414ebdd842d89daec52
+      internalID: -1204511675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_94
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07201bc6dc4059f409b9696f4fab759e
+      internalID: -685526335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_95
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca8398b92b7206447a471c8f974f69dd
+      internalID: 101474340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_96
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 80b26b25e7295a14bac51f8de7bff492
+      internalID: 272989391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_97
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 80fc21a8d2dd7564bb8d338077e2af17
+      internalID: 18228997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_98
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0562ef721fc2a74abd3f77769215aee
+      internalID: 775499121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_99
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 820439cfe35967647925163a94f9eac4
+      internalID: 1413091548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_100
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6cc76cd6a5abee0449c4fb0d4006087f
+      internalID: -1671715436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_101
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62f32a44730cb38479351976048ef6d9
+      internalID: 480196010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_102
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbdaff73569660b42810e177f7bf1a65
+      internalID: -865141905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_103
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 416
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a9bda55f9d7dd34293c8e55e9cec645
+      internalID: 411715278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_104
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad0c7c87099259441950940898272c42
+      internalID: 785057926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_105
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a51a75608485d274cb4a4664c8f00726
+      internalID: 1653318746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_106
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8cc2e76f3bb0b94fb7549a788d86ecf
+      internalID: 1520808159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_107
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e9721f2c8016764da86492155002fb2
+      internalID: -423755522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_108
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f39d940b8c60544a95c92547b144882
+      internalID: 1783668965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_109
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f3c3cf41ecc8d94a9a77f45efce2ea0
+      internalID: 1413991210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_110
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2513703005450724780833bbdd865463
+      internalID: -218402452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_111
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c372f07cf8558784fb8fcc977b29ea53
+      internalID: -2019388145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_112
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bab823f61b69d9d48baa85b9625a55b4
+      internalID: -1421207936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_113
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac9870129fd7da946af61f068f598f76
+      internalID: 1203585277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_114
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9498a97e680f5c241a72d6b66cc5612e
+      internalID: -726922376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_115
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f790dee2c84aaf4489bb47f7b60e6a7
+      internalID: -938092853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_116
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 340
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e081f5d6c3292d84f9ca0bd5a039ecc3
+      internalID: 1848256371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_117
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec8e919b74264a14fab7aeaf339277fa
+      internalID: -205946087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_118
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 18998d17b856c334695ce707e2a73d17
+      internalID: -363116458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_119
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06dcf700b389ba94cb67eacc2e193aed
+      internalID: 1622437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_120
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36a3e8474cde2204d942e62a904675c0
+      internalID: -25797061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_121
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 289886999f0d1834b94831657111d392
+      internalID: -16397445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_122
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a3b2e3eb5914904a97168e19049b72b
+      internalID: 804068928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_123
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f07583424416cc4fa1e52650dcccbd2
+      internalID: -960747768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_124
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a81d8229e05f65140a435a8546be04e1
+      internalID: 203967080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_125
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b75571efe242e004b89ea92264b57f71
+      internalID: -967219176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_126
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: efa02e542f1714f4a8fb183fca66361e
+      internalID: -1749773158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_127
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 419990af8f0857d48852135b50b91748
+      internalID: -773552271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_128
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c03d12d9462ca104dabb7dde8738a9a7
+      internalID: -638192311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_129
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 264
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aee2be78c778f2f47bd12fa7f0fa9487
+      internalID: 1479513202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_130
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff595d463c6d92f49a573acc542571ae
+      internalID: 1467275072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_131
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5549c4a00c2c1fc4fa42b0b7a22f7f4b
+      internalID: 417814624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_132
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de6b0eb65cf842e45aa10b42bb716109
+      internalID: -1757611234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_133
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd9c7f6aba589c4439626fd3a5ade2c8
+      internalID: 2134809855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_134
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ba55c0c7d6825e4dbd0e90be81d2bcb
+      internalID: -823025799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_135
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f774a0a591e1686439e6102f1e49f6b4
+      internalID: -1703960356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_136
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50ee5c2a233544d448bf66e28e3fa929
+      internalID: -1128832417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_137
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 981d83d95eaab504ea6000f4cbff5470
+      internalID: 1028644442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_138
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a2dd3c725bc790419b107ea04e07b4f
+      internalID: 1841536351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_139
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 564e0cd1b568a6d4ea4e520961e5cc47
+      internalID: -1054092678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_140
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: adfb4cc848042294d955ff386d895df8
+      internalID: 913999985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_141
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: babc5e6bd03313b45a83bc1fedc47774
+      internalID: -1696480307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_142
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 188
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30d44032bcb66d845b731a2882d86a02
+      internalID: 1236507805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_143
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a449ab99d7d80d541a883bbbd455c559
+      internalID: -711045081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_144
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 645cbbc1072997b4f891ae725c17b69d
+      internalID: -1382993392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_145
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c84693e35f6e1f4da5767da0ec2291f
+      internalID: 1191607154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_146
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4b99d8609b65da47aabea428ee97ae2
+      internalID: -842638324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_147
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: beb0cee667349ff42b5ac1b40f3de4b2
+      internalID: 673711227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_148
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31f669d6774f86544b3bd976ca1d2ab4
+      internalID: 2053477256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_149
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8cd27e3a83f0f9479d6b2658f875d33
+      internalID: -197493656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_150
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be67de973c2d30f43bf8d7ca4ab69a0d
+      internalID: 177851367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_151
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c50b6910fb8d37e428cc38523cc9f1a9
+      internalID: -2024142286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_152
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3a2a69cf17a1244395230f77fd8a1b0
+      internalID: 1438124564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_153
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc87e7687f85d6f49a3ccda8a15230f1
+      internalID: -1128867628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_154
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ec4471c99870744fb4547edda409c9a
+      internalID: -718098125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_155
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 112
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56470b94d09182945974fadd4a5a3a4e
+      internalID: 1531839025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_156
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 829094c486d32d64b9138fb17bebe5f6
+      internalID: 445694728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_157
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a774b0518db97a846a06b6e279e5c787
+      internalID: 325073123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_158
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dc1b4f1ba2a727f439290b773bb14490
+      internalID: -391848489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_159
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42d803914fd967d4db388871dea98b68
+      internalID: -52806892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_160
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f5094ec2ca650b41a7971c1ba90f503
+      internalID: 1717206114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_161
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 117fec86665cfa547af7a359fe9df30a
+      internalID: 245603095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_162
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: daa036b0b10eb424c91b2956f32fab82
+      internalID: -1095066623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_163
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b78a058f0880eb4998797070a6d12f1
+      internalID: -2105077324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_164
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6327b2a826acc354b8eb0c35e7b06af5
+      internalID: -653237371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_165
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e15898ac02a6b8e4c8b70df5d44325c9
+      internalID: -321751241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_166
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dcaaef0bc224ae74b819ea4b75339c3a
+      internalID: 2011217365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_167
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ce6f162f11a00c4887479e2fe3926da
+      internalID: -371743027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skill_Passive9_168
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 36
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec893a3af16e413488e7a417210ca365
+      internalID: 555834667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Skill_Passive9_0: -5470825
+      Skill_Passive9_1: -245889240
+      Skill_Passive9_10: 286923141
+      Skill_Passive9_100: -1671715436
+      Skill_Passive9_101: 480196010
+      Skill_Passive9_102: -865141905
+      Skill_Passive9_103: 411715278
+      Skill_Passive9_104: 785057926
+      Skill_Passive9_105: 1653318746
+      Skill_Passive9_106: 1520808159
+      Skill_Passive9_107: -423755522
+      Skill_Passive9_108: 1783668965
+      Skill_Passive9_109: 1413991210
+      Skill_Passive9_11: -340349223
+      Skill_Passive9_110: -218402452
+      Skill_Passive9_111: -2019388145
+      Skill_Passive9_112: -1421207936
+      Skill_Passive9_113: 1203585277
+      Skill_Passive9_114: -726922376
+      Skill_Passive9_115: -938092853
+      Skill_Passive9_116: 1848256371
+      Skill_Passive9_117: -205946087
+      Skill_Passive9_118: -363116458
+      Skill_Passive9_119: 1622437
+      Skill_Passive9_12: -1164309768
+      Skill_Passive9_120: -25797061
+      Skill_Passive9_121: -16397445
+      Skill_Passive9_122: 804068928
+      Skill_Passive9_123: -960747768
+      Skill_Passive9_124: 203967080
+      Skill_Passive9_125: -967219176
+      Skill_Passive9_126: -1749773158
+      Skill_Passive9_127: -773552271
+      Skill_Passive9_128: -638192311
+      Skill_Passive9_129: 1479513202
+      Skill_Passive9_13: 285198928
+      Skill_Passive9_130: 1467275072
+      Skill_Passive9_131: 417814624
+      Skill_Passive9_132: -1757611234
+      Skill_Passive9_133: 2134809855
+      Skill_Passive9_134: -823025799
+      Skill_Passive9_135: -1703960356
+      Skill_Passive9_136: -1128832417
+      Skill_Passive9_137: 1028644442
+      Skill_Passive9_138: 1841536351
+      Skill_Passive9_139: -1054092678
+      Skill_Passive9_14: -462587820
+      Skill_Passive9_140: 913999985
+      Skill_Passive9_141: -1696480307
+      Skill_Passive9_142: 1236507805
+      Skill_Passive9_143: -711045081
+      Skill_Passive9_144: -1382993392
+      Skill_Passive9_145: 1191607154
+      Skill_Passive9_146: -842638324
+      Skill_Passive9_147: 673711227
+      Skill_Passive9_148: 2053477256
+      Skill_Passive9_149: -197493656
+      Skill_Passive9_15: -125263849
+      Skill_Passive9_150: 177851367
+      Skill_Passive9_151: -2024142286
+      Skill_Passive9_152: 1438124564
+      Skill_Passive9_153: -1128867628
+      Skill_Passive9_154: -718098125
+      Skill_Passive9_155: 1531839025
+      Skill_Passive9_156: 445694728
+      Skill_Passive9_157: 325073123
+      Skill_Passive9_158: -391848489
+      Skill_Passive9_159: -52806892
+      Skill_Passive9_16: -95475481
+      Skill_Passive9_160: 1717206114
+      Skill_Passive9_161: 245603095
+      Skill_Passive9_162: -1095066623
+      Skill_Passive9_163: -2105077324
+      Skill_Passive9_164: -653237371
+      Skill_Passive9_165: -321751241
+      Skill_Passive9_166: 2011217365
+      Skill_Passive9_167: -371743027
+      Skill_Passive9_168: 555834667
+      Skill_Passive9_17: -997161330
+      Skill_Passive9_18: 445007428
+      Skill_Passive9_19: 1353100237
+      Skill_Passive9_2: 1025752264
+      Skill_Passive9_20: -1788696538
+      Skill_Passive9_21: -287944474
+      Skill_Passive9_22: 204284005
+      Skill_Passive9_23: -2116588671
+      Skill_Passive9_24: -1867083876
+      Skill_Passive9_25: -219178397
+      Skill_Passive9_26: -311453368
+      Skill_Passive9_27: -722999819
+      Skill_Passive9_28: 2043830119
+      Skill_Passive9_29: -1800602183
+      Skill_Passive9_3: -430713638
+      Skill_Passive9_30: -1372135861
+      Skill_Passive9_31: 465656591
+      Skill_Passive9_32: 1102789610
+      Skill_Passive9_33: -224838660
+      Skill_Passive9_34: -1873219599
+      Skill_Passive9_35: 1492151284
+      Skill_Passive9_36: 1012354940
+      Skill_Passive9_37: 939054810
+      Skill_Passive9_38: 1007641994
+      Skill_Passive9_39: 1964492100
+      Skill_Passive9_4: 81083997
+      Skill_Passive9_40: 1628108540
+      Skill_Passive9_41: 1555983479
+      Skill_Passive9_42: -188448837
+      Skill_Passive9_43: 1011088138
+      Skill_Passive9_44: 164683408
+      Skill_Passive9_45: -1748688549
+      Skill_Passive9_46: 1892991754
+      Skill_Passive9_47: 1774151701
+      Skill_Passive9_48: -1740234935
+      Skill_Passive9_49: -1706043684
+      Skill_Passive9_5: -1482988430
+      Skill_Passive9_50: -1401762149
+      Skill_Passive9_51: -1212869886
+      Skill_Passive9_52: -2084610169
+      Skill_Passive9_53: -1877624240
+      Skill_Passive9_54: -1231753748
+      Skill_Passive9_55: 1986775082
+      Skill_Passive9_56: 1012154723
+      Skill_Passive9_57: 418606469
+      Skill_Passive9_58: 819334136
+      Skill_Passive9_59: -573490586
+      Skill_Passive9_6: -438787929
+      Skill_Passive9_60: 214952868
+      Skill_Passive9_61: -1336557893
+      Skill_Passive9_62: 1891205267
+      Skill_Passive9_63: 1338128342
+      Skill_Passive9_64: -2008578901
+      Skill_Passive9_65: -640199270
+      Skill_Passive9_66: -42569747
+      Skill_Passive9_67: 1205174824
+      Skill_Passive9_68: -1424378790
+      Skill_Passive9_69: -1760390990
+      Skill_Passive9_7: -479840554
+      Skill_Passive9_70: 851542353
+      Skill_Passive9_71: -678864287
+      Skill_Passive9_72: 1191663311
+      Skill_Passive9_73: -624736692
+      Skill_Passive9_74: -54187414
+      Skill_Passive9_75: -523703830
+      Skill_Passive9_76: -146478254
+      Skill_Passive9_77: -2087874006
+      Skill_Passive9_78: 841355306
+      Skill_Passive9_79: 1546386897
+      Skill_Passive9_8: -1346217620
+      Skill_Passive9_80: 1145574114
+      Skill_Passive9_81: -2130379286
+      Skill_Passive9_82: -1355155203
+      Skill_Passive9_83: -1704791515
+      Skill_Passive9_84: -830505229
+      Skill_Passive9_85: 1233802695
+      Skill_Passive9_86: -1018407524
+      Skill_Passive9_87: 768417066
+      Skill_Passive9_88: 842954336
+      Skill_Passive9_89: 284121615
+      Skill_Passive9_9: -1769545661
+      Skill_Passive9_90: -1108400356
+      Skill_Passive9_91: 217752227
+      Skill_Passive9_92: -2067958087
+      Skill_Passive9_93: -1204511675
+      Skill_Passive9_94: -685526335
+      Skill_Passive9_95: 101474340
+      Skill_Passive9_96: 272989391
+      Skill_Passive9_97: 18228997
+      Skill_Passive9_98: 775499121
+      Skill_Passive9_99: 1413091548
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

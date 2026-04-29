@@ -13,25 +13,25 @@ MonoBehaviour:
   m_Name: DEF_312
   m_EditorClassIdentifier: 
   skillName: "\u94C1\u58C1"
-  description: "\u9632\u5FA1\u6548\u679C\u6781\u5927"
+  description: "\u9632\u5FA1\u6548\u679C\u6781\u5927\uFF0C\u4F46\u5BF9\u65B9\u66F4\u6613\u547D\u4E2D"
   skillIcon: {fileID: 21300000, guid: 413253281d5376b4c847c4879c2e4829, type: 3}
   skillType: 1
   animationTriggerName: 
-  staminaCosts: 080000000800000007000000
+  staminaCosts: 040000000400000003000000
   basicDamages:
   - 0
   - 0
   - 0
   basicDefends:
-  - 18
-  - 22
-  - 28
+  - 16
+  - 20
+  - 26
   hitAmends:
+  - 20
+  - 17
   - 15
-  - 13
-  - 10
   isConsumable: 0
-  price: 50
+  price: 80
   hitTimes: 1
   hitBarConfig:
     baseSpeed: 0

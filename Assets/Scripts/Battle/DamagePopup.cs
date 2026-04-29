@@ -5,8 +5,8 @@ using System.Collections;
 public class DamagePopup : MonoBehaviour
 {
     [Header("Animation Settings")]
-    [SerializeField] private float moveSpeed = 2f;    // 向上飘的速度
-    [SerializeField] private float destroyTime = 2f;  // 存活/淡出时间
+    [SerializeField] private float moveSpeed = 80f;   // 向上飘的速度（UI像素/秒）
+    [SerializeField] private float destroyTime = 1.5f; // 存活/淡出时间（秒）
 
     private Text popupText;
 
@@ -50,7 +50,7 @@ public class DamagePopup : MonoBehaviour
         while (timer < destroyTime)
         {
             // 向上匀速移动
-            transform.position += Vector3.up * moveSpeed * Time.deltaTime;
+            transform.localPosition += Vector3.up * moveSpeed * Time.deltaTime;
 
             // 透明度渐隐淡出
             float alpha = Mathf.Lerp(1f, 0f, timer / destroyTime);

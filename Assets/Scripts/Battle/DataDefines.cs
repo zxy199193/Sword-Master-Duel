@@ -8,7 +8,7 @@ using System.Linq;
 // ==========================================
 public enum SkillType { Attack, Defend, Dodge, Special, Item }
 public enum SectionLevel { Level0, Level1, Level2, Level3, Level4, Level5, Level6, Level99 }
-public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked, Burn, Clone, FireEnchant, Recover, Paralyzed, Frozen, Insight, Sharpened, Lightweight, Charging }
+public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked, Burn, Clone, FireEnchant, Recover, Paralyzed, Frozen, Insight, Sharpened, Lightweight, Charging, Exhausted }
 
 public enum ShopCategory { Weapon, Armor, Accessory, Item }
 public enum AttributeType { Vitality, Endurance, Strength, Mentality }
@@ -428,8 +428,8 @@ public class CounterAttackOnEvadeEffect : SkillEffect
 
         if (baseDmg > 0)
         {
-            // 伤害公式：技能反击基础伤害 + 自身(defender)的力量属性
-            int finalDamage = baseDmg + defender.GetFinalStrength();
+            // 伤害公式：技能反击基础伤害 + 每3点力量+1（真实伤害，不计百分比增幅）
+            int finalDamage = baseDmg + defender.GetFinalStrength() / 3;
 
             // 扣血（作为惩罚性反击，这里直接造成伤害，无视对方此时的临时防御，突出一个“破绽真实伤害”）
             bool hitLanded = attacker.TakeDamage(finalDamage);
@@ -505,15 +505,15 @@ public class HeavyLoadExtraDamageEffect : SkillEffect
 
     public override int GetBaseDamageModifier(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
     {
-        var loadState = caster.GetEffectiveLoadState();
-        if (loadState == GlobalBattleRules.LoadWeightState.Heavy || loadState == GlobalBattleRules.LoadWeightState.Extreme)
+        float ratio = caster.GetLoadRatio();
+        if (ratio >= 0.8f)
         {
             int idx = Mathf.Clamp(skillLevel - 1, 0, heavyLoadDamages.Length - 1);
             int bonus = heavyLoadDamages.Length > 0 ? heavyLoadDamages[idx] : 0;
             if (bonus > 0)
             {
-                manager.SpawnGeneralPopup(caster.isPlayer, "<color=#FF8C00>力劈华山!</color>");
-                Debug.Log($"[{caster.roleData.roleName}] 触发超重增伤！当前负重状态 {loadState}，额外增加 {bonus} 点基础伤害！");
+                manager.SpawnGeneralPopup(caster.isPlayer, "<color=#FF8C00>狮子斩!</color>");
+                Debug.Log($"[{caster.roleData.roleName}] 触发狮子斩！当前负重比 {ratio:P0}，额外增加 {bonus} 点基础伤害！");
             }
             return bonus;
         }
@@ -639,6 +639,79 @@ public class ApplyStatusOnBeingHitEffect : SkillEffect
         // 留空
     }
 }
+/// <summary>
+/// 角力：防御技能被命中时，额外消耗攻击方体力。
+/// 用于 OnBeingHit 钩子，defender = 防御方（使用角力者），attacker = 攻击方。
+/// </summary>
+[Serializable]
+public class DrainAttackerStaminaOnHitEffect : SkillEffect
+{
+    [Tooltip("各等级下额外消耗攻击方的体力值 (请填入3个值)")]
+    public int[] drainAmounts = new int[3];
+
+    public override void OnBeingHit(BattleEntity defender, BattleEntity attacker, BattleManager manager, int skillLevel, SectionLevel hitLevel)
+    {
+        int idx = Mathf.Clamp(skillLevel - 1, 0, drainAmounts.Length - 1);
+        int drain = drainAmounts.Length > 0 ? drainAmounts[idx] : 0;
+        if (drain <= 0) return;
+
+        int actual = Mathf.Min(drain, attacker.currentStamina);
+        attacker.currentStamina -= actual;
+        attacker.OnStaminaChanged?.Invoke();
+
+        manager.SpawnGeneralPopup(attacker.isPlayer, $"<color=#FF8C00>角力! -{actual} SP</color>");
+        Debug.Log($"[{defender.roleData.roleName}] 触发角力！{attacker.roleData.roleName} 额外消耗 {actual} 点体力。");
+    }
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 留空，核心逻辑在 OnBeingHit
+    }
+}
+
+/// <summary>
+/// 快速反击：防御技能被命中时，对攻击方造成反击伤害。
+/// 用于 OnBeingHit 钩子，defender = 防御方（使用快速反击者），attacker = 攻击方。
+/// </summary>
+[Serializable]
+public class CounterAttackOnDefendEffect : SkillEffect
+{
+    [Tooltip("各等级下反击的基础伤害 (请填入3个值，如 4, 6, 9)")]
+    public int[] counterDamages = new int[3];
+
+    public override void OnBeingHit(BattleEntity defender, BattleEntity attacker, BattleManager manager, int skillLevel, SectionLevel hitLevel)
+    {
+        int idx = Mathf.Clamp(skillLevel - 1, 0, counterDamages.Length - 1);
+        int baseDmg = counterDamages.Length > 0 ? counterDamages[idx] : 0;
+        if (baseDmg <= 0) return;
+
+        // 伤害公式：基础值 + 每3点防御方力量+1（无视对方当前防御，真实伤害，不计百分比增幅）
+        int finalDamage = baseDmg + defender.GetFinalStrength() / 3;
+
+        bool hitLanded = attacker.TakeDamage(finalDamage);
+        if (hitLanded)
+        {
+            attacker.PlayHitAnim();
+            manager.SpawnHitEffect(attacker.transform);
+
+            manager.SpawnGeneralPopup(defender.isPlayer, "<color=#FF4500>快速反击!</color>");
+            manager.SpawnDamagePopup(attacker.isPlayer, finalDamage.ToString(), 2);
+
+            Debug.Log($"[{defender.roleData.roleName}] 触发快速反击！对 [{attacker.roleData.roleName}] 造成了 {finalDamage} 点真实伤害！");
+
+            if (attacker.currentBasicLife <= 0)
+            {
+                attacker.PlayDieAnim();
+            }
+        }
+    }
+
+    public override void Execute(BattleEntity caster, BattleEntity target, BattleManager manager, int skillLevel)
+    {
+        // 留空，核心逻辑在 OnBeingHit
+    }
+}
+
 // ==========================================
 // 全局战斗规则 (Global Rules)
 // ==========================================

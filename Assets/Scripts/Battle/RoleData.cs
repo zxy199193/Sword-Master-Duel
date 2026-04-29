@@ -47,6 +47,9 @@ public class RoleData : ScriptableObject
     [Tooltip("AI QTE 反应时间宽容度 (秒)。值越小AI越精准(0即完美)，值越大容易偏离中心。")]
     public float aiReactionTolerance = 0.2f;
 
+    [Tooltip("AI 打击条最多回弹次数 (0~N)。填 X 则随机回弹 0~X 次后出手，0 次表示不回弹直接出手。")]
+    [Range(0, 10)] public int aiMaxBounces = 3;
+
     [Header("敌方战斗携带配置 (NPC专用)")]
     [Tooltip("NPC在战斗中装配的技能/道具与对应阶段权重")]
     public List<NPCActionConfig> npcSkills = new List<NPCActionConfig>();
@@ -55,6 +58,9 @@ public class RoleData : ScriptableObject
     public float[] subSkillProbabilities = new float[4] { 0.5f, -1f, -1f, -1f };
 
     [Header("关卡与奖励设定")]
+    [Tooltip("敌人强度等级(1~5)，对应 EnemyDifficultyDatabase 中的分级池，填完后记得将该敌人加入数据库对应等级")]
+    [Range(1, 5)] public int difficultyLevel = 1;
+
     [Tooltip("是否为关底 Boss（开启后无法撤退）")]
     public bool isBoss;
     

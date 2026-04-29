@@ -90,7 +90,7 @@ public class PlayerProfile
 
     public int GetFinalMaxStamina()
     {
-        int total = baseMaxStamina + GetFinalEndurance() * 2;
+        int total = baseMaxStamina + Mathf.FloorToInt(GetFinalEndurance() / 4f);
         if (equippedWeapon != null) total += equippedWeapon.bonusStamina;
         if (equippedArmor != null && currentExtraLife > 0) total += equippedArmor.bonusStamina;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusStamina;
@@ -135,13 +135,13 @@ public class PlayerProfile
 
     public int GetHpRecoverPerTurn()
     {
-        return Mathf.FloorToInt(GetFinalVitality() / 2f);
+        return GetFinalVitality() / 3;  // 每3点活力 +1 生命恢复
     }
 
     public int GetStaminaRecoverPerTurn()
     {
         int baseRecover = playerRoleAsset != null ? playerRoleAsset.staminaRecoverPerTurn : 2;
-        return baseRecover + Mathf.FloorToInt(GetFinalMentality() / 6f);
+        return baseRecover + Mathf.FloorToInt(GetFinalEndurance() / 8f);
     }
 
     public GlobalBattleRules.LoadWeightState GetLoadWeightState()
@@ -186,6 +186,9 @@ public class GameManager : MonoBehaviour
     public PlayerProfile playerProfile;
     public List<LevelData> allLevels;
 
+    [Tooltip("按强度分级的全局敌人数据库")]
+    public EnemyDifficultyDatabase enemyDatabase;
+
     [Header("核心管理器引用 (Managers Reference)")]
     public BattleManager battleManager;
     public LevelUIManager levelUIManager;
@@ -199,7 +202,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] 
     public List<RoleData> currentLevelEnemies = new List<RoleData>();
 
-    [HideInInspector] public List<SkillData> currentDojoSkills = new List<SkillData>();
+    [HideInInspector] public List<SkillData> currentDojoSkills = new List<SkillData>();  // 常驻招式
+    [HideInInspector] public List<SkillData> randDojoSkills   = new List<SkillData>();  // 随机招式
 
     // 武器商店 (运行时)
     [HideInInspector] public List<EquipmentData> permWeapons = new List<EquipmentData>();
@@ -222,6 +226,10 @@ public class GameManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        // 移动端帧率设置：默认 Android 是 30fps，这里统一设为 60fps
+        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0; // 移动端关闭垂直同步，由 targetFrameRate 控制
     }
 
     private void Start()
@@ -366,41 +374,49 @@ public class GameManager : MonoBehaviour
 
     private void RollEnemiesForCurrentLevel()
     {
-        LevelData currentLevel = allLevels[currentMainLevelIndex];
-        var validGroups = currentLevel.possibleGroups.FindAll(g => g.enemies != null && g.enemies.Count > 0);
-
-        if (validGroups.Count > 0)
+        if (enemyDatabase == null)
         {
-            int randIndex = Random.Range(0, validGroups.Count);
-            currentLevelEnemies = validGroups[randIndex].enemies;
-            Debug.Log($"<color=orange>生成随机敌人组：{validGroups[randIndex].groupName}</color>");
-        }
-        else
-        {
-            Debug.LogError($"关卡 {currentLevel.levelTitle} 没有配置有效的敌人组！");
+            Debug.LogError("[GameManager] EnemyDifficultyDatabase 未赋值！请在 Inspector 中配置。");
             currentLevelEnemies = new List<RoleData>();
+            return;
+        }
+
+        LevelData currentLevel = allLevels[currentMainLevelIndex];
+        currentLevelEnemies = new List<RoleData>();
+
+        // 按节点顺序依次抽取敌人
+        for (int i = 0; i < 3; i++)
+        {
+            int difficulty = currentLevel.GetNodeDifficulty(i);
+            RoleData enemy = enemyDatabase.GetRandomEnemy(difficulty);
+
+            if (enemy != null)
+            {
+                currentLevelEnemies.Add(enemy);
+                Debug.Log($"<color=orange>[AI 敌人生成] 节点{i + 1} 强度{difficulty} → {enemy.roleName}</color>");
+            }
+            else
+            {
+                Debug.LogError($"[GameManager] 节点{i + 1} 强度{difficulty} 的敌人池为空，无法创建战斗！");
+            }
         }
     }
 
     private void RefreshShopAndDojo()
     {
-        currentDojoSkills.Clear();
         if (restUIManager == null || restUIManager.currentShopConfig == null) return;
         var shopConfig = restUIManager.currentShopConfig;
+        var dojo = shopConfig.dojoSkillShop;
 
-        // 1. 道场招式：随机8个
-        if (shopConfig.availableSkills != null)
-        {
-            var skillsPool = new List<SkillData>(shopConfig.availableSkills);
-            for (int i = 0; i < 8 && skillsPool.Count > 0; i++)
-            {
-                int idx = Random.Range(0, skillsPool.Count);
-                currentDojoSkills.Add(skillsPool[idx]);
-                skillsPool.RemoveAt(idx);
-            }
-        }
+        // 1. 道场常驻招式
+        currentDojoSkills = dojo.permanentSkills != null
+            ? new List<SkillData>(dojo.permanentSkills)
+            : new List<SkillData>();
 
-        // 2. 刷新所有分类商店
+        // 2. 道场随机招式（每大关刷新，ensureDifferent = false，因为是整体重刷）
+        randDojoSkills = RollRandomSkills(dojo.randomSkillsPool, randDojoSkills, dojo.randomCount, false);
+
+        // 3. 刷新所有分类商店
         RefreshAllCategorizedShops(false);
     }
 
@@ -491,7 +507,7 @@ public class GameManager : MonoBehaviour
 
         battleManager.gameObject.SetActive(false);
         LevelData currentLevel = allLevels[currentMainLevelIndex];
-        levelUIManager.UpdateAndShow(currentLevel, currentNodeIndex, currentLevelEnemies);
+        levelUIManager.UpdateAndShow(currentLevel, currentLevelEnemies);
     }
 
     private void EnterRestUI()

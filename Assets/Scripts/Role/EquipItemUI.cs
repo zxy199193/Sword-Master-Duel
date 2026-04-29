@@ -18,14 +18,15 @@ public class EquipItemUI : MonoBehaviour
     public GameObject armorStatNode;
     public Text durabilityText;
 
-    [Header("UI 节点 - 状态与操作")]
+    [Header("UI 节点 - 角色界面")]
     public GameObject equippedBadge;
-    public Button actionBtn;
-    public Text actionBtnText;
+    public Button selectBtn;
+    public Button unequipBtn;
 
     [Header("UI 节点 - 商店专属")]
-    public GameObject priceNode;
-    public Text priceText;
+    public Button buyBtn;
+    public Text buyBtnText;
+    public GameObject ownedBadge;
 
     private EquipmentData currentData;
 
@@ -33,58 +34,69 @@ public class EquipItemUI : MonoBehaviour
     // Public Methods
     // ==========================================
 
-    public void Setup(EquipmentData equipData, bool isEquipped, bool canUnequip, Action<EquipmentData> onActionClicked)
+    /// <summary>角色界面使用</summary>
+    public void Setup(EquipmentData equipData, bool isEquipped, bool canUnequip,
+        Action<EquipmentData> onSelect, Action<EquipmentData> onUnequip)
     {
         PopulateBasicInfo(equipData);
 
-        if (equippedBadge) equippedBadge.SetActive(isEquipped);
-        if (priceNode) priceNode.SetActive(false);
+        // 隐藏商店专属节点
+        if (buyBtn) buyBtn.gameObject.SetActive(false);
+        if (ownedBadge) ownedBadge.SetActive(false);
 
-        actionBtn.onClick.RemoveAllListeners();
+        if (equippedBadge) equippedBadge.SetActive(isEquipped);
 
         if (isEquipped)
         {
-            if (!canUnequip) 
+            if (selectBtn) selectBtn.gameObject.SetActive(false);
+            if (unequipBtn)
             {
-                actionBtn.gameObject.SetActive(false);
-            }
-            else 
-            { 
-                actionBtn.gameObject.SetActive(true); 
-                if (actionBtnText) actionBtnText.text = "卸下"; 
+                unequipBtn.gameObject.SetActive(true);
+                unequipBtn.interactable = canUnequip;
+                unequipBtn.onClick.RemoveAllListeners();
+                if (canUnequip)
+                    unequipBtn.onClick.AddListener(() => onUnequip?.Invoke(currentData));
             }
         }
         else
         {
-            actionBtn.gameObject.SetActive(true);
-            if (actionBtnText) actionBtnText.text = "装备";
+            if (unequipBtn) unequipBtn.gameObject.SetActive(false);
+            if (selectBtn)
+            {
+                selectBtn.gameObject.SetActive(true);
+                selectBtn.onClick.RemoveAllListeners();
+                selectBtn.onClick.AddListener(() => onSelect?.Invoke(currentData));
+            }
         }
-
-        actionBtn.interactable = true;
-        actionBtn.onClick.AddListener(() => onActionClicked?.Invoke(currentData));
     }
 
-    public void SetupForShop(EquipmentData equipData, int price, bool canAfford, string btnText, Action<EquipmentData> onActionClicked)
+    /// <summary>商店界面使用</summary>
+    public void SetupForShop(EquipmentData equipData, int price, bool canAfford, bool isOwned,
+        Action<EquipmentData> onBuy)
     {
         PopulateBasicInfo(equipData);
 
+        // 隐藏角色界面专属节点
         if (equippedBadge) equippedBadge.SetActive(false);
+        if (selectBtn) selectBtn.gameObject.SetActive(false);
+        if (unequipBtn) unequipBtn.gameObject.SetActive(false);
 
-        if (priceNode) priceNode.SetActive(true);
-        if (priceText)
+        if (isOwned)
         {
-            priceText.text = price.ToString();
-            priceText.color = canAfford ? Color.white : Color.red;
+            if (buyBtn) buyBtn.gameObject.SetActive(false);
+            if (ownedBadge) ownedBadge.SetActive(true);
         }
-
-        if (actionBtn != null)
+        else
         {
-            actionBtn.gameObject.SetActive(true);
-            actionBtn.interactable = canAfford;
-            if (actionBtnText) actionBtnText.text = btnText;
-
-            actionBtn.onClick.RemoveAllListeners();
-            actionBtn.onClick.AddListener(() => onActionClicked?.Invoke(currentData));
+            if (ownedBadge) ownedBadge.SetActive(false);
+            if (buyBtn)
+            {
+                buyBtn.gameObject.SetActive(true);
+                buyBtn.interactable = canAfford;
+                if (buyBtnText) buyBtnText.text = price.ToString();
+                buyBtn.onClick.RemoveAllListeners();
+                buyBtn.onClick.AddListener(() => onBuy?.Invoke(currentData));
+            }
         }
     }
 

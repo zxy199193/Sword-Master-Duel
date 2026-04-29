@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: ATK_401
   m_EditorClassIdentifier: 
   skillName: "\u91CD\u5288"
-  description: "\u5A01\u529B\u9AD8\uFF0C\u547D\u4E2D\u7387\u4E2D\r\n\u5BF9\u989D\u5916\u751F\u547D\u503C\u9020\u6210\u66F4\u9AD8\u4F24\u5BB3"
+  description: "\u5A01\u529B\u8F83\u9AD8\uFF0C\u547D\u4E2D\u7387\u4E2D\uFF0C\u5BF9\u9632\u5177\u9020\u6210\u66F4\u9AD8\u4F24\u5BB3\r"
   skillIcon: {fileID: 21300000, guid: 38d513935403092408d114a995fcfa42, type: 3}
   skillType: 0
   animationTriggerName: Attack
-  staminaCosts: 080000000800000007000000
+  staminaCosts: 030000000300000002000000
   basicDamages:
-  - 7
-  - 9
-  - 12
+  - 8
+  - 10
+  - 13
   basicDefends:
   - 0
   - 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   - 0
   - 0
   isConsumable: 0
-  price: 100
+  price: 50
   hitTimes: 1
   hitBarConfig:
     baseSpeed: 100

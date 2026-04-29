@@ -22,7 +22,7 @@ MonoBehaviour:
   endurance: 7
   strength: 10
   mentality: 16
-  staminaRecoverPerTurn: 3
+  staminaRecoverPerTurn: 2
   equippedWeapon: {fileID: 11400000, guid: 14f2cd337c8f2344ea10e2a517c12a90, type: 2}
   equippedArmor: {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
   equippedAccessories: []
@@ -64,5 +64,5 @@ MonoBehaviour:
   - -1
   - -1
   isBoss: 0
-  goldReward: 80
+  goldReward: 120
   expReward: 100

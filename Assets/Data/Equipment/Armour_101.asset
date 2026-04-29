@@ -26,7 +26,7 @@ MonoBehaviour:
   bonusStrength: 0
   bonusMentality: 0
   atkFactor: 0
-  durability: 5
+  durability: 3
   equipEffects: []
   references:
     version: 2

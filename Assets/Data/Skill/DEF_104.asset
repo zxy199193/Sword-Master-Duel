@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: DEF_104
   m_EditorClassIdentifier: 
   skillName: "\u683C\u6321"
-  description: "\u9632\u5FA1\u6548\u679C\u4E2D"
+  description: "\u9632\u5FA1\u6548\u679C\u4E2D\u7B49"
   skillIcon: {fileID: 21300000, guid: 19104db2d1d1d624e960854822af3022, type: 3}
   skillType: 1
   animationTriggerName: 
-  staminaCosts: 020000000200000001000000
+  staminaCosts: 010000000100000000000000
   basicDamages:
   - 0
   - 0

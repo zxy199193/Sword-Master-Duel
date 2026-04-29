@@ -13,25 +13,25 @@ MonoBehaviour:
   m_Name: ATK_303
   m_EditorClassIdentifier: 
   skillName: "\u8D85\u84C4\u529B\u65A9"
-  description: "\u5A01\u529B\u6781\u9AD8\uFF0C\u547D\u4E2D\u7387\u4E2D\r\n\u5BF9\u989D\u5916\u751F\u547D\u503C\u9020\u6210\u66F4\u9AD8\u4F24\u5BB3\r\n\u4F7F\u7528\u540E\u8FDB\u5165\u84C4\u529B\u72B6\u6001\uFF0C\u5BF9\u65B9\u653B\u51FB\u66F4\u6613\u547D\u4E2D\uFF0C\u4E0B\u4E00\u56DE\u5408\u8DF3\u8FC7\u51C6\u5907\u9636\u6BB5\u76F4\u63A5\u8FDB\u5165\u6218\u6597\u9636\u6BB5"
+  description: "\u5A01\u529B\u6781\u9AD8\uFF0C\u547D\u4E2D\u7387\u4E2D\uFF0C\u5BF9\u9632\u5177\u9020\u6210\u66F4\u9AD8\u4F24\u5BB3\uFF088/10/13\uFF09\uFF0C\u4F7F\u7528\u540E\u8FDB\u5165\u84C4\u529B\u72B6\u6001\uFF0C\u5BF9\u65B9\u653B\u51FB\u66F4\u6613\u547D\u4E2D\uFF0C\u4E0B\u4E00\u56DE\u5408\u76F4\u63A5\u8FDB\u5165\u6218\u6597\u9636\u6BB5"
   skillIcon: {fileID: 21300000, guid: 38d513935403092408d114a995fcfa42, type: 3}
   skillType: 0
   animationTriggerName: Attack
-  staminaCosts: 0c0000000b0000000a000000
+  staminaCosts: 080000000800000007000000
   basicDamages:
-  - 25
-  - 27
-  - 30
+  - 22
+  - 26
+  - 32
   basicDefends:
   - 0
   - 0
   - 0
   hitAmends:
-  - 0
-  - 0
-  - 0
+  - 15
+  - 13
+  - 10
   isConsumable: 0
-  price: 100
+  price: 120
   hitTimes: 1
   hitBarConfig:
     baseSpeed: 100
@@ -57,6 +57,6 @@ MonoBehaviour:
       type: {class: ChargeAttackEffect, ns: , asm: Assembly-CSharp}
       data:
         defenseWidthModifiers:
-        - 15
-        - 13
+        - 8
         - 10
+        - 13

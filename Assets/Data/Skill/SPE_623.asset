@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: SPE_623
   m_EditorClassIdentifier: 
   skillName: "\u5F71\u5206\u8EAB"
-  description: "\u4F7F\u7528\u540E\u6211\u65B9\u8FDB\u5165\u5206\u8EAB\u72B6\u6001"
+  description: "\u6211\u65B9\u8FDB\u5165\u3010\u5206\u8EAB\u3011\u72B6\u6001"
   skillIcon: {fileID: 21300000, guid: 5fcffea1084f4d14aa9340465fb5df31, type: 3}
   skillType: 3
   animationTriggerName: Attack
-  staminaCosts: 020000000200000001000000
+  staminaCosts: 060000000600000005000000
   basicDamages:
   - 0
   - 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   - 0
   - 0
   isConsumable: 0
-  price: 50
+  price: 80
   hitTimes: 1
   hitBarConfig:
     baseSpeed: 0

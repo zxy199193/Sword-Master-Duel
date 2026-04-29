@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e054a1e69a9c9f3438976a4b37f32cbe, type: 3}
+  m_Name: EnemyDifficultyDatabase
+  m_EditorClassIdentifier: 
+  tiers:
+  - level: 1
+    enemies:
+    - {fileID: 11400000, guid: 45b65116af273cc49a64972e2dc25cb7, type: 2}
+    - {fileID: 11400000, guid: 8b990ebee944e58458fba11f9f0121b8, type: 2}
+    - {fileID: 11400000, guid: d846c951fb217d944b68252c95fd3010, type: 2}
+    - {fileID: 11400000, guid: 6737812f4ff40be40a7dc4e06dc62b42, type: 2}
+    - {fileID: 11400000, guid: 2cedf7e6df6e9514ea2c684202f5adba, type: 2}
+  - level: 2
+    enemies:
+    - {fileID: 11400000, guid: ea04d3292e7c9ac428d376df84b14142, type: 2}
+    - {fileID: 11400000, guid: 2e8f4cc46c9a79e4bad35324ee04cb98, type: 2}
+    - {fileID: 11400000, guid: 887f5fef7ae2e734987787017561343e, type: 2}
+    - {fileID: 11400000, guid: 47a7205160363234185619d582e91ba8, type: 2}
+    - {fileID: 11400000, guid: 3e8e879283083424f8e91c4d49aeaba5, type: 2}
+  - level: 3
+    enemies:
+    - {fileID: 11400000, guid: c8703835a45bf03439fe0ed77e4287a6, type: 2}
+    - {fileID: 11400000, guid: 8736c81b331d2a24cb9b1cbe25eef021, type: 2}
+    - {fileID: 11400000, guid: a12e003a60a79f041b10ead9d859b690, type: 2}
+    - {fileID: 11400000, guid: 481450d9bacede542aec9e48d7fc9ff2, type: 2}
+    - {fileID: 11400000, guid: 174e26983294db645ae6f07581a049d1, type: 2}
+  - level: 4
+    enemies:
+    - {fileID: 11400000, guid: 81cc59650e1f4a546b38a8e4d987fb06, type: 2}
+    - {fileID: 11400000, guid: 9b8716427f6a67d4f911f1621043780b, type: 2}
+    - {fileID: 11400000, guid: 5cc26b3032928334d95f3596c3919082, type: 2}
+    - {fileID: 11400000, guid: 738b4e9bb2aa93842af478f4d5792c9f, type: 2}
+    - {fileID: 11400000, guid: 7702ed3e60cbd6f46aaa01566851b805, type: 2}
+  - level: 5
+    enemies:
+    - {fileID: 11400000, guid: 4e32a8beb0cd4e949b886d50303930d8, type: 2}

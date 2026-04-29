@@ -100,7 +100,6 @@ public class RestUIManager : MonoBehaviour
         if (upgradeSkillBtn) upgradeSkillBtn.onClick.AddListener(() => shopListUI.OpenUpgradeSkill());
         if (masterSkillBtn) masterSkillBtn.onClick.AddListener(() => shopListUI.OpenMasterSkill());
 
-        if (shopMenuBtn) shopMenuBtn.onClick.AddListener(() => shopListUI.OpenShop(ShopCategory.Weapon));
 
         // 原有的分类按钮也全部指向统一商店的不同分类
         if (buyWeaponBtn) buyWeaponBtn.onClick.AddListener(() => shopListUI.OpenShop(ShopCategory.Weapon));
@@ -139,7 +138,7 @@ public class RestUIManager : MonoBehaviour
         
         var profile = GameManager.Instance.playerProfile;
 
-        if (hpText) hpText.text = $"生命: {profile.currentHp} / {profile.GetFinalMaxLife()}";
+        if (hpText) hpText.text = $"{profile.currentHp}/{profile.GetFinalMaxLife()}";
         if (goldText) goldText.text = $"{profile.totalGold}";
         if (attrPointsText) attrPointsText.text = $"{profile.unallocatedPoints}";
         if (daysText) daysText.text = $"第{profile.currentRestDays}/{profile.maxRestDays}天";

@@ -21,12 +21,9 @@ public class BattleManager : MonoBehaviour
     [Header("飘字挂点 (2) 战斗伤害 - 随机偏移")]
     public Transform playerDamageAnchor;
     public Transform enemyDamageAnchor;
-    [Header("飘字挂点 (3) 体力恢复")]
-    public Transform playerStaminaRecoverAnchor;
-    public Transform enemyStaminaRecoverAnchor;
-    [Header("飘字挂点 (4) 生命恢复")]
-    public Transform playerHpRecoverAnchor;
-    public Transform enemyHpRecoverAnchor;
+    [Header("飘字挂点 (3) 恢复信息（HP+体力合并，挂 VerticalLayoutGroup）")]
+    public Transform playerRecoverAnchor;
+    public Transform enemyRecoverAnchor;
     [Header("飘字挂点 (5) 行动信息")]
     public Transform playerActionInfoAnchor;
     public Transform enemyActionInfoAnchor;
@@ -41,9 +38,9 @@ public class BattleManager : MonoBehaviour
 
     [Header("VFX & Prefabs")]
     public GameObject actionInfoPrefab;
-    public GameObject normalDamagePrefab;
-    public GameObject critDamagePrefab;
-    public GameObject missPrefab;
+    public GameObject normalDamagePrefab; // 普通伤害 + Miss 飘字
+    public GameObject critDamagePrefab;   // 暴击伤害飘字
+    public GameObject infoPopupPrefab;    // 通用信息飘字（恢复、状态提示等）
 
     // ==========================================
     // 运行时状态 (Runtime State)
@@ -93,7 +90,16 @@ public class BattleManager : MonoBehaviour
         currentEnemySkill = null;
         currentEnemySubSkill = null;
 
-        if (enemyEntity.runtimeSkills != null && enemyEntity.runtimeSkills.Count > 0)
+        // 检查敌人是否有跨回合锁定技能（如蓄力斩第二回合强制释放）
+        if (enemyEntity.lockedNextTurnSkill != null)
+        {
+            currentEnemySkill = enemyEntity.lockedNextTurnSkill;
+            enemyEntity.lockedNextTurnSkill = null;
+            string enemyName = enemyEntity.roleData?.roleName ?? "未知";
+            string skillName = currentEnemySkill.skillData?.skillName ?? "未知";
+            Debug.Log($"<color=orange>[AI 锁定] {enemyName} 强制释放锁定技能：{skillName}</color>");
+        }
+        else if (enemyEntity.runtimeSkills != null && enemyEntity.runtimeSkills.Count > 0)
         {
             float hpPercentage = (float)enemyEntity.currentBasicLife / enemyEntity.roleData.maxBasicLife;
 
@@ -239,7 +245,7 @@ public class BattleManager : MonoBehaviour
         if (slot.skillData.skillType == SkillType.Defend)
         {
             int equipBonus = GetSkillTypeBonus(entity, SkillType.Defend);
-            entity.tempDamageReduction = slot.skillData.GetBasicDefend(slot.level) + entity.GetFinalEndurance() + equipBonus;
+            entity.tempDamageReduction = slot.skillData.GetBasicDefend(slot.level) + entity.GetFinalEndurance() / 4 + equipBonus;  // 每4点耐力 +1 基础减伤
             entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level);
         }
         else if (slot.skillData.skillType == SkillType.Dodge)
@@ -296,9 +302,9 @@ public class BattleManager : MonoBehaviour
 
     public void SpawnDamagePopup(bool isPlayerTakingDamage, string textContent, int hitLevel)
     {
-        GameObject prefabToSpawn = normalDamagePrefab;
-        if (hitLevel == 0) prefabToSpawn = missPrefab;
-        else if (hitLevel >= 2) prefabToSpawn = critDamagePrefab;
+        // hitLevel 0 = Miss，1 = 普通，>= 2 = 暴击
+        // Miss 和 普通伤害 共用 normalDamagePrefab，暴击单独用 critDamagePrefab
+        GameObject prefabToSpawn = (hitLevel >= 2) ? critDamagePrefab : normalDamagePrefab;
 
         if (prefabToSpawn == null) return;
 
@@ -314,17 +320,18 @@ public class BattleManager : MonoBehaviour
         if (popupScript != null) popupScript.Setup(textContent);
     }
 
+    /// <summary>
+    /// 恢复飘字：生命/体力恢复共用同一挂点，由挂点上的 VerticalLayoutGroup 自动排列
+    /// isHp 参数保留以备将来区分样式，当前不影响挂点选择
+    /// </summary>
     public void SpawnRecoverPopup(bool isPlayer, string textContent, bool isHp)
     {
-        if (normalDamagePrefab == null) return;
+        if (infoPopupPrefab == null) return;
 
-        Transform targetAnchor = isPlayer
-            ? (isHp ? playerHpRecoverAnchor : playerStaminaRecoverAnchor)
-            : (isHp ? enemyHpRecoverAnchor : enemyStaminaRecoverAnchor);
-
+        Transform targetAnchor = isPlayer ? playerRecoverAnchor : enemyRecoverAnchor;
         if (targetAnchor == null) return;
 
-        GameObject popupObj = Instantiate(normalDamagePrefab, targetAnchor);
+        GameObject popupObj = Instantiate(infoPopupPrefab, targetAnchor);
         popupObj.transform.localPosition = Vector3.zero;
 
         DamagePopup popupScript = popupObj.GetComponent<DamagePopup>();
@@ -332,16 +339,16 @@ public class BattleManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 通用飘字：固定挂点，用于 Miss、状态提示、特效文字等非伤害数值信息
+    /// 通用信息飘字：固定挂点，用于状态提示、防具损坏、扎伤等非伤害数值信息
     /// </summary>
     public void SpawnGeneralPopup(bool isPlayer, string textContent)
     {
-        if (normalDamagePrefab == null) return;
+        if (infoPopupPrefab == null) return;
 
         Transform targetAnchor = isPlayer ? playerGeneralAnchor : enemyGeneralAnchor;
         if (targetAnchor == null) return;
 
-        GameObject popupObj = Instantiate(normalDamagePrefab, targetAnchor);
+        GameObject popupObj = Instantiate(infoPopupPrefab, targetAnchor);
         popupObj.transform.localPosition = Vector3.zero;
 
         DamagePopup popupScript = popupObj.GetComponent<DamagePopup>();
@@ -389,11 +396,10 @@ public class BattleManager : MonoBehaviour
     {
         Transform[] allAnchors = new Transform[]
         {
-            playerGeneralAnchor,        enemyGeneralAnchor,
-            playerDamageAnchor,         enemyDamageAnchor,
-            playerStaminaRecoverAnchor, enemyStaminaRecoverAnchor,
-            playerHpRecoverAnchor,      enemyHpRecoverAnchor,
-            playerActionInfoAnchor,     enemyActionInfoAnchor,
+            playerGeneralAnchor,    enemyGeneralAnchor,
+            playerDamageAnchor,     enemyDamageAnchor,
+            playerRecoverAnchor,    enemyRecoverAnchor,
+            playerActionInfoAnchor, enemyActionInfoAnchor,
         };
 
         foreach (var anchor in allAnchors)

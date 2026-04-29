@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: ATK_102
   m_EditorClassIdentifier: 
   skillName: "\u6A2A\u626B"
-  description: "\u5A01\u529B\u4F4E\uFF0C\u547D\u4E2D\u7387\u9AD8"
+  description: "\u5A01\u529B\u8F83\u4F4E\uFF0C\u547D\u4E2D\u7387\u9AD8"
   skillIcon: {fileID: 21300000, guid: f837ff419a14102439e9d9ec62f1df01, type: 3}
   skillType: 0
   animationTriggerName: Attack
-  staminaCosts: 030000000300000002000000
+  staminaCosts: 020000000200000001000000
   basicDamages:
   - 3
   - 5

@@ -63,13 +63,9 @@ public class ItemListUI : MonoBehaviour
 
         if (itemUI != null)
         {
-            itemUI.Setup(slot, isEquipped, (clickedSlot) =>
-            {
-                if (isEquipped) onUnequipAction?.Invoke();
-                else onEquipAction?.Invoke(clickedSlot);
-
-                gameObject.SetActive(false);
-            });
+            itemUI.Setup(slot, isEquipped,
+                (clickedSlot) => { onEquipAction?.Invoke(clickedSlot); gameObject.SetActive(false); },
+                (clickedSlot) => { onUnequipAction?.Invoke(); gameObject.SetActive(false); });
         }
     }
 }

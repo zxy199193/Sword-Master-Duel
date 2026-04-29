@@ -69,18 +69,9 @@ public class EquipListUI : MonoBehaviour
 
         if (itemUI != null)
         {
-            itemUI.Setup(data, isEquipped, canUnequip, (clickedData) =>
-            {
-                if (isEquipped)
-                {
-                    onUnequipAction?.Invoke();
-                }
-                else
-                {
-                    onEquipAction?.Invoke(clickedData);
-                }
-                ClosePanel();
-            });
+            itemUI.Setup(data, isEquipped, canUnequip,
+                (clickedData) => { onEquipAction?.Invoke(clickedData); ClosePanel(); },
+                (clickedData) => { onUnequipAction?.Invoke(); ClosePanel(); });
         }
     }
 

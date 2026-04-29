@@ -31,14 +31,14 @@ public class SkillTooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
         List<StatusType> statuses = boundSkillData.GetRelatedStatuses();
         if (statuses != null && statuses.Count > 0)
         {
-            // 获取UI元素在屏幕上的世界坐标，传给浮窗管理器
+            // 获取 UI 元素的四角世界坐标（0=左下, 1=左上, 2=右上, 3=右下）
             Vector3[] corners = new Vector3[4];
             rectTransform.GetWorldCorners(corners);
-            
-            // 取右边缘中间的位置
-            Vector3 rightCenter = (corners[2] + corners[3]) / 2f;
-            
-            StatusTooltipManager.Instance.ShowTooltip(statuses, rightCenter);
+
+            // 取上边缘中心点（左上角 + 右上角的中点），这样向上偏移后浮窗在按钮正上方
+            Vector3 topCenter = (corners[1] + corners[2]) / 2f;
+
+            StatusTooltipManager.Instance.ShowTooltip(statuses, topCenter);
         }
     }
 

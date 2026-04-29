@@ -13,19 +13,19 @@ MonoBehaviour:
   m_Name: DEF_611
   m_EditorClassIdentifier: 
   skillName: "\u8981\u5BB3\u9632\u5FA1"
-  description: "\u9632\u5FA1\u6548\u679C\u5C0F\r\n\u53D7\u5230\u9AD8\u7B49\u7EA7\u547D\u4E2D\u533A\u95F4\u653B\u51FB\u5927\u5E45\u63D0\u5347\u9632\u5FA1\u6548\u679C"
+  description: "\u9632\u5FA1\u6548\u679C\u8F83\u5C0F\uFF0C\u5982\u679C\u6ED1\u5757\u505C\u5728\u5927\u4E8E\u7B49\u4E8ELv.3\u7684\u547D\u4E2D\u533A\u95F4\uFF0C\u9632\u5FA1\u6548\u679C+8/10/13"
   skillIcon: {fileID: 21300000, guid: 413253281d5376b4c847c4879c2e4829, type: 3}
   skillType: 1
   animationTriggerName: 
-  staminaCosts: 030000000300000002000000
+  staminaCosts: 010000000100000000000000
   basicDamages:
   - 0
   - 0
   - 0
   basicDefends:
-  - 2
-  - 3
-  - 5
+  - 4
+  - 6
+  - 9
   hitAmends:
   - 15
   - 13
@@ -47,5 +47,5 @@ MonoBehaviour:
     - rid: 2591120559595585537
       type: {class: CriticalDefenseEffect, ns: , asm: Assembly-CSharp}
       data:
-        extraDefends: 0c0000000c0000000c000000
+        extraDefends: 080000000a0000000d000000
         minTriggerLevel: 3

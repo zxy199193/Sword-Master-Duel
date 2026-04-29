@@ -79,6 +79,7 @@ public class BattleEntity : MonoBehaviour
         }
 
         runtimeSkills.Clear();
+        activeStatuses.Clear();  // 清除上一场战斗残留的所有状态
         lockedNextTurnSkill = null;
 
         if (isPlayer && GameManager.Instance != null)
@@ -236,7 +237,7 @@ public class BattleEntity : MonoBehaviour
         }
         else
         {
-            baseMax = roleData.maxStamina + GetFinalEndurance() * 2;
+            baseMax = roleData.maxStamina + Mathf.FloorToInt(GetFinalEndurance() / 4f);
             if (roleData.equippedWeapon != null) baseMax += roleData.equippedWeapon.bonusStamina;
             if (roleData.equippedArmor != null) baseMax += roleData.equippedArmor.bonusStamina;
             if (roleData.equippedAccessories != null)
@@ -251,12 +252,16 @@ public class BattleEntity : MonoBehaviour
             foreach (var acc in roleData.equippedAccessories) if (acc != null) baseMax += acc.bonusStamina;
         }
 
+        // Exhausted（虚脱）：体力上限压至 2
+        if (activeStatuses.ContainsKey(StatusType.Exhausted))
+            return 2;
+
         return Mathf.Max(1, baseMax - staminaMaxPenalty);
     }
 
     public int GetHpRecoverPerTurn()
     {
-        return GetFinalVitality() / 2;
+        return GetFinalVitality() / 3;  // 每3点活力 +1 生命悂复
     }
 
     public float GetFinalActionTime(float baseTime)
@@ -302,6 +307,19 @@ public class BattleEntity : MonoBehaviour
             return GlobalBattleRules.LoadWeightState.Extreme;
         }
         return GlobalBattleRules.LoadWeightState.Medium;
+    }
+
+    public float GetLoadRatio()
+    {
+        if (isPlayer && GameManager.Instance != null)
+        {
+            int currentLoad = GameManager.Instance.playerProfile.GetCurrentLoadWeight();
+            if (activeStatuses.ContainsKey(StatusType.Frozen)) currentLoad += 6;
+            if (activeStatuses.ContainsKey(StatusType.Lightweight)) currentLoad -= 20;
+            int maxLoad = GameManager.Instance.playerProfile.GetMaxLoad();
+            return maxLoad > 0 ? (float)currentLoad / maxLoad : 0f;
+        }
+        return 0.5f; // 敌方无负重系统，默认返回中等
     }
 
     public float GetFinalHitBarSlowdown(float globalBaseSlowdown)
@@ -400,7 +418,7 @@ public class BattleEntity : MonoBehaviour
         int oldHp = currentBasicLife;
 
         // 每回合体力恢复
-        int recoverAmount = roleData.staminaRecoverPerTurn + Mathf.FloorToInt(GetFinalMentality() / 6f);
+        int recoverAmount = roleData.staminaRecoverPerTurn + Mathf.FloorToInt(GetFinalEndurance() / 8f);
         if (activeStatuses.ContainsKey(StatusType.Gathering))
         {
             recoverAmount += 1;
@@ -539,11 +557,14 @@ public class BattleEntity : MonoBehaviour
 
                 if (key == StatusType.Overdrawn)
                 {
-                    staminaMaxPenalty += 10;
-                    int newMax = GetFinalMaxStamina();
+                    // 透支结束：施加 2 回合虚脱，期间体力上限压至 2
+                    BattleManager bm = GameObject.FindObjectOfType<BattleManager>();
+                    AddStatus(StatusType.Exhausted, 2);
+                    int newMax = GetFinalMaxStamina(); // 此时已含虚脱上限=2
                     if (currentStamina > newMax) currentStamina = newMax;
                     OnStaminaChanged?.Invoke();
-                    Debug.Log($"<color=#FF0000>[{roleData.roleName}] 的【透支】状态结束，体力上限永久扣除 10 点！</color>");
+                    if (bm != null) bm.SpawnGeneralPopup(isPlayer, "<color=#FF6600>虚脱!</color>");
+                    Debug.Log($"<color=#FF0000>[{roleData.roleName}] 的【透支】结束，进入 2 回合虚脱，体力上限压至 2！</color>");
                 }
             }
         }

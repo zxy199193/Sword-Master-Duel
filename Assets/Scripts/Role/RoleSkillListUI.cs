@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 public class RoleSkillListUI : MonoBehaviour
@@ -54,6 +55,8 @@ public class RoleSkillListUI : MonoBehaviour
                 CreateItemNode(slot, false, true);
             }
         }
+
+        ForceRefreshLayout();
     }
 
     // ==========================================
@@ -67,13 +70,32 @@ public class RoleSkillListUI : MonoBehaviour
         
         if (itemUI != null)
         {
-            itemUI.Setup(slot, isEquipped, canUnequip, (clickedSlot) =>
+            itemUI.Setup(slot, isEquipped, canUnequip,
+                (clickedSlot) => { onEquipAction?.Invoke(clickedSlot); gameObject.SetActive(false); },
+                (clickedSlot) => { onUnequipAction?.Invoke(); gameObject.SetActive(false); });
+        }
+    }
+
+    private void ForceRefreshLayout()
+    {
+        if (!gameObject.activeInHierarchy) return;
+        StartCoroutine(RefreshLayoutRoutine());
+    }
+
+    private IEnumerator RefreshLayoutRoutine()
+    {
+        Canvas.ForceUpdateCanvases();
+        yield return null;
+
+        RectTransform rect = GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            LayoutGroup[] layouts = GetComponentsInChildren<LayoutGroup>(true);
+            for (int i = layouts.Length - 1; i >= 0; i--)
             {
-                if (isEquipped) onUnequipAction?.Invoke();
-                else onEquipAction?.Invoke(clickedSlot);
-                
-                gameObject.SetActive(false);
-            });
+                LayoutRebuilder.ForceRebuildLayoutImmediate(layouts[i].GetComponent<RectTransform>());
+            }
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
         }
     }
 }

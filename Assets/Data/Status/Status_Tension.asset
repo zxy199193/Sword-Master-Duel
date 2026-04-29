@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statusType: 0
   statusName: "\u7D27\u5F20"
-  icon: {fileID: 21300000, guid: d135275b0ac4b924895bc3c1390398e9, type: 3}
+  icon: {fileID: 123507297, guid: 06999cf5a011c8c4dbc4a5d89a8f3232, type: 3}
   description: "\u6ED1\u5757\u901F\u5EA6+30%\r\n\u653B\u51FB\u62DB\u5F0F\u6240\u6709\u547D\u4E2D\u533A\u95F4-6"

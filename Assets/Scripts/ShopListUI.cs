@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -53,19 +54,19 @@ public class ShopListUI : MonoBehaviour
         gameObject.SetActive(true); 
         titleText.text = "道场 - 招式学习 (耗时1天)"; 
         if (refreshArea) refreshArea.SetActive(false);
-        if (randomContentRoot) randomContentRoot.gameObject.SetActive(false);
+        if (randomContentRoot) randomContentRoot.gameObject.SetActive(true);
         ClearList();
         
         var profile = GameManager.Instance.playerProfile;
 
+        // 常驻招式
         foreach (var skill in GameManager.Instance.currentDojoSkills)
         {
-            if (HasSkill(skill, profile)) continue;
-
+            bool isOwned = HasSkill(skill, profile);
             SkillSlot tempSlot = new SkillSlot { skillData = skill, level = 1, quantity = 1 };
-            bool canAfford = profile.totalGold >= skill.price && profile.currentRestDays >= 1;
+            bool canAfford = !isOwned && profile.totalGold >= skill.price && profile.currentRestDays >= 1;
 
-            CreateSkillUI(tempSlot, skill.price, "学习", canAfford, permanentContentRoot, () =>
+            CreateSkillUI(tempSlot, skill.price, "学习", canAfford, isOwned, permanentContentRoot, () =>
             {
                 if (profile.currentRestDays >= 1 && profile.ConsumeGold(skill.price))
                 {
@@ -77,6 +78,28 @@ public class ShopListUI : MonoBehaviour
                 }
             });
         }
+
+        // 随机招式
+        foreach (var skill in GameManager.Instance.randDojoSkills)
+        {
+            bool isOwned = HasSkill(skill, profile);
+            SkillSlot tempSlot = new SkillSlot { skillData = skill, level = 1, quantity = 1 };
+            bool canAfford = !isOwned && profile.totalGold >= skill.price && profile.currentRestDays >= 1;
+
+            CreateSkillUI(tempSlot, skill.price, "学习", canAfford, isOwned, randomContentRoot, () =>
+            {
+                if (profile.currentRestDays >= 1 && profile.ConsumeGold(skill.price))
+                {
+                    profile.currentRestDays -= 1;
+                    TryAutoEquipSkill(skill, profile);
+                    Debug.Log($"购买并尝试装备招式(随机): {skill.skillName}");
+                    OpenLearnSkill();
+                    restUIManager.RefreshPlayerStatusUI();
+                }
+            });
+        }
+
+        ForceRefreshLayout();
     }
 
     public void OpenUpgradeSkill()
@@ -96,7 +119,7 @@ public class ShopListUI : MonoBehaviour
             SkillSlot previewSlot = new SkillSlot { skillData = slot.skillData, level = 2, quantity = slot.quantity };
             bool canAfford = profile.totalGold >= cost && profile.currentRestDays >= 1;
 
-            CreateSkillUI(previewSlot, cost, "进阶", canAfford, permanentContentRoot, () =>
+            CreateSkillUI(previewSlot, cost, "进阶", canAfford, false, permanentContentRoot, () =>
             {
                 if (profile.currentRestDays >= 1 && profile.ConsumeGold(cost))
                 {
@@ -108,6 +131,8 @@ public class ShopListUI : MonoBehaviour
                 }
             });
         }
+
+        ForceRefreshLayout();
     }
 
     public void OpenMasterSkill()
@@ -127,7 +152,7 @@ public class ShopListUI : MonoBehaviour
             SkillSlot previewSlot = new SkillSlot { skillData = slot.skillData, level = 3, quantity = slot.quantity };
             bool canAfford = profile.totalGold >= cost && profile.currentRestDays >= 2;
 
-            CreateSkillUI(previewSlot, cost, "精通", canAfford, permanentContentRoot, () =>
+            CreateSkillUI(previewSlot, cost, "精通", canAfford, false, permanentContentRoot, () =>
             {
                 if (profile.currentRestDays >= 2 && profile.ConsumeGold(cost))
                 {
@@ -139,6 +164,8 @@ public class ShopListUI : MonoBehaviour
                 }
             });
         }
+
+        ForceRefreshLayout();
     }
 
     public void OpenShop(ShopCategory category)
@@ -148,20 +175,7 @@ public class ShopListUI : MonoBehaviour
 
         if (refreshArea)
         {
-            refreshArea.SetActive(true);
-            if (refreshCostText) refreshCostText.text = $"刷新耗费: {currentConfig.refreshCost}";
-            if (refreshBtn)
-            {
-                refreshBtn.onClick.RemoveAllListeners();
-                refreshBtn.onClick.AddListener(() =>
-                {
-                    if (GameManager.Instance.ManualRefreshShop())
-                    {
-                        OpenShop(category);
-                        restUIManager.RefreshPlayerStatusUI();
-                    }
-                });
-            }
+            refreshArea.SetActive(false); // 暂时隐藏刷新功能
         }
         if (randomContentRoot) randomContentRoot.gameObject.SetActive(true);
 
@@ -198,6 +212,8 @@ public class ShopListUI : MonoBehaviour
             foreach (var item in perm) CreateEquipShopUI(item, profile, permanentContentRoot, category);
             foreach (var item in rand) CreateEquipShopUI(item, profile, randomContentRoot, category);
         }
+
+        ForceRefreshLayout();
     }
 
     private string GetCategoryName(ShopCategory category)
@@ -230,9 +246,9 @@ public class ShopListUI : MonoBehaviour
 
     private void CreateEquipShopUI(EquipmentData equip, PlayerProfile profile, Transform targetRoot, ShopCategory category)
     {
-        if (HasEquipment(equip, profile)) return;
-        bool canAfford = profile.totalGold >= equip.price;
-        CreateEquipUI(equip, "购买", canAfford, targetRoot, () =>
+        bool isOwned = HasEquipment(equip, profile);
+        bool canAfford = !isOwned && profile.totalGold >= equip.price;
+        CreateEquipUI(equip, canAfford, isOwned, targetRoot, () =>
         {
             if (profile.ConsumeGold(equip.price))
             {
@@ -245,9 +261,10 @@ public class ShopListUI : MonoBehaviour
 
     private void CreateSkillShopUI(SkillData skill, PlayerProfile profile, Transform targetRoot, ShopCategory category)
     {
+        // 道具为消耗品可叠加购买，不判断「已拥有」
         bool canAfford = profile.totalGold >= skill.price;
         SkillSlot tempSlot = new SkillSlot { skillData = skill, level = 1, quantity = 0 };
-        CreateSkillUI(tempSlot, skill.price, "购买", canAfford, targetRoot, () =>
+        CreateSkillUI(tempSlot, skill.price, "购买", canAfford, false, targetRoot, () =>
         {
             if (profile.ConsumeGold(skill.price))
             {
@@ -336,22 +353,22 @@ public class ShopListUI : MonoBehaviour
         }
     }
 
-    private void CreateEquipUI(EquipmentData equip, string btnText, bool canAfford, Transform targetRoot, System.Action onClick)
+    private void CreateEquipUI(EquipmentData equip, bool canAfford, bool isOwned, Transform targetRoot, System.Action onClick)
     {
         var go = Instantiate(shopEquipPrefab, targetRoot);
         var ui = go.GetComponent<EquipItemUI>();
 
         System.Action<EquipmentData> clickWrapper = (e) => onClick?.Invoke();
-        ui.SetupForShop(equip, equip.price, canAfford, btnText, clickWrapper);
+        ui.SetupForShop(equip, equip.price, canAfford, isOwned, clickWrapper);
     }
 
-    private void CreateSkillUI(SkillSlot slot, int price, string btnText, bool canAfford, Transform targetRoot, System.Action onClick)
+    private void CreateSkillUI(SkillSlot slot, int price, string btnText, bool canAfford, bool isOwned, Transform targetRoot, System.Action onClick)
     {
         var go = Instantiate(shopSkillPrefab, targetRoot);
         var ui = go.GetComponent<RoleSkillItemUI>();
 
         System.Action<SkillSlot> clickWrapper = (s) => onClick?.Invoke();
-        ui.SetupForShop(slot, price, canAfford, btnText, clickWrapper);
+        ui.SetupForShop(slot, price, canAfford, isOwned, btnText, clickWrapper);
     }
 
     // ==========================================
@@ -361,7 +378,7 @@ public class ShopListUI : MonoBehaviour
     private bool HasSkill(SkillData skillData, PlayerProfile profile)
     {
         var allSlots = GetAllSkillSlots(profile);
-        return allSlots.Any(s => s.skillData == skillData);
+        return allSlots.Any(s => s.skillData != null && s.skillData == skillData);
     }
 
     private bool HasEquipment(EquipmentData equipData, PlayerProfile profile)
@@ -375,7 +392,7 @@ public class ShopListUI : MonoBehaviour
     private List<SkillSlot> GetOwnedSkillsOfLevel(int level, PlayerProfile profile)
     {
         var allSlots = GetAllSkillSlots(profile);
-        return allSlots.Where(s => s.level == level && s.skillData.skillType != SkillType.Item).ToList();
+        return allSlots.Where(s => s.skillData != null && s.level == level && s.skillData.skillType != SkillType.Item).ToList();
     }
 
     private List<SkillSlot> GetAllSkillSlots(PlayerProfile profile)
@@ -409,5 +426,32 @@ public class ShopListUI : MonoBehaviour
         }
             
         profile.storageSkillsAndItems.Add(new SkillSlot { skillData = itemData, level = 1, quantity = 1 });
+    }
+
+    // ==========================================
+    // Private Methods - Layout
+    // ==========================================
+
+    private void ForceRefreshLayout()
+    {
+        if (!gameObject.activeInHierarchy) return;
+        StartCoroutine(RefreshLayoutRoutine());
+    }
+
+    private IEnumerator RefreshLayoutRoutine()
+    {
+        Canvas.ForceUpdateCanvases();
+        yield return null;
+
+        RectTransform rect = GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            LayoutGroup[] layouts = GetComponentsInChildren<LayoutGroup>(true);
+            for (int i = layouts.Length - 1; i >= 0; i--)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(layouts[i].GetComponent<RectTransform>());
+            }
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
+        }
     }
 }

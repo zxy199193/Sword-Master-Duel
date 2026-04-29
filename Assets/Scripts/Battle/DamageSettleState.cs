@@ -174,9 +174,11 @@ public class DamageSettleState : BattleState
                 }
             }
 
-            // 3. 计算最终伤害: (总攻击力 - 总减伤) × 武器倍率 × 打击条倍率
+            // 3. 计算最终伤害:
+            // (技能基础伤害 + 各类修正 + 每4点力量+1基础伤害 - 减伤) × 武器倍率 × 打击条倍率 × 力量百分比增幅(1 + 0.03×力量)
             int attackTypeBonus = battleManager.GetSkillTypeBonus(attacker, SkillType.Attack);
-            float totalBaseDamage = skill.GetBasicDamage(level) + (finalStrength * 1) + equipDamageModifier + skillEffectBaseDamageMod + attackTypeBonus;
+            int strengthFlatBonus = finalStrength / 4;  // 每4点力量 +1 基础伤害
+            float totalBaseDamage = skill.GetBasicDamage(level) + strengthFlatBonus + equipDamageModifier + skillEffectBaseDamageMod + attackTypeBonus;
 
             
             if (attacker.activeStatuses.ContainsKey(StatusType.Excited))
@@ -187,7 +189,20 @@ public class DamageSettleState : BattleState
             int totalReduction = Mathf.RoundToInt(defender.tempDamageReduction) + skillEffectDefenseMod;
 
             float netBaseDamage = Mathf.Max(0, totalBaseDamage - totalReduction);
-            int finalDamage = Mathf.RoundToInt(weaponAtkFactor * multiplier * netBaseDamage);
+            float strengthPercentBonus = 1f + 0.03f * finalStrength;  // 每点力量 +3% 技能伤害
+            int finalDamage = Mathf.RoundToInt(weaponAtkFactor * multiplier * netBaseDamage * strengthPercentBonus);
+
+            // [伤害公式日志] 每次命中输出计算过程，方便数值验证
+            {
+                int skillBase = Mathf.RoundToInt(skill.GetBasicDamage(level));
+                int excitedBonus = attacker.activeStatuses.ContainsKey(StatusType.Excited) ? 6 : 0;
+                string correctionBreakdown = $"力量:{strengthFlatBonus}+装备:{equipDamageModifier}+特效:{skillEffectBaseDamageMod}+攻击类型:{attackTypeBonus}+亢奋:{excitedBonus}-减伤:{totalReduction}";
+                Debug.Log(
+                    $"<color=#FFD700>[伤害结算] {attacker.roleData.roleName} -> {defender.roleData.roleName}\n" +
+                    $"最终伤害 = (基础伤害[{skillBase}] + 修正[{correctionBreakdown}]) " +
+                    $"× 武器倍率[{weaponAtkFactor:F2}] × 打击条倍率[{multiplier:F2}] × 力量增幅[{strengthPercentBonus:F2}] = {finalDamage}</color>"
+                );
+            }
 
             // 分身增伤：伤害翻倍
             if (attacker.activeStatuses.ContainsKey(StatusType.Clone))

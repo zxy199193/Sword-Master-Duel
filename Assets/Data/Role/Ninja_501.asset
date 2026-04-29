@@ -22,7 +22,7 @@ MonoBehaviour:
   endurance: 0
   strength: 1
   mentality: 3
-  staminaRecoverPerTurn: 3
+  staminaRecoverPerTurn: 2
   equippedWeapon: {fileID: 11400000, guid: 308c55fba002e3b4caea7efb3a8c5d0d, type: 2}
   equippedArmor: {fileID: 11400000, guid: f43dbd186bb77e84f859dd818e530034, type: 2}
   equippedAccessories: []
@@ -37,17 +37,18 @@ MonoBehaviour:
       skillData: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
       level: 0
       quantity: 0
-    phaseWeights: 0a000000ffffffffffffffffffffffff
+    phaseWeights: 14000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
       level: 0
       quantity: 3
-    phaseWeights: 0a000000ffffffffffffffffffffffff
+    phaseWeights: 00000000ffffffff0a000000ffffffff
   subSkillProbabilities:
   - 0.5
   - -1
   - -1
   - -1
+  difficultyLevel: 1
   isBoss: 0
-  goldReward: 20
+  goldReward: 30
   expReward: 35

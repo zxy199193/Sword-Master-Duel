@@ -12,45 +12,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e36239bdf90eef4b9aeb698d13592be, type: 3}
   m_Name: Boss_101
   m_EditorClassIdentifier: 
-  roleName: BOSS
+  roleName: "\u9B54\u5251\u58EB"
   roleDescription: 
   roleModel: {fileID: -1098845575, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
   animatorController: {fileID: 9100000, guid: 3a926d436d9125f4686d3dc2cfaed053, type: 2}
   maxBasicLife: 10
   maxStamina: 5
-  vitality: 15
-  endurance: 15
-  strength: 15
-  mentality: 15
-  staminaRecoverPerTurn: 3
+  vitality: 8
+  endurance: 8
+  strength: 16
+  mentality: 18
+  staminaRecoverPerTurn: 2
   equippedWeapon: {fileID: 11400000, guid: a17d1176ef6c913448d13dd85aa25696, type: 2}
   equippedArmor: {fileID: 11400000, guid: a3fea4b0612c265479844132e8f5ea5d, type: 2}
   equippedAccessories: []
-  aiReactionTolerance: 0.35
+  aiReactionTolerance: 0.15
   npcSkills:
   - skillSlot:
-      skillData: {fileID: 11400000, guid: f504015147a24fb4f9a49f1ba4e50ea6, type: 2}
+      skillData: {fileID: 11400000, guid: 3550780d426025a4bad45b7d82384c77, type: 2}
       level: 1
       quantity: 0
-    phaseWeights: 0a000000ffffffffffffffffffffffff
+    phaseWeights: 0f000000ffffffffffffffffffffffff
   - skillSlot:
-      skillData: {fileID: 11400000, guid: 282c28fe5af7ee74281bc58366321726, type: 2}
+      skillData: {fileID: 11400000, guid: 4b2b6ddb99af39e4b84b08568c55024a, type: 2}
+      level: 1
+      quantity: 0
+    phaseWeights: 0f000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: d29c4ab77970f444c923287ce35543f4, type: 2}
       level: 0
       quantity: 0
-    phaseWeights: 0a000000ffffffffffffffffffffffff
+    phaseWeights: 00000000000000001e000000ffffffff
   - skillSlot:
-      skillData: {fileID: 11400000, guid: 886cef935987f7c4694d1d60bbb13dfc, type: 2}
-      level: 0
-      quantity: 0
-    phaseWeights: 0a000000ffffffffffffffffffffffff
-  - skillSlot:
-      skillData: {fileID: 11400000, guid: 08901a3ef1e892e46997bb27a9004bcf, type: 2}
-      level: 0
-      quantity: 0
-    phaseWeights: 0a000000ffffffffffffffffffffffff
-  - skillSlot:
-      skillData: {fileID: 11400000, guid: 474a10b183cccc64c9891f818273ec54, type: 2}
-      level: 0
+      skillData: {fileID: 11400000, guid: 56110b0a913fda24a9abb3f143d74b8e, type: 2}
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
@@ -59,20 +54,31 @@ MonoBehaviour:
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
-      skillData: {fileID: 11400000, guid: 309fbf6a33108a940a6a8b1fe7845098, type: 2}
+      skillData: {fileID: 11400000, guid: 09b0744b4ae21884b8b6067526e9da6c, type: 2}
       level: 0
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
-      skillData: {fileID: 11400000, guid: f17287398bf6a46469bca1bd08f0976b, type: 2}
+      skillData: {fileID: 11400000, guid: a6aa81dd379a97e4dbaa81639de62279, type: 2}
       level: 0
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 172e921df57d7494ab7e873a5aaaaf00, type: 2}
+      level: 1
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 73a5a292b9c321b4fa65e0987bc60345, type: 2}
+      level: 1
+      quantity: 3
+    phaseWeights: 00000000ffffffff0a000000ffffffff
   subSkillProbabilities:
   - 0.5
   - -1
   - -1
   - -1
+  difficultyLevel: 1
   isBoss: 0
   goldReward: 80
   expReward: 100

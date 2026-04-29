@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: DEF_511
   m_EditorClassIdentifier: 
   skillName: "\u89D2\u529B"
-  description: "\u9632\u5FA1\u6548\u679C\u4E2D\r\n\u5BF9\u65B9\u8FDB\u884C\u653B\u51FB\u65F6\u989D\u5916\u6D88\u8017\u4F53\u529B"
+  description: "\u9632\u5FA1\u6548\u679C\u4E2D\u7B49\uFF0C\u5BF9\u65B9\u653B\u51FB\u547D\u4E2D\u65F6\u989D\u5916\u6D88\u8017\u4F53\u529B\uFF082/2/3\uFF09"
   skillIcon: {fileID: 21300000, guid: 413253281d5376b4c847c4879c2e4829, type: 3}
   skillType: 1
   animationTriggerName: 
-  staminaCosts: 040000000400000003000000
+  staminaCosts: 030000000300000002000000
   basicDamages:
   - 0
   - 0
@@ -39,7 +39,12 @@ MonoBehaviour:
     actionTime: 0
     sections: []
   castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
-  effects: []
+  effects:
+  - rid: 2591120740793188352
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2591120740793188352
+      type: {class: DrainAttackerStaminaOnHitEffect, ns: , asm: Assembly-CSharp}
+      data:
+        drainAmounts: 020000000200000003000000

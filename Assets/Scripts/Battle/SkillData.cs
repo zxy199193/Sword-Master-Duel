@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
 using System;
-using System.Linq;
 #endif
 
 [CreateAssetMenu(fileName = "NewSkill", menuName = "SwordMaster/Skill Data")]
@@ -103,14 +103,48 @@ public class SkillData : ScriptableObject
 
         foreach (var effect in effects)
         {
+            // 施加状态（技能执行时）
             if (effect is ApplyStatusEffect applyStatus)
             {
                 if (!statuses.Contains(applyStatus.statusType)) statuses.Add(applyStatus.statusType);
             }
+            // 施加状态（按打击条等级触发）
             else if (effect is ApplyStatusOnHitLevelEffect hitStatus)
             {
                 if (!statuses.Contains(hitStatus.statusType)) statuses.Add(hitStatus.statusType);
             }
+            // 施加状态（受击时反制，如角力、硬撑等）
+            else if (effect is ApplyStatusOnBeingHitEffect beingHitStatus)
+            {
+                if (!statuses.Contains(beingHitStatus.statusType)) statuses.Add(beingHitStatus.statusType);
+            }
+            // 施加状态（闪避成功后反制，如无刀取）
+            else if (effect is CounterStatusOnEvadeEffect evadeStatus)
+            {
+                if (!statuses.Contains(evadeStatus.statusToApply)) statuses.Add(evadeStatus.statusToApply);
+            }
+            // 移除状态（如水、净化等道具/技能）
+            else if (effect is RemoveStatusEffect removeStatus)
+            {
+                if (removeStatus.removeAllNegative)
+                {
+                    // 所有负面状态
+                    var allNegative = new List<StatusType>
+                    {
+                        StatusType.Dizzy, StatusType.Impatient, StatusType.Overdrawn,
+                        StatusType.Obscured, StatusType.Smoked, StatusType.Burn,
+                        StatusType.Paralyzed, StatusType.Frozen
+                    };
+                    foreach (var s in allNegative)
+                        if (!statuses.Contains(s)) statuses.Add(s);
+                }
+                else
+                {
+                    foreach (var s in removeStatus.specificTypes)
+                        if (!statuses.Contains(s)) statuses.Add(s);
+                }
+            }
+            // 蓄力技能
             else if (effect is ChargeAttackEffect)
             {
                 if (!statuses.Contains(StatusType.Charging)) statuses.Add(StatusType.Charging);

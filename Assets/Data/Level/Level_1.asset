@@ -13,9 +13,6 @@ MonoBehaviour:
   m_Name: Level_1
   m_EditorClassIdentifier: 
   levelTitle: "\u51B3\u65971"
-  possibleGroups:
-  - groupName: "\u521D\u59CB"
-    enemies:
-    - {fileID: 11400000, guid: 32de716671bd21647a504ed09ecca28d, type: 2}
-    - {fileID: 11400000, guid: 45b65116af273cc49a64972e2dc25cb7, type: 2}
-    - {fileID: 11400000, guid: 45b65116af273cc49a64972e2dc25cb7, type: 2}
+  node1Difficulty: 1
+  node2Difficulty: 1
+  node3Difficulty: 1

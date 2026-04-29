@@ -189,7 +189,11 @@ public class HitBarManager : MonoBehaviour
 
             aiReactionTimeError = UnityEngine.Random.Range(-tolerance, tolerance);
             aiCurrentBounces = 0;
-            aiTargetBounces = UnityEngine.Random.Range(1, 4);
+            // 弹跳次数：在 0~aiMaxBounces 之间随机，0 表示不回弹直接出手
+            int maxBounces = (currentCaster != null && currentCaster.roleData != null)
+                ? Mathf.Max(0, currentCaster.roleData.aiMaxBounces)
+                : 3;
+            aiTargetBounces = UnityEngine.Random.Range(0, maxBounces + 1);
         }
     }
 

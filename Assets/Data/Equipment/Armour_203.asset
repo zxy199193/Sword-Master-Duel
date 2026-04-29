@@ -18,7 +18,7 @@ MonoBehaviour:
   equipType: 1
   quality: 1
   weight: 16
-  price: 30
+  price: 60
   bonusLife: 0
   bonusStamina: 0
   bonusVitality: 0

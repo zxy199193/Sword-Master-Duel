@@ -41,18 +41,20 @@ public class ActionPanelUI : MonoBehaviour
     {
         gameObject.SetActive(true);
         selectedMainAction = null;
-        selectedSubAction = null;
+        selectedSubAction  = null;
 
         bool isBoss = battleManager.enemyEntity.roleData.isBoss;
         retreatBtn.interactable = !isBoss;
 
+        // 清除待用体力预览
+        RefreshPendingStaminaDisplay();
         UpdateSelectionDisplay();
         CheckReadyButtonState();
     }
 
     private void OpenSkillList(params SkillType[] typesToOpen)
     {
-        var playerSkills = battleManager.playerEntity.runtimeSkills;
+        var playerSkills     = battleManager.playerEntity.runtimeSkills;
         int availableStamina = battleManager.playerEntity.currentStamina;
 
         bool isOpeningMainAction = Array.Exists(typesToOpen, t => t == SkillType.Attack || t == SkillType.Defend || t == SkillType.Dodge);
@@ -69,8 +71,8 @@ public class ActionPanelUI : MonoBehaviour
 
         skillListUI.OpenList(playerSkills, battleManager.playerEntity, availableStamina, (chosenSlot) =>
         {
-            if (chosenSlot.skillData.skillType == SkillType.Attack ||
-                chosenSlot.skillData.skillType == SkillType.Defend ||
+            if (chosenSlot.skillData.skillType == SkillType.Attack  ||
+                chosenSlot.skillData.skillType == SkillType.Defend  ||
                 chosenSlot.skillData.skillType == SkillType.Dodge)
             {
                 selectedMainAction = chosenSlot;
@@ -80,8 +82,11 @@ public class ActionPanelUI : MonoBehaviour
                 selectedSubAction = chosenSlot;
             }
 
+            // 选完技能后立刻刷新体力预览
+            RefreshPendingStaminaDisplay();
             UpdateSelectionDisplay();
             CheckReadyButtonState();
+
         }, battleManager, typesToOpen);
     }
 
@@ -122,13 +127,38 @@ public class ActionPanelUI : MonoBehaviour
 
     private void OnReadyClicked()
     {
+        // 点击"准备完成"后，清除待用预览（体力将在 BattleManager 中真实扣除，届时 OnStaminaChanged 会刷新图标）
+        battleManager.playerInfoUI.SetPendingStamina(0);
         battleManager.OnPlayerActionConfirmed(selectedMainAction, selectedSubAction);
     }
 
     private void OnRetreatClicked()
     {
         Debug.Log("<color=orange>玩家选择了撤退！</color>");
+        battleManager.playerInfoUI.SetPendingStamina(0);
         gameObject.SetActive(false);
         GameManager.Instance.OnBattleRetreat();
+    }
+
+    // ==========================================
+    // 待用体力预览
+    // ==========================================
+
+    /// <summary>
+    /// 根据当前已选主/副技能，计算合计体力消耗并推送给玩家体力条
+    /// </summary>
+    private void RefreshPendingStaminaDisplay()
+    {
+        if (battleManager == null || battleManager.playerInfoUI == null) return;
+
+        int totalCost = 0;
+
+        if (selectedMainAction != null)
+            totalCost += battleManager.GetActualSkillCost(battleManager.playerEntity, selectedMainAction, selectedSubAction);
+
+        if (selectedSubAction != null)
+            totalCost += battleManager.GetActualSkillCost(battleManager.playerEntity, selectedSubAction);
+
+        battleManager.playerInfoUI.SetPendingStamina(totalCost);
     }
 }

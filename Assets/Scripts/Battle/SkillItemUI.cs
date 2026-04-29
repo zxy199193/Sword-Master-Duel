@@ -104,7 +104,7 @@ public class SkillItemUI : MonoBehaviour
 
         if (showModified && boundCaster != null)
         {
-            // 修正伤害：(基础 + 力量×2) × 武器倍率，取整
+            // 修正伤害：(基础 + 每3点力量+1) × 武器倍率 × 力量百分比增幅，取整
             float weaponFactor = 1.0f;
             if (boundCaster.isPlayer && GameManager.Instance != null)
             {
@@ -116,7 +116,10 @@ public class SkillItemUI : MonoBehaviour
                 var equip = boundCaster.roleData?.equippedWeapon;
                 if (equip != null) weaponFactor = equip.atkFactor;
             }
-            int modifiedDamage = Mathf.RoundToInt((baseDamage + boundCaster.GetFinalStrength() * 1) * weaponFactor);
+            int finalStr = boundCaster.GetFinalStrength();
+            int strengthFlatBonus = finalStr / 3;               // 每3点力量 +1 基础伤害
+            float strengthPercentBonus = 1f + 0.03f * finalStr; // 每点力量 +3% 技能伤害
+            int modifiedDamage = Mathf.RoundToInt((baseDamage + strengthFlatBonus) * weaponFactor * strengthPercentBonus);
             SetNodeText(damageNode, damageText, modifiedDamage.ToString());
 
             // 修正体力：走 GetActualSkillCost 逻辑
@@ -139,7 +142,7 @@ public class SkillItemUI : MonoBehaviour
 
         if (showModified && boundCaster != null)
         {
-            // 修正防御：基础防御 + 耐力
+            // 修正防御：基础防御 + 每点耐力+1（防御技能效果）
             int modifiedDefend = baseDefend + boundCaster.GetFinalEndurance();
             SetNodeText(defendNode, defendText, modifiedDefend.ToString());
 

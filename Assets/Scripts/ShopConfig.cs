@@ -26,6 +26,17 @@ public class ItemShopCategory
     public int randomCount = 5;
 }
 
+[Serializable]
+public class DojoSkillCategory
+{
+    [Header("常驻招式（每局固定出现）")]
+    public List<SkillData> permanentSkills = new List<SkillData>();
+    [Header("随机招式池（每大关刷新一次）")]
+    public List<SkillData> randomSkillsPool = new List<SkillData>();
+    [Header("单次随机数量")]
+    public int randomCount = 4;
+}
+
 [CreateAssetMenu(fileName = "NewShopConfig", menuName = "SwordMaster/Shop Config")]
 public class ShopConfig : ScriptableObject
 {
@@ -38,6 +49,6 @@ public class ShopConfig : ScriptableObject
     public EquipShopCategory accessoryShop = new EquipShopCategory { categoryName = "饰品" };
     public ItemShopCategory itemShop = new ItemShopCategory { categoryName = "道具" };
 
-    [Header("道场可购招式 (仅限1级)")]
-    public List<SkillData> availableSkills = new List<SkillData>();
+    [Header("道场招式配置")]
+    public DojoSkillCategory dojoSkillShop = new DojoSkillCategory();
 }

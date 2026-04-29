@@ -12,12 +12,6 @@ public class LevelUIManager : MonoBehaviour
     public Text[] enemyNameTexts = new Text[3];
     public Text[] enemyDescTexts = new Text[3];
 
-    [Header("Visual Feedback")]
-    [Tooltip("Overlay for defeated enemies")]
-    public GameObject[] defeatedOverlays = new GameObject[3];
-    [Tooltip("Indicator for the current enemy node")]
-    public GameObject[] currentNodeIndicators = new GameObject[3];
-
     [Header("UI References")]
     public Button openRolePanelBtn;
     public RoleUIManager roleUIManager;
@@ -46,7 +40,7 @@ public class LevelUIManager : MonoBehaviour
     // Public Methods
     // ==========================================
 
-    public void UpdateAndShow(LevelData levelData, int nodeIndex, List<RoleData> currentEnemies)
+    public void UpdateAndShow(LevelData levelData, List<RoleData> currentEnemies)
     {
         gameObject.SetActive(true);
 
@@ -83,11 +77,6 @@ public class LevelUIManager : MonoBehaviour
                 enemyDescTexts[i].gameObject.SetActive(true);
             }
 
-            if (defeatedOverlays.Length > i && defeatedOverlays[i] != null)
-                defeatedOverlays[i].SetActive(i < nodeIndex);
-
-            if (currentNodeIndicators.Length > i && currentNodeIndicators[i] != null)
-                currentNodeIndicators[i].SetActive(i == nodeIndex);
         }
     }
 
