@@ -198,9 +198,24 @@ public class GameManager : MonoBehaviour
     [Header("运行进度 (Runtime Progress)")]
     public int currentMainLevelIndex = 0;
     public int currentNodeIndex = 0;
-    
-    [HideInInspector] 
-    public List<RoleData> currentLevelEnemies = new List<RoleData>();
+
+    // 当前大关 AB 两组敌人（各3个）
+    [HideInInspector] public List<RoleData> currentGroupA = new List<RoleData>();
+    [HideInInspector] public List<RoleData> currentGroupB = new List<RoleData>();
+
+    // 玩家选择后，当前进行中的组
+    [HideInInspector] public List<RoleData> currentLevelEnemies = new List<RoleData>();
+    [HideInInspector] public bool selectedGroupIsA = true;
+
+    // 本关 AB 组各自抽到的额外奖励词条
+    [HideInInspector] public LevelExtraRewardEntry currentGroupAExtraReward;
+    [HideInInspector] public LevelExtraRewardEntry currentGroupBExtraReward;
+
+    /// <summary>
+    /// 玩家从关卡选择界面返回休息场景时为 true，
+    /// 此时点击"继续"应回到关卡界面而非推进到下一关。
+    /// </summary>
+    [HideInInspector] public bool isReturnedFromLevelSelect = false;
 
     [HideInInspector] public List<SkillData> currentDojoSkills = new List<SkillData>();  // 常驻招式
     [HideInInspector] public List<SkillData> randDojoSkills   = new List<SkillData>();  // 随机招式
@@ -284,7 +299,7 @@ public class GameManager : MonoBehaviour
     {
         currentNodeIndex++;
 
-        if (currentNodeIndex >= 3) EnterRestUI();
+        if (currentNodeIndex >= 3) EndCurrentLevelGroup();
         else StartCombatNode();
     }
 
@@ -305,6 +320,19 @@ public class GameManager : MonoBehaviour
         EnterLevelNodeUI();
     }
 
+    /// <summary>
+    /// 玩家在关卡UI选择A组或B组后调用，将对应组赋给 currentLevelEnemies 并开始第一场战斗。
+    /// </summary>
+    public void SelectGroupAndStartCombat(bool isGroupA)
+    {
+        selectedGroupIsA = isGroupA;
+        currentLevelEnemies = isGroupA ? new List<RoleData>(currentGroupA) : new List<RoleData>(currentGroupB);
+        currentNodeIndex = 0;
+
+        levelUIManager.gameObject.SetActive(false);
+        StartCombatNode();
+    }
+
     public void StartCombatNode()
     {
         if (currentLevelEnemies == null || currentNodeIndex >= currentLevelEnemies.Count)
@@ -323,37 +351,13 @@ public class GameManager : MonoBehaviour
     // Public Methods - Battle Callbacks
     // ==========================================
 
-    public void OnBattleResolution(bool isWin, int goldReward = 0, int expReward = 0)
+    public void OnBattleResolution(bool isWin)
     {
         if (isWin)
         {
-            int finalGold = goldReward;
-            int finalExp = expReward;
-
-            // 扫描饰品效果
-            if (playerProfile.equippedAccessories != null)
-            {
-                foreach (var acc in playerProfile.equippedAccessories)
-                {
-                    if (acc == null || acc.equipEffects == null) continue;
-                    foreach (var effect in acc.equipEffects)
-                    {
-                        if (effect is GlobalBattleRules.RewardModifierEquipEffect rewardMod)
-                        {
-                            if (rewardMod.isGold) finalGold += rewardMod.bonusAmount;
-                            else finalExp += rewardMod.bonusAmount;
-                        }
-                    }
-                }
-            }
-
-            playerProfile.totalGold += finalGold;
-            playerProfile.AddExp(finalExp);
-            
             SavePlayerBattleState();
 
-
-            if (battleResultUI != null) battleResultUI.ShowResult(goldReward);
+            if (battleResultUI != null) battleResultUI.ShowResult();
             else AdvanceToNextNode();
         }
         else
@@ -377,29 +381,88 @@ public class GameManager : MonoBehaviour
         if (enemyDatabase == null)
         {
             Debug.LogError("[GameManager] EnemyDifficultyDatabase 未赋值！请在 Inspector 中配置。");
+            currentGroupA = new List<RoleData>();
+            currentGroupB = new List<RoleData>();
             currentLevelEnemies = new List<RoleData>();
             return;
         }
 
         LevelData currentLevel = allLevels[currentMainLevelIndex];
-        currentLevelEnemies = new List<RoleData>();
+        currentGroupA = new List<RoleData>();
+        currentGroupB = new List<RoleData>();
 
-        // 按节点顺序依次抽取敌人
+        // 生成 A 组（3个节点）
         for (int i = 0; i < 3; i++)
         {
-            int difficulty = currentLevel.GetNodeDifficulty(i);
+            int difficulty = currentLevel.GetGroupANodeDifficulty(i);
             RoleData enemy = enemyDatabase.GetRandomEnemy(difficulty);
-
             if (enemy != null)
             {
-                currentLevelEnemies.Add(enemy);
-                Debug.Log($"<color=orange>[AI 敌人生成] 节点{i + 1} 强度{difficulty} → {enemy.roleName}</color>");
+                currentGroupA.Add(enemy);
+                Debug.Log($"<color=orange>[A组 敌人生成] 节点{i + 1} 强度{difficulty} → {enemy.roleName}</color>");
             }
             else
             {
-                Debug.LogError($"[GameManager] 节点{i + 1} 强度{difficulty} 的敌人池为空，无法创建战斗！");
+                Debug.LogError($"[GameManager] A组节点{i + 1} 强度{difficulty} 的敌人池为空！");
             }
         }
+
+        // 生成 B 组（3个节点）
+        for (int i = 0; i < 3; i++)
+        {
+            int difficulty = currentLevel.GetGroupBNodeDifficulty(i);
+            RoleData enemy = enemyDatabase.GetRandomEnemy(difficulty);
+            if (enemy != null)
+            {
+                currentGroupB.Add(enemy);
+                Debug.Log($"<color=cyan>[B组 敌人生成] 节点{i + 1} 强度{difficulty} → {enemy.roleName}</color>");
+            }
+            else
+            {
+                Debug.LogError($"[GameManager] B组节点{i + 1} 强度{difficulty} 的敌人池为空！");
+            }
+        }
+
+        // ── 为 AB 组各抽取额外奖励（保证不重复，池只有1项时相同）──
+        RollExtraRewards(currentLevel);
+    }
+
+    /// <summary>
+    /// 从当前关卡的额外奖励池中为 A 组、B 组各抽一项。
+    /// A 先随机；B 从剩余中随机（池≤1项时两组相同）。
+    /// </summary>
+    private void RollExtraRewards(LevelData levelData)
+    {
+        currentGroupAExtraReward = null;
+        currentGroupBExtraReward = null;
+
+        var pool = levelData.extraRewardPool;
+        if (pool == null || pool.Count == 0)
+        {
+            Debug.LogWarning("[GameManager] 额外奖励池为空，本关无额外奖励。");
+            return;
+        }
+
+        // A 组：从完整池随机
+        int idxA = Random.Range(0, pool.Count);
+        currentGroupAExtraReward = pool[idxA];
+
+        // B 组：从剩余项目中随机（池只有1项则与 A 相同）
+        if (pool.Count >= 2)
+        {
+            // 构建不包含 A 那项的候选列表
+            List<LevelExtraRewardEntry> remaining = new List<LevelExtraRewardEntry>(pool);
+            remaining.RemoveAt(idxA);
+            int idxB = Random.Range(0, remaining.Count);
+            currentGroupBExtraReward = remaining[idxB];
+        }
+        else
+        {
+            currentGroupBExtraReward = pool[0];
+        }
+
+        Debug.Log($"<color=orange>[奖励抽签] A组额外奖励: {currentGroupAExtraReward?.GetDisplayName() ?? "无"}</color>");
+        Debug.Log($"<color=cyan>[奖励抽签] B组额外奖励: {currentGroupBExtraReward?.GetDisplayName() ?? "无"}</color>");
     }
 
     private void RefreshShopAndDojo()
@@ -503,11 +566,99 @@ public class GameManager : MonoBehaviour
 
     private void EnterLevelNodeUI()
     {
-        if (currentLevelEnemies == null || currentLevelEnemies.Count == 0) RollEnemiesForCurrentLevel();
+        if (currentGroupA == null || currentGroupA.Count == 0) RollEnemiesForCurrentLevel();
 
         battleManager.gameObject.SetActive(false);
         LevelData currentLevel = allLevels[currentMainLevelIndex];
-        levelUIManager.UpdateAndShow(currentLevel, currentLevelEnemies);
+        levelUIManager.UpdateAndShow(currentLevel, currentGroupA, currentGroupB,
+                                     currentGroupAExtraReward, currentGroupBExtraReward);
+    }
+
+    /// <summary>
+    /// 玩家通关选定组的3场战斗后调用：发放基础奖励 + 对应组额外奖励，然后进入休息界面。
+    /// </summary>
+    private void EndCurrentLevelGroup()
+    {
+        LevelData currentLevel = allLevels[currentMainLevelIndex];
+        string groupLabel = selectedGroupIsA ? "A" : "B";
+
+        // ── 基础奖励 ──
+        int finalGold = currentLevel.baseGoldReward;
+        int finalExp  = currentLevel.baseExpReward;
+
+        // 扫描饰品奖励加成
+        if (playerProfile.equippedAccessories != null)
+        {
+            foreach (var acc in playerProfile.equippedAccessories)
+            {
+                if (acc == null || acc.equipEffects == null) continue;
+                foreach (var effect in acc.equipEffects)
+                {
+                    if (effect is GlobalBattleRules.RewardModifierEquipEffect rewardMod)
+                    {
+                        if (rewardMod.isGold) finalGold += rewardMod.bonusAmount;
+                        else finalExp += rewardMod.bonusAmount;
+                    }
+                }
+            }
+        }
+
+        playerProfile.totalGold += finalGold;
+        playerProfile.AddExp(finalExp);
+        Debug.Log($"<color=lime>[关卡结算] 基础奖励：+{finalGold}金币 +{finalExp}经验</color>");
+
+        // ── 额外奖励（本关已在生成时抽好的词条）──
+        LevelExtraRewardEntry extra = selectedGroupIsA ? currentGroupAExtraReward : currentGroupBExtraReward;
+
+        if (extra != null)
+        {
+            if (extra.rewardType == LevelExtraRewardEntry.RewardType.Equipment && extra.equipment != null)
+            {
+                playerProfile.storageEquipments.Add(extra.equipment);
+                Debug.Log($"<color=yellow>[关卡结算] {groupLabel}组额外装备: {extra.equipment.equipName} → 仓库</color>");
+            }
+            else if (extra.rewardType == LevelExtraRewardEntry.RewardType.Item && extra.item != null)
+            {
+                // 道具可能一次给多个（quantity）
+                SkillSlot existing = playerProfile.storageSkillsAndItems
+                    .Find(s => s.skillData == extra.item);
+                if (existing != null)
+                {
+                    existing.quantity += extra.quantity;
+                }
+                else
+                {
+                    playerProfile.storageSkillsAndItems.Add(
+                        new SkillSlot { skillData = extra.item, level = 1, quantity = extra.quantity });
+                }
+                Debug.Log($"<color=yellow>[关卡结算] {groupLabel}组额外道具: {extra.item.skillName} ×{extra.quantity} → 道具库</color>");
+            }
+        }
+
+        EnterRestUI();
+    }
+
+    /// <summary>
+    /// 由关卡选择界面的"返回休息"按钮调用（第一关不可用）。
+    /// 标记来源为关卡界面，进入休息场景后"继续"时会回到当前关卡而非推进到下一关。
+    /// </summary>
+    public void EnterRestFromLevelUI()
+    {
+        isReturnedFromLevelSelect = true;
+        EnterRestUI();
+    }
+
+    /// <summary>
+    /// 由 RestUIManager 在 isReturnedFromLevelSelect=true 时调用：
+    /// 清除标志位并重新显示当前关卡选择界面（不重新抽敌人和奖励）。
+    /// </summary>
+    public void ReturnToLevelUIFromRest()
+    {
+        isReturnedFromLevelSelect = false;
+        battleManager.gameObject.SetActive(false);
+        LevelData currentLevel = allLevels[currentMainLevelIndex];
+        levelUIManager.UpdateAndShow(currentLevel, currentGroupA, currentGroupB,
+                                     currentGroupAExtraReward, currentGroupBExtraReward);
     }
 
     private void EnterRestUI()

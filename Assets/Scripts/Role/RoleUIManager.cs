@@ -52,6 +52,22 @@ public class RoleUIManager : MonoBehaviour
     [Header("UI 引用 - 负重系统")]
     public Text loadWeightText;
 
+    [Header("UI 引用 - 属性说明弹窗")]
+    [Tooltip("点击后弹出属性说明弹窗的按钮")]
+    public Button attrInfoBtn;
+    [Tooltip("属性说明弹窗根节点")]
+    public GameObject attrInfoPanel;
+    [Tooltip("属性说明弹窗内的关闭按钮")]
+    public Button attrInfoCloseBtn;
+
+    [Header("UI 引用 - 负重说明弹窗")]
+    [Tooltip("点击后弹出负重说明弹窗的按钮")]
+    public Button loadInfoBtn;
+    [Tooltip("负重说明弹窗根节点")]
+    public GameObject loadInfoPanel;
+    [Tooltip("负重说明弹窗内的关闭按钮")]
+    public Button loadInfoCloseBtn;
+
     public Button closeBtn;
 
     // ==========================================
@@ -71,6 +87,13 @@ public class RoleUIManager : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        // 面板隐藏时同步关闭所有子弹窗，防止残留
+        if (attrInfoPanel != null) attrInfoPanel.SetActive(false);
+        if (loadInfoPanel != null) loadInfoPanel.SetActive(false);
+    }
+
     // ==========================================
     // Initialization
     // ==========================================
@@ -81,6 +104,14 @@ public class RoleUIManager : MonoBehaviour
         if (addEnduranceBtn) addEnduranceBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Endurance));
         if (addStrengthBtn) addStrengthBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Strength));
         if (addMentalityBtn) addMentalityBtn.onClick.AddListener(() => AllocatePoint(AttributeType.Mentality));
+
+        // 属性说明弹窗
+        if (attrInfoBtn)      attrInfoBtn.onClick.AddListener(() => attrInfoPanel?.SetActive(true));
+        if (attrInfoCloseBtn) attrInfoCloseBtn.onClick.AddListener(() => attrInfoPanel?.SetActive(false));
+
+        // 负重说明弹窗
+        if (loadInfoBtn)      loadInfoBtn.onClick.AddListener(() => loadInfoPanel?.SetActive(true));
+        if (loadInfoCloseBtn) loadInfoCloseBtn.onClick.AddListener(() => loadInfoPanel?.SetActive(false));
 
         if (weaponSlot != null && weaponSlot.slotBtn != null) weaponSlot.slotBtn.onClick.AddListener(OnWeaponSlotClicked);
         if (armorSlot != null && armorSlot.slotBtn != null) armorSlot.slotBtn.onClick.AddListener(OnArmorSlotClicked);

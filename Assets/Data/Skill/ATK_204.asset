@@ -36,7 +36,7 @@ MonoBehaviour:
   hitBarConfig:
     baseSpeed: 100
     baseSlowdown: 100
-    actionTime: 10
+    actionTime: 15
     sections:
     - level: 1
       axisPosition: 50

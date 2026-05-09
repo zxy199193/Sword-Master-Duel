@@ -13,6 +13,24 @@ MonoBehaviour:
   m_Name: Level_2
   m_EditorClassIdentifier: 
   levelTitle: "\u51B3\u65972"
-  node1Difficulty: 1
-  node2Difficulty: 2
-  node3Difficulty: 2
+  groupA_Node1Difficulty: 1
+  groupA_Node2Difficulty: 2
+  groupA_Node3Difficulty: 2
+  groupB_Node1Difficulty: 1
+  groupB_Node2Difficulty: 2
+  groupB_Node3Difficulty: 2
+  baseGoldReward: 125
+  baseExpReward: 125
+  extraRewardPool:
+  - rewardType: 1
+    equipment: {fileID: 0}
+    item: {fileID: 11400000, guid: 581cf46c902186f4a84fb49c1045502d, type: 2}
+    quantity: 0
+  - rewardType: 1
+    equipment: {fileID: 0}
+    item: {fileID: 11400000, guid: 309fbf6a33108a940a6a8b1fe7845098, type: 2}
+    quantity: 0
+  - rewardType: 1
+    equipment: {fileID: 0}
+    item: {fileID: 11400000, guid: af6c2dcac1165284db9ce42fcd7f8383, type: 2}
+    quantity: 0

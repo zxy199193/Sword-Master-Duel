@@ -20,11 +20,11 @@ MonoBehaviour:
   weight: 1
   price: 30
   bonusLife: 0
-  bonusStamina: 99
-  bonusVitality: 99
-  bonusEndurance: 99
-  bonusStrength: 99
-  bonusMentality: 99
+  bonusStamina: 20
+  bonusVitality: 20
+  bonusEndurance: 20
+  bonusStrength: 50
+  bonusMentality: 20
   atkFactor: 1
   durability: 0
   equipEffects: []

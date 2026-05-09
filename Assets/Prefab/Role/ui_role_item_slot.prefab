@@ -322,7 +322,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 175285948, guid: b472a9bbd7cafc54dbe1be8079d8ac25, type: 3}
+  m_Sprite: {fileID: -81954491, guid: b472a9bbd7cafc54dbe1be8079d8ac25, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -548,7 +548,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 595394281, guid: b472a9bbd7cafc54dbe1be8079d8ac25, type: 3}
+  m_Sprite: {fileID: 1588468314, guid: b472a9bbd7cafc54dbe1be8079d8ac25, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -572,7 +572,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5785972784536093318, guid: d7415ca6689c8f649896befc54ff77e8, type: 3}
       propertyPath: m_FontData.m_FontSize
-      value: 18
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 6681389429897443360, guid: d7415ca6689c8f649896befc54ff77e8, type: 3}
       propertyPath: m_Pivot.x

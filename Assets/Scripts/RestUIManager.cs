@@ -211,10 +211,13 @@ public class RestUIManager : MonoBehaviour
     private void ProceedToNextLevel()
     {
         ClosePanel();
-        if (GameManager.Instance != null)
-        {
+        if (GameManager.Instance == null) return;
+
+        // 若玩家是从关卡选择界面临时返回休息场景的，回到关卡界面而不推进关卡
+        if (GameManager.Instance.isReturnedFromLevelSelect)
+            GameManager.Instance.ReturnToLevelUIFromRest();
+        else
             GameManager.Instance.AdvanceToNextMainLevel();
-        }
     }
 
     private void OnOpenRolePanelClicked()

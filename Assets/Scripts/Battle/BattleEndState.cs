@@ -32,9 +32,8 @@ public class BattleEndState : BattleState
         {
             Debug.Log("<color=green>[BattleEnd] 战斗胜利！</color>");
             battleManager.ShowBroadcast("胜利");
-            int gold = battleManager.enemyEntity.roleData.goldReward;
-            int exp  = battleManager.enemyEntity.roleData.expReward;
-            GameManager.Instance.OnBattleResolution(true, gold, exp);
+            // 单场战斗不再直接发奖励，由 GameManager.EndCurrentLevelGroup() 在3战全胜后统一结算
+            GameManager.Instance.OnBattleResolution(true);
         }
     }
 

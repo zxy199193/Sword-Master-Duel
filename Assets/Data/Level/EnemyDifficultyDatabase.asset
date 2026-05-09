@@ -44,3 +44,5 @@ MonoBehaviour:
   - level: 5
     enemies:
     - {fileID: 11400000, guid: 4e32a8beb0cd4e949b886d50303930d8, type: 2}
+    - {fileID: 11400000, guid: ad0886541a45ca24fb531da53272a2de, type: 2}
+    - {fileID: 11400000, guid: 8f444906a93230748b35916a30f8c20d, type: 2}

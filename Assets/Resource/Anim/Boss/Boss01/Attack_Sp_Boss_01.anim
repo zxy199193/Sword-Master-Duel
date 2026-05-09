@@ -210,7 +210,7 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 1.8666667
-    functionName: 
+    functionName: Proxy_TriggerHitPoint
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
