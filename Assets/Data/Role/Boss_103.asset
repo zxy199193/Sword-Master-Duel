@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e36239bdf90eef4b9aeb698d13592be, type: 3}
   m_Name: Boss_103
   m_EditorClassIdentifier: 
-  roleName: "\u795E\u79D8\u6218\u58EB"
-  roleDescription: 
-  roleModel: {fileID: -1098845575, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  roleName: "\u9ED1\u8272\u5251\u58EB"
+  roleDescription: "\u6DF1\u9083\u9ED1\u6697\u7684\u72C2\u6218\u58EB\uFF0C\u6325\u821E\u5DE8\u5251\u653B\u52BF\u731B\u70C8\uFF0C\u4F7F\u7528\u72EE\u5B50\u65A9\u80FD\u9020\u6210\u6781\u4E3A\u6050\u6016\u7684\u4F24\u5BB3\r"
+  roleModel: {fileID: -2068271942, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
   animatorController: {fileID: 9100000, guid: 8be3e744fa6f9764aa0c1f98b53ac65b, type: 2}
   maxBasicLife: 10
   maxStamina: 8

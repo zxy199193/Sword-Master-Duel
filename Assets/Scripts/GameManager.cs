@@ -68,7 +68,7 @@ public class PlayerProfile
         if (level >= 10) currentExp = 0;
     }
 
-    public int GetMaxLoad() => 10 + GetFinalEndurance() * 2;
+    public int GetMaxLoad() => 10 + GetFinalEndurance() * 3;
 
     public int GetCurrentLoadWeight()
     {
@@ -81,7 +81,7 @@ public class PlayerProfile
 
     public int GetFinalMaxLife()
     {
-        int total = baseMaxLife + GetFinalVitality() * 5;
+        int total = baseMaxLife + GetFinalVitality() * 6;
         if (equippedWeapon != null) total += equippedWeapon.bonusLife;
         if (equippedArmor != null && currentExtraLife > 0) total += equippedArmor.bonusLife;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusLife;
@@ -135,7 +135,7 @@ public class PlayerProfile
 
     public int GetHpRecoverPerTurn()
     {
-        return GetFinalVitality() / 3;  // 每3点活力 +1 生命恢复
+        return (GetFinalVitality() / 4) * 2;  // 每4点活力 +2 生命恢复
     }
 
     public int GetStaminaRecoverPerTurn()
@@ -173,6 +173,24 @@ public class PlayerProfile
             currentHp -= amount; 
             if (currentHp < 1) currentHp = 1; 
             return true; 
+        }
+        return false;
+    }
+
+    public bool HasSkillUpgradeEffect()
+    {
+        List<EquipmentData> equips = new List<EquipmentData>();
+        if (equippedWeapon != null) equips.Add(equippedWeapon);
+        if (equippedArmor != null && currentExtraLife > 0) equips.Add(equippedArmor);
+        if (equippedAccessories != null) equips.AddRange(equippedAccessories);
+
+        foreach (var eq in equips)
+        {
+            if (eq == null || eq.equipEffects == null) continue;
+            foreach (var effect in eq.equipEffects)
+            {
+                if (effect is GlobalBattleRules.SkillUpgradeEquipEffect) return true;
+            }
         }
         return false;
     }
@@ -586,6 +604,9 @@ public class GameManager : MonoBehaviour
         int finalGold = currentLevel.baseGoldReward;
         int finalExp  = currentLevel.baseExpReward;
 
+        int goldBonusPct = 0;
+        int expBonusPct = 0;
+
         // 扫描饰品奖励加成
         if (playerProfile.equippedAccessories != null)
         {
@@ -596,11 +617,21 @@ public class GameManager : MonoBehaviour
                 {
                     if (effect is GlobalBattleRules.RewardModifierEquipEffect rewardMod)
                     {
-                        if (rewardMod.isGold) finalGold += rewardMod.bonusAmount;
-                        else finalExp += rewardMod.bonusAmount;
+                        if (rewardMod.isGold) goldBonusPct += rewardMod.bonusAmount;
+                        else expBonusPct += rewardMod.bonusAmount;
                     }
                 }
             }
+        }
+
+        if (goldBonusPct > 0)
+        {
+            finalGold += Mathf.RoundToInt(currentLevel.baseGoldReward * (goldBonusPct / 100f));
+        }
+
+        if (expBonusPct > 0)
+        {
+            finalExp += Mathf.RoundToInt(currentLevel.baseExpReward * (expBonusPct / 100f));
         }
 
         playerProfile.totalGold += finalGold;

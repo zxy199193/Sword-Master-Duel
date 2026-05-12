@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Sword_104
   m_EditorClassIdentifier: 
   roleName: "\u5251\u5723"
-  roleDescription: "\u5251\u8C6A\u5251\u8C6A"
-  roleModel: {fileID: -1674650397, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  roleDescription: "\u83B7\u5F97\u5251\u5723\u79F0\u53F7\u7684\u9AD8\u624B\uFF0C\u5B9E\u529B\u6DF1\u4E0D\u53EF\u6D4B\uFF0C\u80FD\u4F7F\u7528\u5404\u79CD\u51CC\u5389\u7684\u5251\u6280\r"
+  roleModel: {fileID: 1251856578, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
   animatorController: {fileID: 9100000, guid: 48760251ca205424c8002c3851eb3847, type: 2}
   maxBasicLife: 10
   maxStamina: 5
@@ -27,35 +27,46 @@ MonoBehaviour:
   equippedArmor: {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
   equippedAccessories: []
   aiReactionTolerance: 0.2
+  aiMaxBounces: 3
   npcSkills:
   - skillSlot:
       skillData: {fileID: 11400000, guid: 6b1924b78bbd38048a5ff434a711b556, type: 2}
-      level: 1
+      level: 2
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 6ba3735138f11e74294903884de885e6, type: 2}
-      level: 0
+      level: 2
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: ba0ab34439291a24a9994854eea2a9a2, type: 2}
-      level: 0
+      level: 2
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
-      level: 0
+      level: 3
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: de8521a258b7e074a84426d9b4dd82d2, type: 2}
+      level: 2
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 09b0744b4ae21884b8b6067526e9da6c, type: 2}
-      level: 0
+      level: 2
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: a6aa81dd379a97e4dbaa81639de62279, type: 2}
-      level: 0
+      level: 2
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 172e921df57d7494ab7e873a5aaaaf00, type: 2}
+      level: 2
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   subSkillProbabilities:
@@ -63,6 +74,7 @@ MonoBehaviour:
   - -1
   - -1
   - -1
+  difficultyLevel: 1
   isBoss: 0
   goldReward: 120
   expReward: 100

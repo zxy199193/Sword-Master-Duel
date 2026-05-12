@@ -19,8 +19,8 @@ MonoBehaviour:
   groupB_Node1Difficulty: 3
   groupB_Node2Difficulty: 4
   groupB_Node3Difficulty: 4
-  baseGoldReward: 250
-  baseExpReward: 250
+  baseGoldReward: 180
+  baseExpReward: 200
   extraRewardPool:
   - rewardType: 1
     equipment: {fileID: 0}

@@ -8,6 +8,10 @@ public class AudioManager : MonoBehaviour
     public AudioSource sfxSource;       // 用于播放单次音效
     public AudioSource bgmSource;       // 用于播放背景音乐
 
+    [Header("Volume Settings")]
+    [Range(0f, 1f)] public float sfxVolume = 1f;
+    [Range(0f, 1f)] public float bgmVolume = 1f;
+
     [Header("BGM")]
     public AudioClip bgmClip;           // 背景音乐
 
@@ -25,6 +29,10 @@ public class AudioManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject); // 在主菜单和战斗间切换不销毁
+
+            // 从 AudioSource Inspector 上的初始音量读取，避免覆盖手动配置
+            if (bgmSource != null) bgmVolume = bgmSource.volume;
+            if (sfxSource != null) sfxVolume = sfxSource.volume;
         }
         else
         {
@@ -46,6 +54,7 @@ public class AudioManager : MonoBehaviour
         {
             bgmSource.clip = bgmClip;
             bgmSource.loop = true;
+            bgmSource.volume = bgmVolume;
             if (!bgmSource.isPlaying)
             {
                 bgmSource.Play();
@@ -68,8 +77,19 @@ public class AudioManager : MonoBehaviour
     {
         if (clip != null && sfxSource != null)
         {
-            sfxSource.PlayOneShot(clip);
+            sfxSource.PlayOneShot(clip, sfxVolume);
         }
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        sfxVolume = Mathf.Clamp01(volume);
+    }
+
+    public void SetBGMVolume(float volume)
+    {
+        bgmVolume = Mathf.Clamp01(volume);
+        if (bgmSource != null) bgmSource.volume = bgmVolume;
     }
 
     public void PlayButtonClickSound()

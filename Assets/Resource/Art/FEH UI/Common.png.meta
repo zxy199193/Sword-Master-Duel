@@ -555,9 +555,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1764
-        y: 996
-        width: 168
-        height: 171
+        y: 1004
+        width: 162
+        height: 163
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1757,7 +1757,7 @@ TextureImporter:
         height: 110
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 30, y: 0, z: 30, w: 0}
+      border: {x: 30, y: 30, z: 30, w: 30}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -2650,6 +2650,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Common_121
+      rect:
+        serializedVersion: 2
+        x: 1814
+        y: 291
+        width: 109
+        height: 89
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 50, y: 0, z: 50, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fedd3317ad26b884e99d85df0d5046cb
+      internalID: -1440942673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -2687,6 +2708,7 @@ TextureImporter:
       Common_119: 1734788703
       Common_12: -1163185281
       Common_120: -1758621260
+      Common_121: -1440942673
       Common_13: 1422963646
       Common_14: -1482609708
       Common_15: -183471109

@@ -69,7 +69,8 @@ public class ActionPanelUI : MonoBehaviour
             availableStamina -= selectedMainAction.skillData.GetStaminaCost(selectedMainAction.level);
         }
 
-        skillListUI.OpenList(playerSkills, battleManager.playerEntity, availableStamina, (chosenSlot) =>
+        skillListUI.OpenList(playerSkills, battleManager.playerEntity, availableStamina, 
+        (chosenSlot) =>
         {
             if (chosenSlot.skillData.skillType == SkillType.Attack  ||
                 chosenSlot.skillData.skillType == SkillType.Defend  ||
@@ -87,7 +88,18 @@ public class ActionPanelUI : MonoBehaviour
             UpdateSelectionDisplay();
             CheckReadyButtonState();
 
-        }, battleManager, typesToOpen);
+        }, 
+        (canceledSlot) =>
+        {
+            if (selectedMainAction == canceledSlot) selectedMainAction = null;
+            if (selectedSubAction == canceledSlot) selectedSubAction = null;
+
+            // 撤销后刷新体力预览
+            RefreshPendingStaminaDisplay();
+            UpdateSelectionDisplay();
+            CheckReadyButtonState();
+        },
+        selectedMainAction, selectedSubAction, battleManager, typesToOpen);
     }
 
     private void UpdateSelectionDisplay()

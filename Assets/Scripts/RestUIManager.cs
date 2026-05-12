@@ -110,6 +110,8 @@ public class RestUIManager : MonoBehaviour
         if (continueBtn) continueBtn.onClick.AddListener(OnContinueClicked);
         if (confirmContinueBtn) confirmContinueBtn.onClick.AddListener(OnConfirmContinue);
         if (cancelContinueBtn) cancelContinueBtn.onClick.AddListener(OnCancelContinue);
+        
+        if (roleUIManager) roleUIManager.OnCloseCallback += RefreshPlayerStatusUI;
 
         // Hide panels by default
         OpenPanel(null);

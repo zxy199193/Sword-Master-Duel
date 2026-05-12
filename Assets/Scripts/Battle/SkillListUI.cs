@@ -14,6 +14,7 @@ public class SkillListUI : MonoBehaviour
     public Toggle modifiedStatsToggle;
 
     private Action<SkillSlot> onSkillSelectedCallback;
+    private Action<SkillSlot> onSkillCanceledCallback;
     private BattleManager battleManager;
 
     // 保存所有当前生成的卡片，用于 Toggle 切换时刷新
@@ -30,10 +31,11 @@ public class SkillListUI : MonoBehaviour
         }
     }
 
-    public void OpenList(List<SkillSlot> allSkills, BattleEntity caster, int availableStamina, Action<SkillSlot> callback, BattleManager manager, params SkillType[] filterTypes)
+    public void OpenList(List<SkillSlot> allSkills, BattleEntity caster, int availableStamina, Action<SkillSlot> onSelect, Action<SkillSlot> onCancel, SkillSlot currentMain, SkillSlot currentSub, BattleManager manager, params SkillType[] filterTypes)
     {
         battleManager = manager;
-        onSkillSelectedCallback = callback;
+        onSkillSelectedCallback = onSelect;
+        onSkillCanceledCallback = onCancel;
         gameObject.SetActive(true);
 
         foreach (Transform child in contentRoot) Destroy(child.gameObject);
@@ -45,21 +47,22 @@ public class SkillListUI : MonoBehaviour
         {
             if (slot != null && slot.skillData != null && Array.Exists(filterTypes, type => type == slot.skillData.skillType))
             {
-                CreateSkillItemUI(slot, caster, availableStamina, showModified);
+                bool isSelected = (slot == currentMain || slot == currentSub);
+                CreateSkillItemUI(slot, caster, availableStamina, showModified, isSelected);
             }
         }
     }
 
     public void ClosePanel() { gameObject.SetActive(false); }
 
-    private void CreateSkillItemUI(SkillSlot slot, BattleEntity caster, int availableStamina, bool showModified)
+    private void CreateSkillItemUI(SkillSlot slot, BattleEntity caster, int availableStamina, bool showModified, bool isSelected)
     {
         GameObject go = Instantiate(skillItemPrefab, contentRoot);
         SkillItemUI itemUI = go.GetComponent<SkillItemUI>();
 
         if (itemUI != null)
         {
-            itemUI.Init(slot, caster, OnSkillSelected, battleManager);
+            itemUI.Init(slot, caster, OnSkillSelected, OnSkillCanceled, isSelected, battleManager);
 
             bool isExhausted = (slot.skillData.skillType == SkillType.Item && slot.quantity <= 0);
             int actualCost = (battleManager != null) 
@@ -94,6 +97,12 @@ public class SkillListUI : MonoBehaviour
     private void OnSkillSelected(SkillSlot selectedSlot)
     {
         onSkillSelectedCallback?.Invoke(selectedSlot);
+        ClosePanel();
+    }
+
+    private void OnSkillCanceled(SkillSlot canceledSlot)
+    {
+        onSkillCanceledCallback?.Invoke(canceledSlot);
         ClosePanel();
     }
 }

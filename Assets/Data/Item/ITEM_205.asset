@@ -39,6 +39,7 @@ MonoBehaviour:
     actionTime: 0
     sections: []
   castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
+  castSoundEffect: {fileID: 8300000, guid: a5720b319461be749b927a83bc5a079f, type: 3}
   effects:
   - rid: 2591120581170823172
   references:

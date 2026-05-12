@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Boss_102
   m_EditorClassIdentifier: 
   roleName: "\u9A91\u58EB\u738B"
-  roleDescription: 
-  roleModel: {fileID: -1098845575, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  roleDescription: "\u771F\u6B63\u7684\u738B\u8005\uFF0C\u624B\u6301\u5723\u5251\u548C\u738B\u8005\u94E0\u7532\uFF0C\u4F7F\u7528\u8D85\u84C4\u529B\u65A9\u80FD\u4E00\u51FB\u6467\u6BC1\u4EFB\u4F55\u654C\u4EBA"
+  roleModel: {fileID: 1264626066, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
   animatorController: {fileID: 9100000, guid: 31d38eb16f9acd646a20399031e6b9fd, type: 2}
   maxBasicLife: 10
   maxStamina: 8
@@ -31,32 +31,27 @@ MonoBehaviour:
   npcSkills:
   - skillSlot:
       skillData: {fileID: 11400000, guid: f504015147a24fb4f9a49f1ba4e50ea6, type: 2}
-      level: 1
+      level: 3
       quantity: 0
     phaseWeights: 0f000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 282c28fe5af7ee74281bc58366321726, type: 2}
-      level: 1
+      level: 3
       quantity: 0
     phaseWeights: 0f000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 3550780d426025a4bad45b7d82384c77, type: 2}
-      level: 0
+      level: 2
       quantity: 0
     phaseWeights: 00000000000000001e000000ffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 08901a3ef1e892e46997bb27a9004bcf, type: 2}
-      level: 1
+      level: 3
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: f5438f747f60a5a4e996f148dc32d15c, type: 2}
-      level: 0
-      quantity: 0
-    phaseWeights: 0a000000ffffffffffffffffffffffff
-  - skillSlot:
-      skillData: {fileID: 11400000, guid: 474a10b183cccc64c9891f818273ec54, type: 2}
-      level: 1
+      level: 3
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:

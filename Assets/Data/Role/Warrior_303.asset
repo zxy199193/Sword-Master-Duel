@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Warrior_303
   m_EditorClassIdentifier: 
   roleName: "\u52C7\u58EB"
-  roleDescription: "\u5251\u8C6A\u5251\u8C6A"
-  roleModel: {fileID: -1674650397, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  roleDescription: "\u6218\u6597\u6280\u5DE7\u5168\u9762\u7684\u6218\u58EB\uFF0C\u5F53\u6218\u610F\u9AD8\u6602\u65F6\u653B\u51FB\u4F1A\u53D8\u5F97\u66F4\u52A0\u5371\u9669\r"
+  roleModel: {fileID: 169542676, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
   animatorController: {fileID: 9100000, guid: 24f4cdf6f3c9f9d4bb651fd262a1b4a6, type: 2}
   maxBasicLife: 10
   maxStamina: 5
@@ -31,32 +31,32 @@ MonoBehaviour:
   npcSkills:
   - skillSlot:
       skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
-      level: 0
+      level: 2
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: fea8bac6424aa4e46817ca90543e2adc, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 16fabbc68d175294daad1b0b700633dc, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 5119037d3db79624da70ac9e9ebca13a, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 1a14096148fa5134bb20982c9ed3f8e3, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: dbd436761913df2418c6e53387488e42, type: 2}
-      level: 0
+      level: 1
       quantity: 2
     phaseWeights: 0a000000ffffffffffffffffffffffff
   subSkillProbabilities:

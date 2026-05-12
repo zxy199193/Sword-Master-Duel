@@ -263,7 +263,7 @@ public class ApplyStatusEffect : SkillEffect
         int idx = Mathf.Clamp(skillLevel - 1, 0, baseDurations.Length - 1);
         int currentBaseDuration = baseDurations.Length > 0 ? baseDurations[idx] : 0;
 
-        int extraDuration = ignoreMentalityBonus ? 0 : Mathf.FloorToInt(caster.roleData.mentality / 6f);
+        int extraDuration = ignoreMentalityBonus ? 0 : Mathf.FloorToInt(caster.GetFinalMentality() / 8f);
         int finalDuration = Mathf.Max(1, currentBaseDuration + extraDuration);
 
         BattleEntity actualTarget = applyToSelf ? caster : target;
@@ -428,8 +428,8 @@ public class CounterAttackOnEvadeEffect : SkillEffect
 
         if (baseDmg > 0)
         {
-            // 伤害公式：技能反击基础伤害 + 每3点力量+1（真实伤害，不计百分比增幅）
-            int finalDamage = baseDmg + defender.GetFinalStrength() / 3;
+            // 伤害公式：技能反击基础伤害 + 每4点力量+1（真实伤害，不计百分比增幅）
+            int finalDamage = baseDmg + defender.GetFinalStrength() / 4;
 
             // 扣血（作为惩罚性反击，这里直接造成伤害，无视对方此时的临时防御，突出一个“破绽真实伤害”）
             bool hitLanded = attacker.TakeDamage(finalDamage);
@@ -685,8 +685,8 @@ public class CounterAttackOnDefendEffect : SkillEffect
         int baseDmg = counterDamages.Length > 0 ? counterDamages[idx] : 0;
         if (baseDmg <= 0) return;
 
-        // 伤害公式：基础值 + 每3点防御方力量+1（无视对方当前防御，真实伤害，不计百分比增幅）
-        int finalDamage = baseDmg + defender.GetFinalStrength() / 3;
+        // 伤害公式：基础值 + 每4点防御方力量+1（无视对方当前防御，真实伤害，不计百分比增幅）
+        int finalDamage = baseDmg + defender.GetFinalStrength() / 4;
 
         bool hitLanded = attacker.TakeDamage(finalDamage);
         if (hitLanded)
@@ -862,6 +862,31 @@ public static class GlobalBattleRules
         public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
         {
             return bonusValue;
+        }
+    }
+
+    [Serializable]
+    public class ExtraHitSectionEquipEffect : EquipEffect
+    {
+        [Tooltip("添加的区间等级")]
+        public SectionLevel sectionLevel = SectionLevel.Level1;
+        [Tooltip("区间中轴位置 (0-100)")]
+        public float axisPosition = 50f;
+        [Tooltip("区间宽度")]
+        public float width = 10f;
+
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
+        {
+            return 0; // 仅作为标记使用
+        }
+    }
+
+    [Serializable]
+    public class SkillUpgradeEquipEffect : EquipEffect
+    {
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
+        {
+            return 0; // 仅作为标记使用
         }
     }
 }

@@ -42,9 +42,13 @@ MonoBehaviour:
       axisPosition: 50
       width: 40
     - level: 3
-      axisPosition: 50
+      axisPosition: 30
+      width: 5
+    - level: 3
+      axisPosition: 70
       width: 5
   castEffectPrefab: {fileID: 0}
+  castSoundEffect: {fileID: 0}
   effects:
   - rid: 2591120559595585546
   references:

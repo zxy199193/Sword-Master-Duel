@@ -237,9 +237,15 @@ public class DamageSettleState : BattleState
                 }
 
                 // 播放特效和飘字
-                battleManager.SpawnHitEffect(defender.transform);
+                battleManager.SpawnHitEffect(defender.transform, hit.Value.level);
                 int hitLevelTag = (int)hit.Value.level >= 3 ? 2 : 1;
                 battleManager.SpawnDamagePopup(isPlayerTakingDamage, finalDamage.ToString(), hitLevelTag);
+
+                // 非防御命中时触发屏幕震动
+                if (hitSoundType != 2 && CameraShake.Instance != null)
+                {
+                    CameraShake.Instance.Shake();
+                }
 
                 // 触发特效 OnAttackHit 钩子
                 if (skill.effects != null && skill.effects.Count > 0)

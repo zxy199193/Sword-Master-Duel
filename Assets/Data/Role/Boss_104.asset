@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e36239bdf90eef4b9aeb698d13592be, type: 3}
+  m_Name: Boss_104
+  m_EditorClassIdentifier: 
+  roleName: "\u706B\u7130\u5B88\u536B"
+  roleDescription: "\u9057\u8FF9\u4E2D\u7684\u9B54\u50CF\u5B88\u536B\uFF0C\u4F3C\u4E4E\u8574\u85CF\u7740\u6050\u6016\u7684\u80FD\u91CF\u3002\u3002\r"
+  roleModel: {fileID: 1510846553, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
+  animatorController: {fileID: 9100000, guid: f37ae24da973bca4fb0697120318a913, type: 2}
+  maxBasicLife: 10
+  maxStamina: 5
+  vitality: 12
+  endurance: 12
+  strength: 12
+  mentality: 12
+  staminaRecoverPerTurn: 2
+  equippedWeapon: {fileID: 11400000, guid: a7633d404ba5b604ca4ad8f71ca572a5, type: 2}
+  equippedArmor: {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
+  equippedAccessories: []
+  aiReactionTolerance: 0.2
+  aiMaxBounces: 3
+  npcSkills:
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
+      level: 3
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 71f0d27139a6ee7478e95946f2344d08, type: 2}
+      level: 3
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: c8c81fcc60cc9ce4694de3d313541bf2, type: 2}
+      level: 3
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
+      level: 3
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
+      level: 3
+      quantity: 0
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  subSkillProbabilities:
+  - 0.5
+  - -1
+  - -1
+  - -1
+  difficultyLevel: 1
+  isBoss: 0
+  goldReward: 30
+  expReward: 35

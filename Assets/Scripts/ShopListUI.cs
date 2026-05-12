@@ -10,6 +10,7 @@ public class ShopListUI : MonoBehaviour
     public Text titleText;
     public Transform permanentContentRoot;
     public Transform randomContentRoot;
+    public Text playerGoldText;
     public Button closeBtn;
 
     [Header("Prefabs")]
@@ -55,6 +56,7 @@ public class ShopListUI : MonoBehaviour
         titleText.text = "道场 - 招式学习 (耗时1天)"; 
         if (refreshArea) refreshArea.SetActive(false);
         if (randomContentRoot) randomContentRoot.gameObject.SetActive(true);
+        RefreshGoldText();
         ClearList();
         
         var profile = GameManager.Instance.playerProfile;
@@ -108,6 +110,7 @@ public class ShopListUI : MonoBehaviour
         titleText.text = "道场 - 招式进阶 (Lv.1 -> Lv.2) (耗时1天)"; 
         if (refreshArea) refreshArea.SetActive(false);
         if (randomContentRoot) randomContentRoot.gameObject.SetActive(false);
+        RefreshGoldText();
         ClearList();
         
         var profile = GameManager.Instance.playerProfile;
@@ -141,6 +144,7 @@ public class ShopListUI : MonoBehaviour
         titleText.text = "道场 - 招式精通 (Lv.2 -> Lv.3) (耗时2天)"; 
         if (refreshArea) refreshArea.SetActive(false);
         if (randomContentRoot) randomContentRoot.gameObject.SetActive(false);
+        RefreshGoldText();
         ClearList();
         
         var profile = GameManager.Instance.playerProfile;
@@ -178,7 +182,7 @@ public class ShopListUI : MonoBehaviour
             refreshArea.SetActive(false); // 暂时隐藏刷新功能
         }
         if (randomContentRoot) randomContentRoot.gameObject.SetActive(true);
-
+        RefreshGoldText();
         ClearList();
         var profile = GameManager.Instance.playerProfile;
 
@@ -225,6 +229,14 @@ public class ShopListUI : MonoBehaviour
             case ShopCategory.Accessory: return "饰品";
             case ShopCategory.Item: return "道具";
             default: return "物品";
+        }
+    }
+
+    private void RefreshGoldText()
+    {
+        if (playerGoldText != null && GameManager.Instance != null && GameManager.Instance.playerProfile != null)
+        {
+            playerGoldText.text = GameManager.Instance.playerProfile.totalGold.ToString();
         }
     }
 

@@ -30,6 +30,8 @@ public class BattleManager : MonoBehaviour
 
     [Header("特效预制体 (Effect Prefabs)")]
     public GameObject hitEffectPrefab;
+    [Tooltip("不同命中区间的特效，索引 0-6 对应 Level0-Level6。留空则使用上面的默认特效")]
+    public GameObject[] leveledHitEffectPrefabs;
     public float hitEffectLifeTime = 0.5f;
 
     [Header("Broadcast UI (广播系统)")]
@@ -253,7 +255,7 @@ public class BattleManager : MonoBehaviour
             // 如果有灵动状态，额外提供 6 点判定缩减！
             float agileBonus = entity.activeStatuses.ContainsKey(StatusType.Agile) ? 6f : 0f;
             float equipBonus = GetSkillTypeBonus(entity, SkillType.Dodge);
-            entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level) - entity.GetFinalMentality() - agileBonus - equipBonus;
+            entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level) - Mathf.FloorToInt(entity.GetFinalMentality() / 4f) * 6f - agileBonus - equipBonus;
         }
 
         // 触发闪避/防御技能自带的特效 (比如启动免疫状态)
@@ -279,7 +281,11 @@ public class BattleManager : MonoBehaviour
         }
 
         if (slot.skillData.castEffectPrefab != null)
-            SpawnCastEffect(user.transform, slot.skillData.castEffectPrefab);
+        {
+            // applyToSelf 的技能特效显示在自己身上，否则显示在对方身上
+            Transform effectTarget = IsSelfTargetSkill(slot.skillData) ? user.transform : target.transform;
+            SpawnCastEffect(effectTarget, slot.skillData.castEffectPrefab, slot.skillData.castSoundEffect);
+        }
 
         if (slot.skillData.effects != null && slot.skillData.effects.Count > 0)
         {
@@ -410,24 +416,57 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void SpawnHitEffect(Transform characterRoot)
+    public void SpawnHitEffect(Transform characterRoot, SectionLevel? hitLevel = null)
     {
-        if (hitEffectPrefab == null || characterRoot == null) return;
+        GameObject effectPrefab = hitEffectPrefab;
+        if (hitLevel.HasValue && leveledHitEffectPrefabs != null)
+        {
+            int levelInt = (int)hitLevel.Value;
+            if (levelInt >= 0 && levelInt < leveledHitEffectPrefabs.Length && leveledHitEffectPrefabs[levelInt] != null)
+            {
+                effectPrefab = leveledHitEffectPrefabs[levelInt];
+            }
+        }
+
+        if (effectPrefab == null || characterRoot == null) return;
         Transform spawnPoint = characterRoot.Find("Effect Point");
         if (spawnPoint == null) spawnPoint = characterRoot;
-        GameObject effect = Instantiate(hitEffectPrefab, spawnPoint);
+        GameObject effect = Instantiate(effectPrefab, spawnPoint);
         effect.transform.localPosition = Vector3.zero;
         Destroy(effect, hitEffectLifeTime);
     }
 
-    public void SpawnCastEffect(Transform characterRoot, GameObject effectPrefab)
+    public void SpawnCastEffect(Transform characterRoot, GameObject effectPrefab, AudioClip soundEffect = null)
     {
         if (effectPrefab == null || characterRoot == null) return;
         Transform spawnPoint = characterRoot.Find("Effect Point");
         if (spawnPoint == null) spawnPoint = characterRoot;
         GameObject effect = Instantiate(effectPrefab, spawnPoint);
         effect.transform.localPosition = Vector3.zero;
-        Destroy(effect, 2f);
+
+        // 播放技能音效（走 AudioManager 统一管理音量）
+        if (soundEffect != null && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(soundEffect);
+        }
+
+        // 根据 Animator 序列帧动画的实际时长来决定销毁时机，避免播放完后残留在最后一帧
+        float destroyDelay = 2f; // 兜底默认值
+        Animator anim = effect.GetComponentInChildren<Animator>();
+        if (anim != null && anim.runtimeAnimatorController != null)
+        {
+            AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+            if (clips != null && clips.Length > 0)
+            {
+                float maxLength = 0f;
+                foreach (var clip in clips)
+                {
+                    if (clip.length > maxLength) maxLength = clip.length;
+                }
+                destroyDelay = maxLength + 0.05f;
+            }
+        }
+        Destroy(effect, destroyDelay);
     }
 
     // ==========================================

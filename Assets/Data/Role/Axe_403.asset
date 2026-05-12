@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Axe_403
   m_EditorClassIdentifier: 
   roleName: "\u72C2\u6218\u58EB"
-  roleDescription: 
-  roleModel: {fileID: -128221220, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  roleDescription: "\u6218\u6597\u72C2\u4EBA\uFF0C\u4F1A\u5BF9\u8D77\u51F6\u72E0\u7684\u8FDE\u7EED\u731B\u51FB\uFF0C\u5C0F\u5FC3\u4E0D\u8981\u88AB\u6293\u4F4F\u4E86\r"
+  roleModel: {fileID: -694024778, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
   animatorController: {fileID: 9100000, guid: 9b3927e934df3244ab83488ba12acc64, type: 2}
   maxBasicLife: 10
   maxStamina: 5
@@ -27,6 +27,7 @@ MonoBehaviour:
   equippedArmor: {fileID: 0}
   equippedAccessories: []
   aiReactionTolerance: 0.45
+  aiMaxBounces: 3
   npcSkills:
   - skillSlot:
       skillData: {fileID: 11400000, guid: 5daf620929a442e4ab3f48622b19a29a, type: 2}
@@ -35,17 +36,17 @@ MonoBehaviour:
     phaseWeights: 1e000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 4597856bd55ad134da929ecf55e0d3c4, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 5ec93632a710c2d42943edb20a688c60, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: f5438f747f60a5a4e996f148dc32d15c, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   subSkillProbabilities:

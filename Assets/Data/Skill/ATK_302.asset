@@ -40,11 +40,12 @@ MonoBehaviour:
     sections:
     - level: 1
       axisPosition: 50
-      width: 20
+      width: 30
     - level: 2
       axisPosition: 50
       width: 10
   castEffectPrefab: {fileID: 0}
+  castSoundEffect: {fileID: 0}
   effects: []
   references:
     version: 2

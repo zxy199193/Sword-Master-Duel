@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Soldier_201
   m_EditorClassIdentifier: 
   roleName: "\u536B\u5175"
-  roleDescription: 
-  roleModel: {fileID: -1178385027, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  roleDescription: "\u65B0\u4EBA\u58EB\u5175\uFF0C\u4F1A\u57FA\u7840\u7684\u62DB\u5F0F\uFF0C\u5076\u5C14\u4F1A\u4F7F\u7528\u5E94\u6025\u836F\u6062\u590D\r"
+  roleModel: {fileID: -1470435358, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
   animatorController: {fileID: 9100000, guid: 8bbb17bb48cd18940b8bca5f343e5bd6, type: 2}
   maxBasicLife: 10
   maxStamina: 5
@@ -27,25 +27,26 @@ MonoBehaviour:
   equippedArmor: {fileID: 11400000, guid: 6f0b2ed08393b4146a13d7bcf9a28506, type: 2}
   equippedAccessories: []
   aiReactionTolerance: 0.5
+  aiMaxBounces: 3
   npcSkills:
   - skillSlot:
       skillData: {fileID: 11400000, guid: 71f0d27139a6ee7478e95946f2344d08, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: c8c81fcc60cc9ce4694de3d313541bf2, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
-      level: 0
+      level: 1
       quantity: 2
     phaseWeights: 00000000ffffffff0a000000ffffffff
   subSkillProbabilities:

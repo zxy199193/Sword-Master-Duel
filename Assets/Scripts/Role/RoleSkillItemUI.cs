@@ -118,55 +118,78 @@ public class RoleSkillItemUI : MonoBehaviour
     // Private Methods - UI Generation
     // ==========================================
 
+    private int GetEffectiveLevel(SkillSlot slot)
+    {
+        if (slot.skillData.skillType == SkillType.Item) return slot.level;
+        int effLevel = slot.level;
+        if (GameManager.Instance != null && GameManager.Instance.playerProfile != null && GameManager.Instance.playerProfile.HasSkillUpgradeEffect())
+        {
+            effLevel++;
+        }
+        return Mathf.Min(effLevel, 3);
+    }
+
+    private int GetEffectiveCost(SkillSlot slot, int effLevel)
+    {
+        int cost = slot.skillData.GetStaminaCost(effLevel);
+        if (slot.skillData.skillType != SkillType.Item && GameManager.Instance != null && GameManager.Instance.playerProfile != null && GameManager.Instance.playerProfile.HasSkillUpgradeEffect())
+        {
+            cost = Mathf.Max(0, cost - 1);
+        }
+        return cost;
+    }
+
     private void PopulateBasicInfo(SkillSlot skillSlot)
     {
         if (nameText) nameText.text = skillSlot.skillData.skillName;
         if (iconImage) iconImage.sprite = skillSlot.skillData.skillIcon;
         if (descText) descText.text = skillSlot.skillData.description;
 
+        int effLevel = GetEffectiveLevel(skillSlot);
+
         if (levelText)
         {
             levelText.gameObject.SetActive(skillSlot.skillData.skillType != SkillType.Item);
-            levelText.text = "Lv." + skillSlot.level;
+            levelText.text = "Lv." + effLevel;
         }
 
         HideAllDynamicNodes();
 
         switch (skillSlot.skillData.skillType)
         {
-            case SkillType.Attack: SetupAttackSkill(skillSlot); break;
-            case SkillType.Defend: SetupDefendSkill(skillSlot); break;
-            case SkillType.Dodge: SetupDodgeSkill(skillSlot); break;
-            case SkillType.Special: SetupSpecialSkill(skillSlot); break;
+            case SkillType.Attack: SetupAttackSkill(skillSlot, effLevel); break;
+            case SkillType.Defend: SetupDefendSkill(skillSlot, effLevel); break;
+            case SkillType.Dodge: SetupDodgeSkill(skillSlot, effLevel); break;
+            case SkillType.Special: SetupSpecialSkill(skillSlot, effLevel); break;
             case SkillType.Item: SetupItem(skillSlot); break;
         }
 
-        DrawMiniHitBar(skillSlot);
+        DrawMiniHitBar(skillSlot, effLevel);
     }
 
-    private void SetupAttackSkill(SkillSlot slot)
+    private void SetupAttackSkill(SkillSlot slot, int effLevel)
     {
-        SetNodeText(damageNode, damageText, slot.skillData.GetBasicDamage(slot.level).ToString());
-        SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
+        SetNodeText(damageNode, damageText, slot.skillData.GetBasicDamage(effLevel).ToString());
+        SetNodeText(staminaPureNode, staminaPureText, GetEffectiveCost(slot, effLevel).ToString());
     }
 
-    private void SetupDefendSkill(SkillSlot slot)
+    private void SetupDefendSkill(SkillSlot slot, int effLevel)
     {
-        SetNodeText(defendNode, defendText, slot.skillData.GetBasicDefend(slot.level).ToString());
-        SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
-        SetNodeText(hitAmendIconNode, hitAmendIconText, $"+{slot.skillData.GetHitAmend(slot.level)}");
+        SetNodeText(defendNode, defendText, slot.skillData.GetBasicDefend(effLevel).ToString());
+        SetNodeText(staminaPureNode, staminaPureText, GetEffectiveCost(slot, effLevel).ToString());
+        SetNodeText(hitAmendIconNode, hitAmendIconText, $"+{slot.skillData.GetHitAmend(effLevel)}");
     }
 
-    private void SetupDodgeSkill(SkillSlot slot)
+    private void SetupDodgeSkill(SkillSlot slot, int effLevel)
     {
-        SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
-        SetNodeText(hitAmendIconNode, hitAmendIconText, slot.skillData.GetHitAmend(slot.level).ToString());
+        SetNodeText(staminaPureNode, staminaPureText, GetEffectiveCost(slot, effLevel).ToString());
+        SetNodeText(hitAmendIconNode, hitAmendIconText, slot.skillData.GetHitAmend(effLevel).ToString());
     }
 
-    private void SetupSpecialSkill(SkillSlot slot)
+    private void SetupSpecialSkill(SkillSlot slot, int effLevel)
     {
-        SetNodeText(staminaPureNode, staminaPureText, slot.skillData.GetStaminaCost(slot.level).ToString());
-        int baseDur = slot.skillData.GetBaseDuration(slot.level);
+        SetNodeText(staminaPureNode, staminaPureText, GetEffectiveCost(slot, effLevel).ToString());
+        int baseDur = slot.skillData.GetBaseDuration(effLevel);
         int extraDur = 0;
 
         if (GameManager.Instance != null && GameManager.Instance.playerProfile != null)
@@ -201,7 +224,7 @@ public class RoleSkillItemUI : MonoBehaviour
         }
     }
 
-    private void DrawMiniHitBar(SkillSlot slot)
+    private void DrawMiniHitBar(SkillSlot slot, int effLevel)
     {
         if (miniHitBarRoot == null || miniSectionPrefab == null) return;
 
@@ -217,7 +240,7 @@ public class RoleSkillItemUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        HitBarConfig config = slot.skillData.GetLeveledHitBarConfig(slot.level);
+        HitBarConfig config = slot.skillData.GetLeveledHitBarConfig(effLevel);
         if (config.sections == null) return;
 
         float totalWidth = miniHitBarRoot.GetComponent<RectTransform>().rect.width;

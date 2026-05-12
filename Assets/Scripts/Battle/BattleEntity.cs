@@ -85,6 +85,8 @@ public class BattleEntity : MonoBehaviour
         if (isPlayer && GameManager.Instance != null)
         {
             PlayerProfile profile = GameManager.Instance.playerProfile;
+            bool hasUpgrade = profile.HasSkillUpgradeEffect();
+
             Action<List<SkillSlot>> AddSlotsToRuntime = (sourceList) =>
             {
                 if (sourceList == null) return;
@@ -93,6 +95,19 @@ public class BattleEntity : MonoBehaviour
                     if (slot == null || slot.skillData == null) continue;
                     SkillData inst = Instantiate(slot.skillData);
                     SkillSlot runtimeSlot = new SkillSlot { skillData = inst, level = slot.level, quantity = slot.quantity, sourceSlot = slot };
+                    
+                    if (hasUpgrade && inst.skillType != SkillType.Item)
+                    {
+                        runtimeSlot.level = Mathf.Min(runtimeSlot.level + 1, 3);
+                        if (inst.staminaCosts != null)
+                        {
+                            for (int i = 0; i < inst.staminaCosts.Length; i++)
+                            {
+                                inst.staminaCosts[i] = Mathf.Max(0, inst.staminaCosts[i] - 1);
+                            }
+                        }
+                    }
+
                     runtimeSkills.Add(runtimeSlot);
                 }
             };
@@ -218,7 +233,7 @@ public class BattleEntity : MonoBehaviour
     {
         if (isPlayer && GameManager.Instance != null) return GameManager.Instance.playerProfile.GetFinalMaxLife();
         
-        int total = roleData.maxBasicLife + GetFinalVitality() * 5;
+        int total = roleData.maxBasicLife + GetFinalVitality() * 6;
         if (roleData.equippedWeapon != null) total += roleData.equippedWeapon.bonusLife;
         if (roleData.equippedArmor != null && currentExtraLife > 0) total += roleData.equippedArmor.bonusLife;
         if (roleData.equippedAccessories != null)
@@ -261,7 +276,7 @@ public class BattleEntity : MonoBehaviour
 
     public int GetHpRecoverPerTurn()
     {
-        return GetFinalVitality() / 3;  // 每3点活力 +1 生命悂复
+        return (GetFinalVitality() / 4) * 2;  // 每4点活力 +2 生命恢复
     }
 
     public float GetFinalActionTime(float baseTime)

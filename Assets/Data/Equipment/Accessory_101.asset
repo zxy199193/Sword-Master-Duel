@@ -21,7 +21,7 @@ MonoBehaviour:
   price: 20
   bonusLife: 0
   bonusStamina: 0
-  bonusVitality: 0
+  bonusVitality: 3
   bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0

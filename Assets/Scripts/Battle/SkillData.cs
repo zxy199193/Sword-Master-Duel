@@ -33,6 +33,7 @@ public class SkillData : ScriptableObject
 
     [Header("Skill Effects")]
     public GameObject castEffectPrefab;
+    public AudioClip castSoundEffect;
     [SerializeReference] public List<SkillEffect> effects = new List<SkillEffect>();
 
     // ==========================================

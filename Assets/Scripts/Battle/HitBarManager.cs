@@ -146,7 +146,7 @@ public class HitBarManager : MonoBehaviour
 
         if (skillInfoUI != null && skillSlot != null && caster != null)
         {
-            skillInfoUI.Init(skillSlot, caster, null);
+            skillInfoUI.Init(skillSlot, caster, null, null, false);
             if (skillInfoUI.miniHitBarRoot != null)
             {
                 skillInfoUI.miniHitBarRoot.SetActive(false);

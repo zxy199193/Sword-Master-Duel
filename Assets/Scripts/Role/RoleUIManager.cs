@@ -10,6 +10,7 @@ public class RoleUIManager : MonoBehaviour
     public Text levelText;
     public Text expText;
     public Text goldText;
+    public System.Action OnCloseCallback;
 
     [Header("UI 引用 - 属性面板")]
     public Text lifeText;
@@ -167,6 +168,7 @@ public class RoleUIManager : MonoBehaviour
     public void ClosePanel() 
     { 
         gameObject.SetActive(false); 
+        OnCloseCallback?.Invoke();
     }
 
     // ==========================================
@@ -272,7 +274,7 @@ public class RoleUIManager : MonoBehaviour
         {
             case AttributeType.Vitality:
                 profile.vitality += 1;
-                profile.currentHp += 5;
+                profile.currentHp += 6;
                 break;
             case AttributeType.Endurance:
                 int oldMaxStam = profile.GetFinalMaxStamina();

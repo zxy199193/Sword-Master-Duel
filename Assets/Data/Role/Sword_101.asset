@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Sword_101
   m_EditorClassIdentifier: 
   roleName: "\u6D6A\u4EBA"
-  roleDescription: "\u9053\u573A\u5B66\u5F92 \u9053\u573A\u5B66\u5F92 "
-  roleModel: {fileID: 604816851, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  roleDescription: "\u5E73\u5E73\u65E0\u5947\u7684\u5251\u58EB\uFF0C\u4F1A\u4F7F\u7528\u57FA\u7840\u7684\u62DB\u5F0F\r"
+  roleModel: {fileID: 1510846553, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
   animatorController: {fileID: 9100000, guid: f37ae24da973bca4fb0697120318a913, type: 2}
   maxBasicLife: 10
   maxStamina: 5
@@ -27,32 +27,34 @@ MonoBehaviour:
   equippedArmor: {fileID: 11400000, guid: 15bc2419418779f469935b9e4859e570, type: 2}
   equippedAccessories: []
   aiReactionTolerance: 0.35
+  aiMaxBounces: 3
   npcSkills:
   - skillSlot:
       skillData: {fileID: 11400000, guid: f1ee89dc89b397e48a913e8931f79f9e, type: 2}
       level: 1
       quantity: 0
-    phaseWeights: e8030000ffffffffffffffffffffffff
+    phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 71f0d27139a6ee7478e95946f2344d08, type: 2}
       level: 1
       quantity: 0
-    phaseWeights: 64000000ffffffffffffffffffffffff
+    phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 6f0b31ef5a2024b419dc9ea472969d85, type: 2}
       level: 1
       quantity: 0
-    phaseWeights: 64000000ffffffffffffffffffffffff
+    phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 4cabca3487bfc504cb9c9d38cd24dc4a, type: 2}
       level: 1
       quantity: 0
-    phaseWeights: 64000000ffffffffffffffffffffffff
+    phaseWeights: 0a000000ffffffffffffffffffffffff
   subSkillProbabilities:
   - 0.5
   - -1
   - -1
   - -1
+  difficultyLevel: 1
   isBoss: 0
   goldReward: 30
   expReward: 35

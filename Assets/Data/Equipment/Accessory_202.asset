@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Accessory_202
   m_EditorClassIdentifier: 
   equipName: "\u51B7\u9759\u624B\u73AF"
-  description: "\u6218\u6597\u5F00\u59CB\u83B7\u5F97\u3010\u96C6\u4E2D\u3011\u72B6\u60012\u56DE\u5408"
+  description: "\u6218\u6597\u5F00\u59CB\u81EA\u8EAB\u9644\u52A03\u56DE\u5408\u3010\u96C6\u4E2D\u3011\u72B6\u6001\r"
   icon: {fileID: 21300000, guid: 0cda919111e50b3469fe247bad91e8d7, type: 3}
   equipType: 2
   quality: 1
@@ -23,7 +23,7 @@ MonoBehaviour:
   bonusStamina: 0
   bonusVitality: 0
   bonusEndurance: 0
-  bonusStrength: 3
+  bonusStrength: 0
   bonusMentality: 0
   atkFactor: 1
   durability: 0
@@ -37,5 +37,5 @@ MonoBehaviour:
       data:
         triggerTiming: 0
         statusType: 1
-        duration: 2
+        duration: 3
         applyToSelf: 1

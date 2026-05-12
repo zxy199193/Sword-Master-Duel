@@ -10,6 +10,7 @@ public class SkillItemUI : MonoBehaviour
     public Text descriptionText;
     public Image skillIcon;
     public Button selectButton;
+    public Button cancelButton;
 
     [Header("展示节点 (Dynamic Nodes)")]
     public GameObject damageNode;
@@ -38,13 +39,15 @@ public class SkillItemUI : MonoBehaviour
     private BattleEntity boundCaster;
     private BattleManager boundManager;
     private Action<SkillSlot> onSelectedCallback;
+    private Action<SkillSlot> onCanceledCallback;
 
-    public void Init(SkillSlot slot, BattleEntity caster, Action<SkillSlot> callback, BattleManager manager = null)
+    public void Init(SkillSlot slot, BattleEntity caster, Action<SkillSlot> onSelect, Action<SkillSlot> onCancel, bool isSelected, BattleManager manager = null)
     {
         boundSlot = slot;
         boundCaster = caster;
         boundManager = manager;
-        onSelectedCallback = callback;
+        onSelectedCallback = onSelect;
+        onCanceledCallback = onCancel;
         SkillData skillData = slot.skillData;
 
         if (nameText != null) nameText.text = skillData.skillName;
@@ -59,6 +62,14 @@ public class SkillItemUI : MonoBehaviour
 
         selectButton.onClick.RemoveAllListeners();
         selectButton.onClick.AddListener(OnSelectClicked);
+        selectButton.gameObject.SetActive(!isSelected);
+
+        if (cancelButton != null)
+        {
+            cancelButton.onClick.RemoveAllListeners();
+            cancelButton.onClick.AddListener(OnCancelClicked);
+            cancelButton.gameObject.SetActive(isSelected);
+        }
 
         var tooltipTrigger = GetComponent<SkillTooltipTrigger>();
         if (tooltipTrigger != null) tooltipTrigger.BindSkill(skillData);
@@ -117,7 +128,7 @@ public class SkillItemUI : MonoBehaviour
                 if (equip != null) weaponFactor = equip.atkFactor;
             }
             int finalStr = boundCaster.GetFinalStrength();
-            int strengthFlatBonus = finalStr / 3;               // 每3点力量 +1 基础伤害
+            int strengthFlatBonus = finalStr / 4;               // 每4点力量 +1 基础伤害
             float strengthPercentBonus = 1f + 0.03f * finalStr; // 每点力量 +3% 技能伤害
             int modifiedDamage = Mathf.RoundToInt((baseDamage + strengthFlatBonus) * weaponFactor * strengthPercentBonus);
             SetNodeText(damageNode, damageText, modifiedDamage.ToString());
@@ -142,8 +153,8 @@ public class SkillItemUI : MonoBehaviour
 
         if (showModified && boundCaster != null)
         {
-            // 修正防御：基础防御 + 每点耐力+1（防御技能效果）
-            int modifiedDefend = baseDefend + boundCaster.GetFinalEndurance();
+            // 修正防御：基础防御 + 每4点耐力+1（防御技能效果）
+            int modifiedDefend = baseDefend + (boundCaster.GetFinalEndurance() / 4);
             SetNodeText(defendNode, defendText, modifiedDefend.ToString());
 
             if (boundManager != null)
@@ -167,7 +178,7 @@ public class SkillItemUI : MonoBehaviour
         {
             staminaCost = boundManager.GetActualSkillCost(boundCaster, boundSlot);
             float agileBonus = boundCaster.activeStatuses.ContainsKey(StatusType.Agile) ? 6f : 0f;
-            hitAmend = hitAmend - boundCaster.GetFinalMentality() - agileBonus;
+            hitAmend = hitAmend - Mathf.FloorToInt(boundCaster.GetFinalMentality() / 4f) * 6f - agileBonus;
         }
 
         SetNodeText(staminaPureNode, staminaPureText, staminaCost.ToString());
@@ -184,7 +195,7 @@ public class SkillItemUI : MonoBehaviour
         SetNodeText(staminaPureNode, staminaPureText, staminaCost.ToString());
 
         int baseDur = boundSlot.skillData.GetBaseDuration(boundSlot.level);
-        int extraDur = boundCaster != null ? Mathf.FloorToInt(boundCaster.GetFinalMentality() / 6f) : 0;
+        int extraDur = boundCaster != null ? Mathf.FloorToInt(boundCaster.GetFinalMentality() / 8f) : 0;
         int totalDur = Mathf.Max(1, baseDur + extraDur);
         SetNodeText(durationNode, durationText, totalDur.ToString());
     }
@@ -239,4 +250,5 @@ public class SkillItemUI : MonoBehaviour
     }
 
     private void OnSelectClicked() => onSelectedCallback?.Invoke(boundSlot);
+    private void OnCancelClicked() => onCanceledCallback?.Invoke(boundSlot);
 }

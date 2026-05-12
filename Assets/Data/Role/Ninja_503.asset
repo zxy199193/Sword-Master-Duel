@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Ninja_503
   m_EditorClassIdentifier: 
   roleName: "\u4E0A\u5FCD"
-  roleDescription: 
-  roleModel: {fileID: -531191204, guid: 1a0627efc6cdf864880648feb4c5db5a, type: 3}
+  roleDescription: "\u4E0A\u7EA7\u5FCD\u8005\uFF0C\u4F1A\u4F7F\u7528\u706B\u9041\u6765\u70B9\u71C3\u9632\u5177\uFF0C\u4EE5\u53CA\u6492\u51FA\u9489\u523A\u6765\u8FDB\u884C\r"
+  roleModel: {fileID: 746239754, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
   animatorController: {fileID: 9100000, guid: c40c7bab6f01b0b4a8af203703fa8feb, type: 2}
   maxBasicLife: 10
   maxStamina: 5
@@ -27,10 +27,11 @@ MonoBehaviour:
   equippedArmor: {fileID: 11400000, guid: 843637551ec7eaa499ad82d95434ec66, type: 2}
   equippedAccessories: []
   aiReactionTolerance: 0.3
+  aiMaxBounces: 3
   npcSkills:
   - skillSlot:
       skillData: {fileID: 11400000, guid: 4b2b6ddb99af39e4b84b08568c55024a, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
@@ -40,12 +41,12 @@ MonoBehaviour:
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 5ac0a60a5cdb50544bd2cc6d2173cdb6, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 14000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 8046ae447ea2a124abc8447e31372e38, type: 2}
-      level: 0
+      level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:

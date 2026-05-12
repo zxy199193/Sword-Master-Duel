@@ -39,15 +39,16 @@ MonoBehaviour:
     actionTime: 10
     sections:
     - level: 1
-      axisPosition: 50
+      axisPosition: 35
       width: 30
     - level: 2
-      axisPosition: 50
+      axisPosition: 35
       width: 20
     - level: 3
-      axisPosition: 50
+      axisPosition: 35
       width: 10
   castEffectPrefab: {fileID: 0}
+  castSoundEffect: {fileID: 0}
   effects:
   - rid: 2591120559595585536
   references:

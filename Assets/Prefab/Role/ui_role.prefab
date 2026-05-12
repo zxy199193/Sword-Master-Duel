@@ -564,7 +564,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 170, y: -240}
+  m_AnchoredPosition: {x: 170, y: -220}
   m_SizeDelta: {x: 300, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1925584452383530478
@@ -2335,7 +2335,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -170, y: -240}
+  m_AnchoredPosition: {x: -170, y: -220}
   m_SizeDelta: {x: 300, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4153757457606901456
@@ -4402,7 +4402,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Text
-      value: "\u6BCF1\u70B9\u8010\u529B\uFF1A\n-\u63D0\u53471\u70B9\u9632\u5FA1\u6280\u80FD\u6548\u679C\n-\u63D0\u53472\u70B9\u89D2\u8272\u8D1F\u91CD\n\n\u6BCF4\u70B9\u8010\u529B\uFF1A\n-\u63D0\u53471\u70B9\u4F53\u529B\u503C\u4E0A\u9650\n\n\u6BCF8\u70B9\u8010\u529B\uFF1A\n-\u63D0\u53471\u70B9\u4F53\u529B\u6062\u590D"
+      value: "\u6BCF1\u70B9\u8010\u529B\uFF1A\n-\u63D0\u53473\u70B9\u89D2\u8272\u8D1F\u91CD\n\n\u6BCF4\u70B9\u8010\u529B\uFF1A\n-\u63D0\u53471\u70B9\u9632\u5FA1\u6280\u80FD\u6548\u679C\n-\u63D0\u53471\u70B9\u4F53\u529B\u503C\u4E0A\u9650\n\n\u6BCF8\u70B9\u8010\u529B\uFF1A\n-\u63D0\u53471\u70B9\u4F53\u529B\u6062\u590D"
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Color.b
@@ -4430,7 +4430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_FontData.m_LineSpacing
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Pivot.x
@@ -4462,7 +4462,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 335
+      value: 287
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11720,7 +11720,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Text
-      value: "\u6BCF1\u70B9\u7CBE\u795E\uFF1A\n-\u51CF\u5C113%\u6253\u51FB\u6761\u6ED1\u5757\u79FB\u52A8\u901F\u5EA6\n-\u63D0\u9AD81\u70B9\u95EA\u907F\u6280\u80FD\u6548\u679C\n\n\u6BCF6\u70B9\u7CBE\u795E\uFF1A\n-\u63D0\u53471\u56DE\u5408\u7279\u6B8A\u6280\u80FD\u6301\u7EED\u65F6\u95F4"
+      value: "\u6BCF1\u70B9\u7CBE\u795E\uFF1A\n-\u51CF\u5C113%\u6253\u51FB\u6761\u6ED1\u5757\u79FB\u52A8\u901F\u5EA6\n\n\u6BCF4\u70B9\u7CBE\u795E\uFF1A\n-\u63D0\u9AD86\u70B9\u95EA\u907F\u6280\u80FD\u6548\u679C\n\n\u6BCF8\u70B9\u7CBE\u795E\uFF1A\n-\u63D0\u53471\u56DE\u5408\u7279\u6B8A\u6280\u80FD\u6301\u7EED\u65F6\u95F4"
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Color.b
@@ -11748,7 +11748,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_FontData.m_LineSpacing
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Pivot.x
@@ -11780,7 +11780,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 221
+      value: 255
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_LocalPosition.x
@@ -12118,7 +12118,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_FontData.m_LineSpacing
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Pivot.x
@@ -12236,7 +12236,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Text
-      value: "\u6BCF1\u70B9\u6D3B\u529B\uFF1A\n-\u589E\u52A05\u70B9\u751F\u547D\u503C\u4E0A\u9650\n\n\u6BCF2\u70B9\u6D3B\u529B\uFF1A\n-\u589E\u52A01\u70B9\u751F\u547D\u6062\u590D"
+      value: "\u6BCF1\u70B9\u6D3B\u529B\uFF1A\n-\u589E\u52A06\u70B9\u751F\u547D\u503C\u4E0A\u9650\n\n\u6BCF4\u70B9\u6D3B\u529B\uFF1A\n-\u589E\u52A02\u70B9\u751F\u547D\u6062\u590D"
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Color.b
@@ -12382,7 +12382,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Text
-      value: "\u6BCF1\u70B9\u529B\u91CF\uFF1A\n-\u63D0\u53473%\u653B\u51FB\u9020\u6210\u7684\u4F24\u5BB3\n\n\u6BCF3\u70B9\u529B\u91CF\uFF1A\n-\u63D0\u5347\u653B\u51FB\u62DB\u5F0F1\u70B9\u57FA\u7840\u4F24\u5BB3"
+      value: "\u6BCF1\u70B9\u529B\u91CF\uFF1A\n-\u63D0\u53473%\u653B\u51FB\u9020\u6210\u7684\u4F24\u5BB3\n\n\u6BCF4\u70B9\u529B\u91CF\uFF1A\n-\u63D0\u5347\u653B\u51FB\u62DB\u5F0F1\u70B9\u57FA\u7840\u4F24\u5BB3"
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Color.b
@@ -12410,7 +12410,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_FontData.m_LineSpacing
-      value: 1.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_Pivot.x
@@ -12442,7 +12442,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 183
+      value: 159
       objectReference: {fileID: 0}
     - target: {fileID: 4066861220075084606, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_LocalPosition.x
