@@ -57,25 +57,36 @@ public class HitBarActionState : BattleState
             sections = new HitSection[leveledConfig.sections.Length + extraSections.Count]
         };
 
+        var widthModifiers = attacker.GetAllEquipEffects<GlobalBattleRules.ModifyHitSectionWidthEquipEffect>();
+
         for (int i = 0; i < leveledConfig.sections.Length; i++)
         {
             HitSection original = leveledConfig.sections[i];
+            float equipWidthBonus = 0f;
+            foreach(var mod in widthModifiers) {
+                if (mod.targetLevel == original.level) equipWidthBonus += mod.extraWidth;
+            }
+
             finalConfig.sections[i] = new HitSection
             {
                 level = original.level,
                 axisPosition = original.axisPosition,
-                width = Mathf.Max(1f, original.width + enemyModifier + statusWidthModifier)
+                width = Mathf.Max(1f, original.width + enemyModifier + statusWidthModifier + equipWidthBonus)
             };
         }
 
         for (int i = 0; i < extraSections.Count; i++)
         {
-            HitSection extra = extraSections[i];
+            float equipWidthBonus = 0f;
+            foreach(var mod in widthModifiers) {
+                if (mod.targetLevel == extra.level) equipWidthBonus += mod.extraWidth;
+            }
+
             finalConfig.sections[leveledConfig.sections.Length + i] = new HitSection
             {
                 level = extra.level,
                 axisPosition = extra.axisPosition,
-                width = Mathf.Max(1f, extra.width + enemyModifier + statusWidthModifier)
+                width = Mathf.Max(1f, extra.width + enemyModifier + statusWidthModifier + equipWidthBonus)
             };
         }
 

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Armour_204
   m_EditorClassIdentifier: 
-  equipName: "\u6B66\u58EB\u5927\u94E0"
-  description: "\u9632\u5FA1\u62DB\u5F0FDmg Down+6"
+  equipName: "\u5FCD\u8005\u5957\u88C5"
+  description: "\u9053\u5177\u643A\u5E26\u6570\u91CF\u4E0A\u9650+2"
   icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
   equipType: 1
   quality: 1
-  weight: 15
+  weight: 8
   price: 60
   bonusLife: 0
   bonusStamina: 0
@@ -26,8 +26,14 @@ MonoBehaviour:
   bonusStrength: 0
   bonusMentality: 0
   atkFactor: 0
-  durability: 25
-  equipEffects: []
+  durability: 16
+  equipEffects:
+  - rid: 186583002561642520
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 186583002561642520
+      type: {class: GlobalBattleRules/ItemCapacityEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 0
+        extraCapacity: 2

@@ -507,6 +507,12 @@ public class BattleManager : MonoBehaviour
             cost = Mathf.Max(0, cost - 1);
         }
 
+        // 装备效果：特殊招式减耗
+        if (slot.skillData.skillType == SkillType.Special && entity.HasEquipEffect<GlobalBattleRules.ReduceSpecialSkillCostEquipEffect>(out var reduceCostEff))
+        {
+            cost = Mathf.Max(0, cost - reduceCostEff.costReduction);
+        }
+
         // 负重效果：仅对攻击/闪避招式生效，防御招式不受负重影响（仅玩家）
         var skillType = slot.skillData.skillType;
         bool isMainSkillType = (skillType == SkillType.Attack || skillType == SkillType.Dodge);

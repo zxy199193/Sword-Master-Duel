@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Armour_103
   m_EditorClassIdentifier: 
   equipName: "\u76AE\u7532"
-  description: 
+  description: "\u7ED3\u5B9E\u7684\u62A4\u5177\uFF0C\u80FD\u62B5\u6321\u4E0D\u5C11\u4F24\u5BB3"
   icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
   equipType: 1
   quality: 0
@@ -26,7 +26,7 @@ MonoBehaviour:
   bonusStrength: 0
   bonusMentality: 0
   atkFactor: 0
-  durability: 10
+  durability: 16
   equipEffects: []
   references:
     version: 2

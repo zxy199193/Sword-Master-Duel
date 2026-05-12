@@ -36,7 +36,7 @@ public class RoleUIManager : MonoBehaviour
 
     [Header("UI 引用 - 道具系统 (组件化)")]
     public ItemSlotUI[] itemSlots;
-    public int currentUnlockedItemSlots = 4;
+    public int maxItemSlots = 4;
     public ItemListUI itemListUI;
 
     [Header("UI 引用 - 招式系统 (组件化)")]
@@ -226,9 +226,10 @@ public class RoleUIManager : MonoBehaviour
         // Item Slots
         if (itemSlots != null)
         {
+            int maxCap = profile.GetMaxItemCapacity();
             for (int i = 0; i < itemSlots.Length; i++)
             {
-                if (i >= currentUnlockedItemSlots) 
+                if (i >= maxItemSlots) 
                 { 
                     itemSlots[i].gameObject.SetActive(false); 
                     continue; 
@@ -236,7 +237,7 @@ public class RoleUIManager : MonoBehaviour
                 itemSlots[i].gameObject.SetActive(true);
                 SkillSlot itemData = null;
                 if (i < profile.equippedItems.Count) itemData = profile.equippedItems[i];
-                itemSlots[i].UpdateUI(itemData);
+                itemSlots[i].UpdateUI(itemData, maxCap);
             }
         }
 

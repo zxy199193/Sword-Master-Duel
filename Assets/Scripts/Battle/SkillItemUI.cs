@@ -202,7 +202,9 @@ public class SkillItemUI : MonoBehaviour
 
     private void SetupItem()
     {
-        SetNodeText(quantityNode, quantityText, $"x{boundSlot.quantity}");
+        int maxCap = 2;
+        if (GameManager.Instance != null && GameManager.Instance.playerProfile != null) maxCap = GameManager.Instance.playerProfile.GetMaxItemCapacity();
+        SetNodeText(quantityNode, quantityText, $"{boundSlot.quantity}/{maxCap}");
     }
 
     private void HideAllDynamicNodes()

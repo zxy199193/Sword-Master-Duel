@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Armour_201
   m_EditorClassIdentifier: 
-  equipName: "\u677F\u7532"
-  description: "\u95EA\u907F\u62DB\u5F0FHit Down+6"
+  equipName: "\u6D6A\u5BA2\u5957\u88C5"
+  description: "\u5BF9\u65B9\u653B\u51FB\u843D\u7A7A\u65F6\u6062\u590D1\u70B9\u4F53\u529B\u503C\uFF0C\u540C\u65F6\u8FDB\u5165\u3010\u96C6\u4E2D\u3011\u72B6\u6001\uFF0C\u6301\u7EED2\u56DE\u5408\r"
   icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
   equipType: 1
   quality: 1
-  weight: 20
+  weight: 8
   price: 60
   bonusLife: 0
   bonusStamina: 0
@@ -26,17 +26,21 @@ MonoBehaviour:
   bonusStrength: 0
   bonusMentality: 0
   atkFactor: 0
-  durability: 35
+  durability: 12
   equipEffects:
-  - rid: 2591120632697323523
+  - rid: 186583002561642506
+  - rid: 186583002561642507
   references:
     version: 2
     RefIds:
-    - rid: 2591120632697323523
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+    - rid: 186583002561642506
+      type: {class: GlobalBattleRules/RecoverStaminaOnEvadeEquipEffect, ns: , asm: Assembly-CSharp}
       data:
-        triggerTiming: 2
-        condition: 1
-        targetLevelMin: 1
-        targetLevelMax: 1
-        damageModifier: -999
+        triggerTiming: 4
+        recoverAmount: 1
+    - rid: 186583002561642507
+      type: {class: GlobalBattleRules/ApplyStatusOnEvadeEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 4
+        statusType: 1
+        duration: 2

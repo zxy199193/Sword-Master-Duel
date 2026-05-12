@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Weapon_204
   m_EditorClassIdentifier: 
-  equipName: "\u6218\u65A7"
-  description: "\u547D\u4E2D\u533A\u95F4\u7B49\u7EA7>1\uFF0C-6\r"
+  equipName: "\u9A91\u58EB\u67AA"
+  description: "Lv1\u548CLv2\u547D\u4E2D\u533A\u95F4+8\r"
   icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
   equipType: 0
   quality: 1
-  weight: 12
+  weight: 13
   price: 60
   bonusLife: 0
   bonusStamina: 0
@@ -25,18 +25,23 @@ MonoBehaviour:
   bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
-  atkFactor: 2
+  atkFactor: 1.5
   durability: 0
   equipEffects:
-  - rid: 2591120534691905540
+  - rid: 186583002561642536
+  - rid: 186583002561642537
   references:
     version: 2
     RefIds:
-    - rid: 2591120534691905540
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+    - rid: 186583002561642536
+      type: {class: GlobalBattleRules/ModifyHitSectionWidthEquipEffect, ns: , asm: Assembly-CSharp}
       data:
-        triggerTiming: 1
-        condition: 2
-        targetLevelMin: 2
-        targetLevelMax: 6
-        damageModifier: -6
+        triggerTiming: 0
+        targetLevel: 1
+        extraWidth: 8
+    - rid: 186583002561642537
+      type: {class: GlobalBattleRules/ModifyHitSectionWidthEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 0
+        targetLevel: 2
+        extraWidth: 8

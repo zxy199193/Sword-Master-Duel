@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
-  m_Name: Armour_105
+  m_Name: Accessory_307
   m_EditorClassIdentifier: 
-  equipName: "\u5FCD\u8005\u62A4\u5177"
-  description: 
-  icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
-  equipType: 1
-  quality: 0
+  equipName: "\u5B88\u62A4\u624B\u73AF"
+  description: "\u6240\u6709\u8D1F\u9762\u6548\u679C\u7684\u6301\u7EED\u65F6\u95F4-2\r"
+  icon: {fileID: 21300000, guid: 0cda919111e50b3469fe247bad91e8d7, type: 3}
+  equipType: 2
+  quality: 2
   weight: 6
-  price: 30
+  price: 80
   bonusLife: 0
   bonusStamina: 0
   bonusVitality: 0
@@ -26,17 +26,14 @@ MonoBehaviour:
   bonusStrength: 0
   bonusMentality: 0
   atkFactor: 0
-  durability: 8
+  durability: 0
   equipEffects:
-  - rid: 2591120534691905544
+  - rid: 186583002561642518
   references:
     version: 2
     RefIds:
-    - rid: 2591120534691905544
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+    - rid: 186583002561642518
+      type: {class: GlobalBattleRules/ReduceDebuffDurationEquipEffect, ns: , asm: Assembly-CSharp}
       data:
-        triggerTiming: 2
-        condition: 2
-        targetLevelMin: 2
-        targetLevelMax: 3
-        damageModifier: -10
+        triggerTiming: 0
+        reduceTurns: 2

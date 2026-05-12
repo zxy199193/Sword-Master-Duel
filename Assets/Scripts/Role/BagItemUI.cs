@@ -31,7 +31,12 @@ public class BagItemUI : MonoBehaviour
         if (descText) descText.text = itemSlot.skillData.description;
 
         if (quantityNode) quantityNode.SetActive(true);
-        if (quantityText) quantityText.text = itemSlot.quantity.ToString();
+        if (quantityText)
+        {
+            int maxCap = 2;
+            if (GameManager.Instance != null && GameManager.Instance.playerProfile != null) maxCap = GameManager.Instance.playerProfile.GetMaxItemCapacity();
+            quantityText.text = $"{itemSlot.quantity}/{maxCap}";
+        }
 
         if (equippedBadge) equippedBadge.SetActive(isEquipped);
 

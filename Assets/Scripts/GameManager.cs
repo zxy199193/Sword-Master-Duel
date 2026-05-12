@@ -194,6 +194,28 @@ public class PlayerProfile
         }
         return false;
     }
+
+    public int GetMaxItemCapacity()
+    {
+        int cap = 2; // 初始上限为2
+        List<EquipmentData> equips = new List<EquipmentData>();
+        if (equippedWeapon != null) equips.Add(equippedWeapon);
+        if (equippedArmor != null && currentExtraLife > 0) equips.Add(equippedArmor);
+        if (equippedAccessories != null) equips.AddRange(equippedAccessories);
+
+        foreach (var eq in equips)
+        {
+            if (eq == null || eq.equipEffects == null) continue;
+            foreach (var effect in eq.equipEffects)
+            {
+                if (effect is GlobalBattleRules.ItemCapacityEquipEffect capEffect)
+                {
+                    cap += capEffect.extraCapacity;
+                }
+            }
+        }
+        return cap;
+    }
 }
 
 public class GameManager : MonoBehaviour
@@ -650,19 +672,35 @@ public class GameManager : MonoBehaviour
             }
             else if (extra.rewardType == LevelExtraRewardEntry.RewardType.Item && extra.item != null)
             {
-                // 道具可能一次给多个（quantity）
-                SkillSlot existing = playerProfile.storageSkillsAndItems
-                    .Find(s => s.skillData == extra.item);
-                if (existing != null)
+                int maxCap = playerProfile.GetMaxItemCapacity();
+                SkillSlot existingEquip = playerProfile.equippedItems.Find(s => s != null && s.skillData == extra.item);
+                SkillSlot existingStorage = playerProfile.storageSkillsAndItems.Find(s => s != null && s.skillData == extra.item);
+
+                // 优先加到已装备的道具槽中
+                if (existingEquip != null)
                 {
-                    existing.quantity += extra.quantity;
+                    existingEquip.quantity += extra.quantity;
+                    if (existingEquip.quantity > maxCap) existingEquip.quantity = maxCap;
+                }
+                else if (existingStorage != null)
+                {
+                    existingStorage.quantity += extra.quantity;
+                    if (existingStorage.quantity > maxCap) existingStorage.quantity = maxCap;
                 }
                 else
                 {
-                    playerProfile.storageSkillsAndItems.Add(
-                        new SkillSlot { skillData = extra.item, level = 1, quantity = extra.quantity });
+                    int addQty = Mathf.Min(extra.quantity, maxCap);
+                    // 如果装备栏未满则自动装备
+                    if (playerProfile.equippedItems.Count < 4)
+                    {
+                        playerProfile.equippedItems.Add(new SkillSlot { skillData = extra.item, level = 1, quantity = addQty });
+                    }
+                    else
+                    {
+                        playerProfile.storageSkillsAndItems.Add(new SkillSlot { skillData = extra.item, level = 1, quantity = addQty });
+                    }
                 }
-                Debug.Log($"<color=yellow>[关卡结算] {groupLabel}组额外道具: {extra.item.skillName} ×{extra.quantity} → 道具库</color>");
+                Debug.Log($"<color=yellow>[关卡结算] {groupLabel}组额外道具: {extra.item.skillName} ×{extra.quantity}</color>");
             }
         }
 

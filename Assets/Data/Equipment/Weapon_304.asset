@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Weapon_304
   m_EditorClassIdentifier: 
-  equipName: "\u8D35\u65CF\u523A\u5251"
-  description: "\u547D\u4E2D\u533A\u95F4\u7B49\u7EA71&2\uFF0C-8\uFF0C\u547D\u4E2D\u533A\u95F4\u7B49\u7EA73\uFF0C+10\r"
+  equipName: "\u7B26\u6587\u5251"
+  description: "\u7279\u6B8A\u62DB\u5F0F\u4F53\u529B\u6D88\u8017-1\n\u5982\u679C\u653B\u51FB\u524D\u4F7F\u7528\u4E86\u7279\u6B8A\u62DB\u5F0F\uFF0C\u653B\u51FB\u62DB\u5F0F\u4F24\u5BB3+3"
   icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
   equipType: 0
   quality: 2
@@ -21,9 +21,11 @@ MonoBehaviour:
   price: 50
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
-  atkFactor: 1.4
+  atkFactor: 1.2
   durability: 0
   equipEffects:
   - rid: 2591120534691905537
@@ -35,7 +37,6 @@ MonoBehaviour:
       type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
       data:
         triggerTiming: 1
-        condition: 2
         targetLevelMin: 1
         targetLevelMax: 2
         damageModifier: -8
@@ -43,7 +44,6 @@ MonoBehaviour:
       type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
       data:
         triggerTiming: 1
-        condition: 1
         targetLevelMin: 3
         targetLevelMax: 3
         damageModifier: 10

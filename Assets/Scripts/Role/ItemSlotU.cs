@@ -26,7 +26,7 @@ public class ItemSlotUI : MonoBehaviour
     // Public Methods
     // ==========================================
 
-    public void UpdateUI(SkillSlot itemSlot)
+    public void UpdateUI(SkillSlot itemSlot, int maxCapacity = 2)
     {
         if (itemSlot != null && itemSlot.skillData != null)
         {
@@ -43,7 +43,7 @@ public class ItemSlotUI : MonoBehaviour
             if (emptyNode) emptyNode.SetActive(false);
 
             if (quantityNode) quantityNode.SetActive(true);
-            if (quantityText) quantityText.text = itemSlot.quantity.ToString();
+            if (quantityText) quantityText.text = $"{itemSlot.quantity}/{maxCapacity}";
         }
         else
         {

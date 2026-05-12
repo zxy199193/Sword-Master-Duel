@@ -202,7 +202,9 @@ public class RoleSkillItemUI : MonoBehaviour
 
     private void SetupItem(SkillSlot slot)
     {
-        SetNodeText(quantityNode, quantityText, $"x{slot.quantity}");
+        int maxCap = 2;
+        if (GameManager.Instance != null && GameManager.Instance.playerProfile != null) maxCap = GameManager.Instance.playerProfile.GetMaxItemCapacity();
+        SetNodeText(quantityNode, quantityText, $"{slot.quantity}/{maxCap}");
     }
 
     private void HideAllDynamicNodes()

@@ -273,10 +273,15 @@ public class ShopListUI : MonoBehaviour
 
     private void CreateSkillShopUI(SkillData skill, PlayerProfile profile, Transform targetRoot, ShopCategory category)
     {
-        // 道具为消耗品可叠加购买，不判断「已拥有」
-        bool canAfford = profile.totalGold >= skill.price;
+        // 道具为消耗品可叠加购买，不判断「已拥有」，判断上限
+        int currentCount = GetItemTotalQuantity(skill, profile);
+        int maxCapacity = profile.GetMaxItemCapacity();
+
+        bool canAfford = profile.totalGold >= skill.price && (skill.skillType != SkillType.Item || currentCount < maxCapacity);
+        string btnText = (skill.skillType == SkillType.Item && currentCount >= maxCapacity) ? "已满" : "购买";
+
         SkillSlot tempSlot = new SkillSlot { skillData = skill, level = 1, quantity = 0 };
-        CreateSkillUI(tempSlot, skill.price, "购买", canAfford, false, targetRoot, () =>
+        CreateSkillUI(tempSlot, skill.price, btnText, canAfford, false, targetRoot, () =>
         {
             if (profile.ConsumeGold(skill.price))
             {
@@ -285,6 +290,14 @@ public class ShopListUI : MonoBehaviour
                 restUIManager.RefreshPlayerStatusUI();
             }
         });
+    }
+
+    private int GetItemTotalQuantity(SkillData itemData, PlayerProfile profile)
+    {
+        int count = 0;
+        foreach (var s in profile.equippedItems) { if (s != null && s.skillData == itemData) count += s.quantity; }
+        foreach (var s in profile.storageSkillsAndItems) { if (s != null && s.skillData == itemData) count += s.quantity; }
+        return count;
     }
 
     private void TryAutoEquipEquipment(EquipmentData equip, PlayerProfile profile)
@@ -325,10 +338,16 @@ public class ShopListUI : MonoBehaviour
 
         if (skill.skillType == SkillType.Item)
         {
+            int maxCap = profile.GetMaxItemCapacity();
             // 道具：先尝试堆叠
             foreach (var s in profile.equippedItems)
             {
-                if (s != null && s.skillData == skill) { s.quantity++; equipped = true; break; }
+                if (s != null && s.skillData == skill) 
+                { 
+                    if (s.quantity < maxCap) s.quantity++; 
+                    equipped = true; 
+                    break; 
+                }
             }
             // 堆叠失败则看是否有空位
             if (!equipped && profile.equippedItems.Count < 4)
@@ -419,11 +438,13 @@ public class ShopListUI : MonoBehaviour
 
     private void AddOrStackItem(SkillData itemData, PlayerProfile profile)
     {
+        int maxCap = profile.GetMaxItemCapacity();
+
         foreach (var slot in profile.equippedItems)
         {
             if (slot != null && slot.skillData == itemData) 
             { 
-                slot.quantity++; 
+                if (slot.quantity < maxCap) slot.quantity++; 
                 return; 
             }
         }
@@ -432,7 +453,7 @@ public class ShopListUI : MonoBehaviour
         {
             if (slot != null && slot.skillData == itemData) 
             { 
-                slot.quantity++; 
+                if (slot.quantity < maxCap) slot.quantity++; 
                 return; 
             }
         }

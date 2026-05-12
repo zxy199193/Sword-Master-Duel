@@ -12,29 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Weapon_403
   m_EditorClassIdentifier: 
-  equipName: "\u6751\u6B63"
-  description: "\u547D\u4E2D\u533A\u95F4\u7B49\u7EA7>2\uFF0C+8\r\n\u6240\u6709\u653B\u51FB\u62DB\u5F0F\u4F53\u529B\u6D88\u8017-1"
+  equipName: "\u65A9\u9F99\u5DE8\u5251"
+  description: "\"\u6218\u6597\u5F00\u59CB\u5BF9\u624B\u9644\u52A06\u56DE\u5408\u3010\u7D27\u5F20\u3011\u72B6\u6001\n\u653B\u51FB\u547D\u4E2D\u540E\u5BF9\u624B\u540E\u9644\u52A02\u56DE\u5408\u3010\u7729\u6655\u3011\u72B6\u6001\"\r"
   icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
   equipType: 0
   quality: 3
-  weight: 10
+  weight: 18
   price: 100
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
-  atkFactor: 1.8
+  atkFactor: 2.5
   durability: 0
   equipEffects:
-  - rid: 2591120534691905542
+  - rid: 186583002561642527
+  - rid: 186583002561642528
   references:
     version: 2
     RefIds:
-    - rid: 2591120534691905542
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+    - rid: 186583002561642527
+      type: {class: GlobalBattleRules/ApplyStatusEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 0
+        statusType: 0
+        duration: 6
+        applyToSelf: 0
+    - rid: 186583002561642528
+      type: {class: GlobalBattleRules/ApplyStatusEquipEffect, ns: , asm: Assembly-CSharp}
       data:
         triggerTiming: 1
-        condition: 2
-        targetLevelMin: 3
-        targetLevelMax: 6
-        damageModifier: 8
+        statusType: 4
+        duration: 2
+        applyToSelf: 0

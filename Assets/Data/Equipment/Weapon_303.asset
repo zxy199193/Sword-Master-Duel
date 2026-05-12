@@ -12,47 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Weapon_303
   m_EditorClassIdentifier: 
-  equipName: "\u523A\u5BA2\u5315\u9996"
-  description: "\u547D\u4E2D\u533A\u95F4\u7B49\u7EA71&2&3&4\uFF0C-10\uFF0C\u547D\u4E2D\u533A\u95F4\u7B49\u7EA7>5\uFF0C+6\r"
+  equipName: "\u9501\u94FE"
+  description: "\u653B\u51FB\u843D\u7A7A\u65F6\u4ECD\u7136\u53EF\u4EE5\u9020\u62100.5\u500D\u7387\u7684\u4F24\u5BB3\r"
   icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
   equipType: 0
   quality: 2
-  weight: 5
+  weight: 6
   price: 50
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
-  atkFactor: 1
+  atkFactor: 1.2
   durability: 0
-  equipEffects:
-  - rid: 2591120534691905537
-  - rid: 2591120534691905538
-  - rid: 2591120534691905539
+  equipEffects: []
   references:
     version: 2
-    RefIds:
-    - rid: 2591120534691905537
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
-      data:
-        triggerTiming: 1
-        condition: 2
-        targetLevelMin: 1
-        targetLevelMax: 4
-        damageModifier: -10
-    - rid: 2591120534691905538
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
-      data:
-        triggerTiming: 1
-        condition: 1
-        targetLevelMin: 5
-        targetLevelMax: 5
-        damageModifier: 6
-    - rid: 2591120534691905539
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
-      data:
-        triggerTiming: 1
-        condition: 2
-        targetLevelMin: 3
-        targetLevelMax: 6
-        damageModifier: 4
+    RefIds: []

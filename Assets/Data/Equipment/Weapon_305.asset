@@ -12,29 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Weapon_305
   m_EditorClassIdentifier: 
-  equipName: "\u5DE8\u65A7"
-  description: "\u547D\u4E2D\u533A\u95F4\u7B49\u7EA7>2\uFF0C-16\r"
+  equipName: "\u5492\u5251"
+  description: "\u6218\u6597\u5F00\u59CB\u81EA\u8EAB\u9644\u52A03\u56DE\u5408\u3010\u8BC5\u5492\u3011\u72B6\u6001\r"
   icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
   equipType: 0
   quality: 2
-  weight: 20
+  weight: 6
   price: 50
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
-  atkFactor: 2.5
+  atkFactor: 2.4
   durability: 0
   equipEffects:
-  - rid: 2591120534691905540
+  - rid: 186583002561642529
   references:
     version: 2
     RefIds:
-    - rid: 2591120534691905540
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+    - rid: 186583002561642529
+      type: {class: GlobalBattleRules/ApplyStatusEquipEffect, ns: , asm: Assembly-CSharp}
       data:
-        triggerTiming: 1
-        condition: 2
-        targetLevelMin: 3
-        targetLevelMax: 6
-        damageModifier: -16
+        triggerTiming: 0
+        statusType: 27
+        duration: 3
+        applyToSelf: 1

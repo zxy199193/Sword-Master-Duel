@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Armour_101
   m_EditorClassIdentifier: 
   equipName: "\u5E03\u8863"
-  description: 
+  description: "\u666E\u901A\u7684\u8863\u7269\uFF0C\u804A\u80DC\u4E8E\u65E0"
   icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
   equipType: 1
   quality: 0

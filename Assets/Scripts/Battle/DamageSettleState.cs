@@ -103,9 +103,20 @@ public class DamageSettleState : BattleState
             Debug.Log($"<color=#00FFFF>[看破触发] {defender.roleData.roleName} 看穿了 {attacker.roleData.roleName} 的招式 {skill.skillName}！</color>");
         }
 
+        bool hasMissDamageEffect = attacker.HasEquipEffect<GlobalBattleRules.MissDamageEquipEffect>(out _);
+        if (!hit.HasValue && hasMissDamageEffect && !isInsightDodged && skill != null)
+        {
+            hit = new HitSection { level = SectionLevel.Level0, width = 0, axisPosition = 0 };
+        }
+
         if (hit.HasValue && skill != null && !isInsightDodged)
         {
             float multiplier = GlobalBattleRules.GetHitMultiplier(hit.Value.level);
+            if (hit.Value.level == SectionLevel.Level0 && hasMissDamageEffect)
+            {
+                multiplier = 0.5f;
+                Debug.Log($"[{attacker.roleData.roleName}] 触发必中残响！Miss转化为0.5倍伤害！");
+            }
             int finalStrength = attacker.GetFinalStrength();
             float weaponAtkFactor = 1.0f;
 
@@ -180,10 +191,30 @@ public class DamageSettleState : BattleState
             int strengthFlatBonus = finalStrength / 4;  // 每4点力量 +1 基础伤害
             float totalBaseDamage = skill.GetBasicDamage(level) + strengthFlatBonus + equipDamageModifier + skillEffectBaseDamageMod + attackTypeBonus;
 
+            if (defendSkill != null && defendSkill.skillType == SkillType.Defend && attacker.HasEquipEffect<GlobalBattleRules.DoubleDamageOnDefendEquipEffect>(out _))
+            {
+                totalBaseDamage *= 2;
+                Debug.Log($"[{attacker.roleData.roleName}] 触发破防增伤！基础伤害翻倍！");
+            }
+
+            if (attacker.HasEquipEffect<GlobalBattleRules.SubSkillDamageBoostEquipEffect>(out var subSkillBoostEff))
+            {
+                SkillSlot subSlot = battleManager.isPlayerAttacking ? battleManager.currentPlayerSubSkill : battleManager.currentEnemySubSkill;
+                if (subSlot != null && subSlot.skillData != null && subSlot.skillData.skillType == SkillType.Special)
+                {
+                    totalBaseDamage += subSkillBoostEff.damageBoost;
+                    Debug.Log($"[{attacker.roleData.roleName}] 触发连击增伤！额外增加 {subSkillBoostEff.damageBoost} 伤害！");
+                }
+            }
             
             if (attacker.activeStatuses.ContainsKey(StatusType.Excited))
             {
                 totalBaseDamage += 6;
+            }
+
+            if (attacker.activeStatuses.ContainsKey(StatusType.Enraged))
+            {
+                totalBaseDamage += 10;
             }
 
             int totalReduction = Mathf.RoundToInt(defender.tempDamageReduction) + skillEffectDefenseMod;
@@ -212,16 +243,44 @@ public class DamageSettleState : BattleState
             }
 
             // 造成最终伤害
-            bool hitLanded = defender.TakeDamage(finalDamage);
+            bool hitLanded = false;
+            if (attacker.HasEquipEffect<GlobalBattleRules.DirectBasicLifeDamageEquipEffect>(out var directLifeEffect) && 
+                hit.Value.level >= directLifeEffect.minLevel && hit.Value.level <= directLifeEffect.maxLevel)
+            {
+                hitLanded = defender.TakeDamage(finalDamage, true);
+                battleManager.SpawnGeneralPopup(defender.isPlayer, "<color=#FF0000>贯穿!</color>");
+            }
+            else
+            {
+                hitLanded = defender.TakeDamage(finalDamage);
+            }
 
             if (hitLanded)
             {
+                if (defender.isPlayer && attackSlot != null && attackSlot.skillData.skillType == SkillType.Attack)
+                {
+                    battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnTakeAttackSkillDamage, hit.Value.level);
+                }
+
                 // 火焰附加特效：命中时给对方上 1 回合灼烧
                 if (attacker.activeStatuses.ContainsKey(StatusType.FireEnchant))
                 {
-                    defender.AddStatus(StatusType.Burn, 1);
+                    defender.AddStatus(StatusType.Burn, 1, attacker);
                     battleManager.SpawnGeneralPopup(defender.isPlayer, "[灼烧]");
                     Debug.Log($"<color=orange>[{attacker.roleData.roleName}] 触发火焰附加！给 [{defender.roleData.roleName}] 施加了 1 回合灼烧。</color>");
+                }
+
+                // 血战：恢复造成最终伤害 30% 的基础生命值
+                if (attacker.activeStatuses.ContainsKey(StatusType.Bloodlust))
+                {
+                    int healAmount = Mathf.FloorToInt(finalDamage * 0.3f);
+                    if (healAmount > 0)
+                    {
+                        attacker.currentBasicLife += healAmount;
+                        if (attacker.currentBasicLife > attacker.GetFinalMaxLife()) attacker.currentBasicLife = attacker.GetFinalMaxLife();
+                        attacker.OnHpChanged?.Invoke();
+                        battleManager.SpawnGeneralPopup(!defender.isPlayer, $"<color=green>血战 +{healAmount}</color>");
+                    }
                 }
 
                 // 播放音效
@@ -282,6 +341,11 @@ public class DamageSettleState : BattleState
             Debug.Log($"[DamageSettleState] {attacker.roleData.roleName} 的该段攻击 Miss！");
             defender.PlayMissAnim();
             battleManager.SpawnGeneralPopup(isPlayerTakingDamage, "MISS");
+
+            if (defender.isPlayer)
+            {
+                battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnEvade, null);
+            }
 
             if (AudioManager.Instance != null)
             {

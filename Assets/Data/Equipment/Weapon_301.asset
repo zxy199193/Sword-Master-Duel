@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Weapon_301
   m_EditorClassIdentifier: 
-  equipName: "\u7687\u5BB6\u9A91\u58EB\u5251"
-  description: 
+  equipName: "\u5927\u592A\u5200"
+  description: "\u6240\u6709\u653B\u51FB\u62DB\u5F0F\u589E\u52A0\u4E00\u4E2A\u5BBD\u5EA615\u7684Lv4\u547D\u4E2D\u533A\u95F4\n\u6240\u6709\u653B\u51FB\u62DB\u5F0FLv1\u548CLv2\u547D\u4E2D\u533A\u95F4+10"
   icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
   equipType: 0
   quality: 2
@@ -21,11 +21,35 @@ MonoBehaviour:
   price: 50
   bonusLife: 0
   bonusStamina: 0
+  bonusVitality: 0
+  bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
-  atkFactor: 2
+  atkFactor: 1.4
   durability: 0
-  equipEffects: []
+  equipEffects:
+  - rid: 186583002561642540
+  - rid: 186583002561642541
+  - rid: 186583002561642542
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 186583002561642540
+      type: {class: GlobalBattleRules/ExtraHitSectionEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 0
+        sectionLevel: 4
+        axisPosition: 50
+        width: 15
+    - rid: 186583002561642541
+      type: {class: GlobalBattleRules/ModifyHitSectionWidthEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 1
+        targetLevel: 1
+        extraWidth: 10
+    - rid: 186583002561642542
+      type: {class: GlobalBattleRules/ModifyHitSectionWidthEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 0
+        targetLevel: 2
+        extraWidth: 10

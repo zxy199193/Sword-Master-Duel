@@ -8,7 +8,7 @@ using System.Linq;
 // ==========================================
 public enum SkillType { Attack, Defend, Dodge, Special, Item }
 public enum SectionLevel { Level0, Level1, Level2, Level3, Level4, Level5, Level6, Level99 }
-public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked, Burn, Clone, FireEnchant, Recover, Paralyzed, Frozen, Insight, Sharpened, Lightweight, Charging, Exhausted }
+public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked, Burn, Clone, FireEnchant, Recover, Paralyzed, Frozen, Insight, Sharpened, Lightweight, Charging, Exhausted, Enraged, Overclock, Bloodlust, Protection, Cursed, Poisoned }
 
 public enum ShopCategory { Weapon, Armor, Accessory, Item }
 public enum AttributeType { Vitality, Endurance, Strength, Mentality }
@@ -267,7 +267,7 @@ public class ApplyStatusEffect : SkillEffect
         int finalDuration = Mathf.Max(1, currentBaseDuration + extraDuration);
 
         BattleEntity actualTarget = applyToSelf ? caster : target;
-        actualTarget.AddStatus(statusType, finalDuration);
+        actualTarget.AddStatus(statusType, finalDuration, caster);
 
         string statusName = statusType.ToString();
         switch (statusType)
@@ -402,7 +402,7 @@ public class CounterStatusOnEvadeEffect : SkillEffect
         if (dur > 0)
         {
             // 给劈空的倒霉蛋加上状态
-            attacker.AddStatus(statusToApply, dur);
+            attacker.AddStatus(statusToApply, dur, defender);
 
             // 飘字提示玩家无刀取成功！
             manager.SpawnGeneralPopup(attacker.isPlayer, $"<color=#FF8C00>破绽![{statusToApply}]</color>");
@@ -562,7 +562,7 @@ public class ApplyStatusOnHitLevelEffect : SkillEffect
             if (dur > 0)
             {
                 // 给目标上状态
-                target.AddStatus(statusType, dur);
+                target.AddStatus(statusType, dur, caster);
 
                 string statusName = statusType.ToString();
                 switch (statusType)
@@ -761,9 +761,7 @@ public static class GlobalBattleRules
     // 装备专属机制 (Equip Effects)
     // ==========================================
 
-    public enum EquipTriggerTiming { OnBattleStart, OnAttackHit, OnDefendHit, OnVictory }
-    public enum EquipCondition { None, Equal, GreaterOrEqual, Less, Between }
-
+    public enum EquipTriggerTiming { OnBattleStart, OnAttackHit, OnDefendHit, OnVictory, OnEvade, OnTakeAttackSkillDamage }
     [Serializable]
     public abstract class EquipEffect
     {
@@ -777,10 +775,10 @@ public static class GlobalBattleRules
     [Serializable]
     public class ConditionalDamageEquipEffect : EquipEffect
     {
-        [Header("触发条件")]
-        public EquipCondition condition;
+        [Header("触发区间 (包含)")]
+        [Tooltip("触发该效果的最小判定等级")]
         public SectionLevel targetLevelMin;
-        [Tooltip("仅当条件为 Between 时，该最大值才生效")]
+        [Tooltip("触发该效果的最大判定等级")]
         public SectionLevel targetLevelMax;
 
         [Header("效果")]
@@ -789,22 +787,13 @@ public static class GlobalBattleRules
 
         public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
         {
-            if (hitLevel == null || condition == EquipCondition.None) return 0;
+            if (hitLevel == null) return 0;
 
             int actual = (int)hitLevel.Value;
             int min = (int)targetLevelMin;
             int max = (int)targetLevelMax;
 
-            bool isMet = false;
-            switch (condition)
-            {
-                case EquipCondition.Equal: isMet = actual == min; break;
-                case EquipCondition.GreaterOrEqual: isMet = actual >= min; break;
-                case EquipCondition.Less: isMet = actual < min; break;
-                case EquipCondition.Between: isMet = actual >= min && actual <= max; break;
-            }
-
-            if (isMet)
+            if (actual >= min && actual <= max)
             {
                 Debug.Log($"[装备特效] 触发伤害修正: {damageModifier}");
                 return damageModifier;
@@ -888,5 +877,155 @@ public static class GlobalBattleRules
         {
             return 0; // 仅作为标记使用
         }
+    }
+
+    [Serializable]
+    public class RecoverStaminaOnEvadeEquipEffect : EquipEffect
+    {
+        public int recoverAmount = 2;
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
+        {
+            wearer.currentStamina = Mathf.Min(wearer.currentStamina + recoverAmount, wearer.GetFinalMaxStamina());
+            wearer.OnStaminaChanged?.Invoke();
+            manager.SpawnRecoverPopup(wearer.isPlayer, $"<color=yellow>闪避回体 +{recoverAmount}</color>", false);
+            return 0;
+        }
+    }
+
+    [Serializable]
+    public class ApplyStatusOnEvadeEquipEffect : EquipEffect
+    {
+        public StatusType statusType = StatusType.Agile;
+        public int duration = 1;
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
+        {
+            wearer.AddStatus(statusType, duration);
+            manager.SpawnGeneralPopup(wearer.isPlayer, $"<color=#00FFFF>闪避反制![{statusType}]</color>");
+            return 0;
+        }
+    }
+
+    [Serializable]
+    public class FirstDamageImmunityEquipEffect : EquipEffect
+    {
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
+        {
+            return 0; // 不在Execute里执行，在BattleEntity的TakeDamage里特判
+        }
+    }
+
+    [Serializable]
+    public class ThornsEquipEffect : EquipEffect
+    {
+        public int reflectDamage = 2;
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
+        {
+            bool hitLanded = opponent.TakeDamage(reflectDamage);
+            if (hitLanded)
+            {
+                opponent.PlayHitAnim();
+                manager.SpawnHitEffect(opponent.transform, SectionLevel.Level1);
+                manager.SpawnGeneralPopup(wearer.isPlayer, $"<color=#FF4500>反伤!</color>");
+                manager.SpawnDamagePopup(opponent.isPlayer, reflectDamage.ToString(), 2);
+                if (opponent.currentBasicLife <= 0) opponent.PlayDieAnim();
+            }
+            return 0;
+        }
+    }
+
+    [Serializable]
+    public class ReduceDebuffDurationEquipEffect : EquipEffect
+    {
+        [Tooltip("减少负面状态的持续回合数")]
+        public int reduceTurns = 1;
+
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
+        {
+            return 0; // 在 BattleEntity.AddStatus 内部特判
+        }
+    }
+
+    [Serializable]
+    public class ApplyStatusOnLowHealthEquipEffect : EquipEffect
+    {
+        [Tooltip("生命值低于等于百分之几触发 (0-100)")]
+        public float hpThresholdPercent = 30f;
+        
+        [Tooltip("触发附加的状态")]
+        public StatusType statusType = StatusType.Tenacious;
+
+        [Tooltip("附加状态的持续回合数")]
+        public int duration = 1;
+
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
+        {
+            return 0; // 在 BattleEntity 内部特判
+        }
+    }
+
+    [Serializable]
+    public class ItemCapacityEquipEffect : EquipEffect
+    {
+        [Tooltip("增加同种道具的携带上限")]
+        public int extraCapacity = 1;
+
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager)
+        {
+            return 0; // 不在战斗中直接结算，由 GameManager 读取
+        }
+    }
+
+    [Serializable]
+    public class ModifyHitSectionWidthEquipEffect : EquipEffect
+    {
+        [Tooltip("要增加宽度的命中区间等级")]
+        public SectionLevel targetLevel = SectionLevel.Level3;
+
+        [Tooltip("增加的宽度值")]
+        public float extraWidth = 5f;
+
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager) { return 0; }
+    }
+
+    [Serializable]
+    public class DirectBasicLifeDamageEquipEffect : EquipEffect
+    {
+        [Tooltip("最小触发区间")]
+        public SectionLevel minLevel = SectionLevel.Level3;
+        
+        [Tooltip("最大触发区间")]
+        public SectionLevel maxLevel = SectionLevel.Level6;
+
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager) { return 0; }
+    }
+
+    [Serializable]
+    public class DoubleDamageOnDefendEquipEffect : EquipEffect
+    {
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager) { return 0; }
+    }
+
+    [Serializable]
+    public class MissDamageEquipEffect : EquipEffect
+    {
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager) { return 0; }
+    }
+
+    [Serializable]
+    public class ReduceSpecialSkillCostEquipEffect : EquipEffect
+    {
+        [Tooltip("特殊招式体力消耗减少量")]
+        public int costReduction = 1;
+
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager) { return 0; }
+    }
+
+    [Serializable]
+    public class SubSkillDamageBoostEquipEffect : EquipEffect
+    {
+        [Tooltip("攻击前使用特殊招式时基础伤害增加量")]
+        public int damageBoost = 3;
+
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager) { return 0; }
     }
 }

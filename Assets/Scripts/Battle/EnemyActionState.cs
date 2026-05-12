@@ -32,14 +32,21 @@ public class EnemyActionState : BattleState
             sections = new HitSection[leveledConfig.sections.Length]
         };
 
+        var widthModifiers = battleManager.enemyEntity.GetAllEquipEffects<GlobalBattleRules.ModifyHitSectionWidthEquipEffect>();
+
         for (int i = 0; i < finalConfig.sections.Length; i++)
         {
             HitSection original = leveledConfig.sections[i];
+            float equipWidthBonus = 0f;
+            foreach(var mod in widthModifiers) {
+                if (mod.targetLevel == original.level) equipWidthBonus += mod.extraWidth;
+            }
+
             finalConfig.sections[i] = new HitSection
             {
                 level = original.level,
                 axisPosition = original.axisPosition,
-                width = Mathf.Max(1f, original.width + widthModifier)
+                width = Mathf.Max(1f, original.width + widthModifier + equipWidthBonus)
             };
         }
         

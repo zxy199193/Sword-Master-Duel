@@ -12,13 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
   m_Name: Armour_302
   m_EditorClassIdentifier: 
-  equipName: "\u91CD\u9A91\u58EB\u94E0"
-  description: "\u547D\u4E2D\u533A\u95F4\u7B49\u7EA7<4\uFF0CDmg-12\r\n\u9632\u5FA1\u62DB\u5F0FDmg
-    Down+8\r\n\u95EA\u907F\u62DB\u5F0FHit Down-8"
+  equipName: "\u5E7B\u5F71\u7532"
+  description: "\u514D\u75AB\u6BCF\u573A\u6218\u6597\u7B2C\u4E00\u6B21\u4F24\u5BB3"
   icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
   equipType: 1
   quality: 2
-  weight: 30
+  weight: 12
   price: 100
   bonusLife: 0
   bonusStamina: 0
@@ -27,17 +26,13 @@ MonoBehaviour:
   bonusStrength: 0
   bonusMentality: 0
   atkFactor: 0
-  durability: 70
+  durability: 18
   equipEffects:
-  - rid: 2591120534691905545
+  - rid: 186583002561642510
   references:
     version: 2
     RefIds:
-    - rid: 2591120534691905545
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+    - rid: 186583002561642510
+      type: {class: GlobalBattleRules/FirstDamageImmunityEquipEffect, ns: , asm: Assembly-CSharp}
       data:
-        triggerTiming: 2
-        condition: 3
-        targetLevelMin: 1
-        targetLevelMax: 3
-        damageModifier: -12
+        triggerTiming: 0

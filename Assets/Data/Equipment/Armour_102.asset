@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Armour_102
   m_EditorClassIdentifier: 
   equipName: "\u9053\u670D"
-  description: 
+  description: "\u5BF9\u65B9\u653B\u51FB\u843D\u7A7A\u65F6\u6062\u590D1\u70B9\u4F53\u529B\u503C\r"
   icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
   equipType: 1
   quality: 0
@@ -27,7 +27,13 @@ MonoBehaviour:
   bonusMentality: 0
   atkFactor: 0
   durability: 5
-  equipEffects: []
+  equipEffects:
+  - rid: 186583002561642505
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 186583002561642505
+      type: {class: GlobalBattleRules/RecoverStaminaOnEvadeEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 4
+        recoverAmount: 1

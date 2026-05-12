@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1c18f77113ee6c43b287b2cfa33d68f, type: 3}
-  m_Name: Armour_305
+  m_Name: Weapon_306
   m_EditorClassIdentifier: 
-  equipName: "\u53CD\u5C04\u7532"
-  description: "\u53D7\u5230\u8D1F\u9762\u6548\u679C\u4F1A\u53CD\u5F39"
-  icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
-  equipType: 1
+  equipName: "\u9057\u8FF9\u5927\u5251"
+  description: "\u9057\u8FF9\u5B88\u536B\u6301\u6709\u7684\u5927\u5251\uFF0C\u950B\u5229\u65E0\u6BD4"
+  icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
+  equipType: 0
   quality: 2
-  weight: 20
-  price: 100
+  weight: 15
+  price: 50
   bonusLife: 0
   bonusStamina: 0
   bonusVitality: 0
   bonusEndurance: 0
   bonusStrength: 0
   bonusMentality: 0
-  atkFactor: 0
-  durability: 30
+  atkFactor: 2
+  durability: 0
   equipEffects: []
   references:
     version: 2
