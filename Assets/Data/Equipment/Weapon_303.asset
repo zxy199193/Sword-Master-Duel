@@ -27,7 +27,12 @@ MonoBehaviour:
   bonusMentality: 0
   atkFactor: 1.2
   durability: 0
-  equipEffects: []
+  equipEffects:
+  - rid: 186583002561642544
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 186583002561642544
+      type: {class: GlobalBattleRules/MissDamageEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 1

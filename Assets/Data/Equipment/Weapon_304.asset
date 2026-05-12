@@ -28,22 +28,18 @@ MonoBehaviour:
   atkFactor: 1.2
   durability: 0
   equipEffects:
-  - rid: 2591120534691905537
-  - rid: 2591120534691905538
+  - rid: 186583002561642545
+  - rid: 186583002561642546
   references:
     version: 2
     RefIds:
-    - rid: 2591120534691905537
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
+    - rid: 186583002561642545
+      type: {class: GlobalBattleRules/ReduceSpecialSkillCostEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 0
+        costReduction: 1
+    - rid: 186583002561642546
+      type: {class: GlobalBattleRules/SubSkillDamageBoostEquipEffect, ns: , asm: Assembly-CSharp}
       data:
         triggerTiming: 1
-        targetLevelMin: 1
-        targetLevelMax: 2
-        damageModifier: -8
-    - rid: 2591120534691905538
-      type: {class: GlobalBattleRules/ConditionalDamageEquipEffect, ns: , asm: Assembly-CSharp}
-      data:
-        triggerTiming: 1
-        targetLevelMin: 3
-        targetLevelMax: 3
-        damageModifier: 10
+        damageBoost: 3

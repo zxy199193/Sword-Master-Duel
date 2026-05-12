@@ -22,15 +22,55 @@ MonoBehaviour:
   baseGoldReward: 105
   baseExpReward: 50
   extraRewardPool:
-  - rewardType: 0
-    equipment: {fileID: 11400000, guid: af82ac9a05f1ceb4d88848733b6292ee, type: 2}
-    item: {fileID: 0}
-    quantity: 0
   - rewardType: 1
     equipment: {fileID: 0}
     item: {fileID: 11400000, guid: daf250b8dd2f3b044bef75c6db978564, type: 2}
-    quantity: 2
+    quantity: 3
   - rewardType: 1
     equipment: {fileID: 0}
     item: {fileID: 11400000, guid: f17287398bf6a46469bca1bd08f0976b, type: 2}
-    quantity: 2
+    quantity: 3
+  - rewardType: 1
+    equipment: {fileID: 0}
+    item: {fileID: 11400000, guid: c063db8790af34e4cb3c42e3bf8da76a, type: 2}
+    quantity: 3
+  - rewardType: 1
+    equipment: {fileID: 0}
+    item: {fileID: 11400000, guid: 581cf46c902186f4a84fb49c1045502d, type: 2}
+    quantity: 3
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: af82ac9a05f1ceb4d88848733b6292ee, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: d28437660135e224faeb53641de52944, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: 3cc641b13ae20f14c9d649a4e428af87, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: d66e917e3eb5833458f63242907f8510, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: f162abb5a6de9c94698425de589b2a57, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: ad75afb9e4f061140b79943f47328266, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: ceb47dbcb78db1a42a631838cbccb0c1, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: 69f6c24141c62b249b8cd72b342dcaf7, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: d5625e01b5bb06f41bc4b2dae8c3dba0, type: 2}
+    item: {fileID: 0}
+    quantity: 1

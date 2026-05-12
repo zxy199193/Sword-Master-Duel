@@ -24,13 +24,61 @@ MonoBehaviour:
   extraRewardPool:
   - rewardType: 1
     equipment: {fileID: 0}
+    item: {fileID: 11400000, guid: 309fbf6a33108a940a6a8b1fe7845098, type: 2}
+    quantity: 3
+  - rewardType: 1
+    equipment: {fileID: 0}
+    item: {fileID: 11400000, guid: af6c2dcac1165284db9ce42fcd7f8383, type: 2}
+    quantity: 3
+  - rewardType: 1
+    equipment: {fileID: 0}
     item: {fileID: 11400000, guid: 9b8a317c081484c4cbb35a481d515985, type: 2}
-    quantity: 0
+    quantity: 3
+  - rewardType: 1
+    equipment: {fileID: 0}
+    item: {fileID: 11400000, guid: c22af5460d2101f4d922e5f7fe0642fd, type: 2}
+    quantity: 3
+  - rewardType: 1
+    equipment: {fileID: 0}
+    item: {fileID: 11400000, guid: c3b1a4ffab296d242a24a9456d1a781d, type: 2}
+    quantity: 3
   - rewardType: 1
     equipment: {fileID: 0}
     item: {fileID: 11400000, guid: dbd436761913df2418c6e53387488e42, type: 2}
-    quantity: 0
+    quantity: 3
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: c419d586b6389cc42935ddaa20eff532, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: b87ae8d1ba481cc4b8080d5cf8302ef2, type: 2}
+    item: {fileID: 0}
+    quantity: 1
   - rewardType: 0
     equipment: {fileID: 11400000, guid: a17aea8861589da43a5be9a65145dc38, type: 2}
     item: {fileID: 0}
-    quantity: 0
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: 53ce3cf313c344d43914060efb98df83, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: d1baaa345e14382418341d826c9d6047, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: 5fa08a3860c80574a823877eb1de8d74, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: 5e2c19106650a7842a809b65cbde8d05, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: 11262686e8a463e4eb09d398ae80bfdc, type: 2}
+    item: {fileID: 0}
+    quantity: 1
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: a4692f4f71c94eb4b83e793fc7b6c00a, type: 2}
+    item: {fileID: 0}
+    quantity: 1

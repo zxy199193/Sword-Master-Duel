@@ -22,15 +22,15 @@ MonoBehaviour:
   baseGoldReward: 180
   baseExpReward: 200
   extraRewardPool:
-  - rewardType: 1
-    equipment: {fileID: 0}
-    item: {fileID: 11400000, guid: 9b8a317c081484c4cbb35a481d515985, type: 2}
-    quantity: 0
-  - rewardType: 1
-    equipment: {fileID: 0}
-    item: {fileID: 11400000, guid: dbd436761913df2418c6e53387488e42, type: 2}
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: fb351ff80c51f2247869f0e3356f0ade, type: 2}
+    item: {fileID: 0}
     quantity: 0
   - rewardType: 0
-    equipment: {fileID: 11400000, guid: a17aea8861589da43a5be9a65145dc38, type: 2}
+    equipment: {fileID: 11400000, guid: 53abcf9da0f5a424c8dad80cf2662f53, type: 2}
+    item: {fileID: 0}
+    quantity: 0
+  - rewardType: 0
+    equipment: {fileID: 11400000, guid: be34cb95b6c64ff419c8227c2196e5ff, type: 2}
     item: {fileID: 0}
     quantity: 0

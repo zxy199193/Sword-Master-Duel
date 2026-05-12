@@ -23,8 +23,8 @@ MonoBehaviour:
   strength: 12
   mentality: 6
   staminaRecoverPerTurn: 2
-  equippedWeapon: {fileID: 11400000, guid: a17d1176ef6c913448d13dd85aa25696, type: 2}
-  equippedArmor: {fileID: 11400000, guid: a3fea4b0612c265479844132e8f5ea5d, type: 2}
+  equippedWeapon: {fileID: 11400000, guid: 37cafa08047d60c44b7761c48a900bf0, type: 2}
+  equippedArmor: {fileID: 11400000, guid: e3bef7720f8c0ba459cb3974701421e8, type: 2}
   equippedAccessories: []
   aiReactionTolerance: 0.3
   aiMaxBounces: 3

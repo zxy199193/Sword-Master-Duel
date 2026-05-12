@@ -77,6 +77,7 @@ public class HitBarActionState : BattleState
 
         for (int i = 0; i < extraSections.Count; i++)
         {
+            HitSection extra = extraSections[i];
             float equipWidthBonus = 0f;
             foreach(var mod in widthModifiers) {
                 if (mod.targetLevel == extra.level) equipWidthBonus += mod.extraWidth;
