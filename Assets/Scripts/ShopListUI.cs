@@ -22,6 +22,16 @@ public class ShopListUI : MonoBehaviour
     public Button refreshBtn;
     public Text refreshCostText;
 
+    [Header("Shop Auto Equip Confirmation UI")]
+    public GameObject autoEquipConfirmPanel;
+    public Button autoEquipConfirmBtn;
+    public Button autoEquipCancelBtn;
+
+    [Header("Shop Auto Equip Full UI")]
+    public GameObject autoEquipFullPanel;
+    public Button autoEquipFullConfirmBtn;
+    public Button autoEquipFullCancelBtn;
+
     private ShopConfig currentConfig;
     private RestUIManager restUIManager;
 
@@ -32,6 +42,8 @@ public class ShopListUI : MonoBehaviour
     private void Awake()
     {
         if (closeBtn) closeBtn.onClick.AddListener(CloseList);
+        if (autoEquipConfirmPanel) autoEquipConfirmPanel.SetActive(false);
+        if (autoEquipFullPanel) autoEquipFullPanel.SetActive(false);
     }
 
     // ==========================================
@@ -44,7 +56,12 @@ public class ShopListUI : MonoBehaviour
         restUIManager = manager;
     }
 
-    public void CloseList() => gameObject.SetActive(false);
+    public void CloseList() 
+    {
+        if (autoEquipConfirmPanel) autoEquipConfirmPanel.SetActive(false);
+        if (autoEquipFullPanel) autoEquipFullPanel.SetActive(false);
+        gameObject.SetActive(false);
+    }
 
     // ==========================================
     // Public Methods - Dojo Actions
@@ -73,7 +90,7 @@ public class ShopListUI : MonoBehaviour
                 if (profile.currentRestDays >= 1 && profile.ConsumeGold(skill.price))
                 {
                     profile.currentRestDays -= 1;
-                    TryAutoEquipSkill(skill, profile);
+                    TryAutoEquipSkill(skill, profile, () => restUIManager.RefreshPlayerStatusUI());
                     Debug.Log($"购买并尝试装备招式: {skill.skillName}");
                     OpenLearnSkill();
                     restUIManager.RefreshPlayerStatusUI();
@@ -93,7 +110,7 @@ public class ShopListUI : MonoBehaviour
                 if (profile.currentRestDays >= 1 && profile.ConsumeGold(skill.price))
                 {
                     profile.currentRestDays -= 1;
-                    TryAutoEquipSkill(skill, profile);
+                    TryAutoEquipSkill(skill, profile, () => restUIManager.RefreshPlayerStatusUI());
                     Debug.Log($"购买并尝试装备招式(随机): {skill.skillName}");
                     OpenLearnSkill();
                     restUIManager.RefreshPlayerStatusUI();
@@ -264,7 +281,7 @@ public class ShopListUI : MonoBehaviour
         {
             if (profile.ConsumeGold(equip.price))
             {
-                TryAutoEquipEquipment(equip, profile);
+                TryAutoEquipEquipment(equip, profile, () => restUIManager.RefreshPlayerStatusUI());
                 OpenShop(category);
                 restUIManager.RefreshPlayerStatusUI();
             }
@@ -285,7 +302,7 @@ public class ShopListUI : MonoBehaviour
         {
             if (profile.ConsumeGold(skill.price))
             {
-                TryAutoEquipSkill(skill, profile);
+                TryAutoEquipSkill(skill, profile, () => restUIManager.RefreshPlayerStatusUI());
                 OpenShop(category);
                 restUIManager.RefreshPlayerStatusUI();
             }
@@ -300,87 +317,179 @@ public class ShopListUI : MonoBehaviour
         return count;
     }
 
-    private void TryAutoEquipEquipment(EquipmentData equip, PlayerProfile profile)
+    private void TryAutoEquipEquipment(EquipmentData equip, PlayerProfile profile, System.Action onEquipSuccess = null)
     {
-        bool equipped = false;
-        if (equip.equipType == EquipmentType.Weapon && profile.equippedWeapon == null)
-        {
-            profile.equippedWeapon = equip;
-            equipped = true;
-        }
-        else if (equip.equipType == EquipmentType.Armor && profile.equippedArmor == null)
-        {
-            profile.equippedArmor = equip;
-            profile.currentExtraLife = equip.durability;
-            equipped = true;
-        }
-        else if (equip.equipType == EquipmentType.Accessory && profile.equippedAccessories.Count < 3)
-        {
-            profile.equippedAccessories.Add(equip);
-            equipped = true;
+        profile.storageEquipments.Add(equip);
+
+        if (autoEquipConfirmPanel) autoEquipConfirmPanel.SetActive(true);
+
+        if (autoEquipConfirmBtn != null) {
+            autoEquipConfirmBtn.onClick.RemoveAllListeners();
+            autoEquipConfirmBtn.onClick.AddListener(() => {
+                if (autoEquipConfirmPanel) autoEquipConfirmPanel.SetActive(false);
+
+                bool canEquip = false;
+                int accIndex = -1;
+                
+                if (equip.equipType == EquipmentType.Weapon && profile.equippedWeapon == null) canEquip = true;
+                else if (equip.equipType == EquipmentType.Armor && profile.equippedArmor == null) canEquip = true;
+                else if (equip.equipType == EquipmentType.Accessory) 
+                {
+                    for(int i = 0; i < 3; i++) {
+                        if (i >= profile.equippedAccessories.Count || profile.equippedAccessories[i] == null) {
+                            accIndex = i;
+                            break;
+                        }
+                    }
+                    if (accIndex != -1) canEquip = true;
+                }
+
+                if (canEquip) {
+                    profile.storageEquipments.Remove(equip);
+                    if (equip.equipType == EquipmentType.Weapon) profile.equippedWeapon = equip;
+                    else if (equip.equipType == EquipmentType.Armor) { profile.equippedArmor = equip; profile.currentExtraLife = equip.durability; }
+                    else if (equip.equipType == EquipmentType.Accessory) {
+                        while (profile.equippedAccessories.Count <= accIndex) profile.equippedAccessories.Add(null);
+                        profile.equippedAccessories[accIndex] = equip;
+                    }
+                    onEquipSuccess?.Invoke();
+                    Debug.Log($"已自动装备: {equip.equipName}");
+                } else {
+                    if (autoEquipFullPanel) autoEquipFullPanel.SetActive(true);
+                }
+            });
         }
 
-        if (!equipped)
-        {
-            profile.storageEquipments.Add(equip);
-            Debug.Log($"已放入仓库: {equip.equipName}");
+        if (autoEquipCancelBtn != null) {
+            autoEquipCancelBtn.onClick.RemoveAllListeners();
+            autoEquipCancelBtn.onClick.AddListener(() => {
+                if (autoEquipConfirmPanel) autoEquipConfirmPanel.SetActive(false);
+                Debug.Log($"已放入仓库: {equip.equipName}");
+            });
         }
-        else
-        {
-            Debug.Log($"已自动装备: {equip.equipName}");
+        
+        if (autoEquipFullConfirmBtn != null) {
+            autoEquipFullConfirmBtn.onClick.RemoveAllListeners();
+            autoEquipFullConfirmBtn.onClick.AddListener(() => {
+                if (autoEquipFullPanel) autoEquipFullPanel.SetActive(false);
+                CloseList();
+                restUIManager.OnOpenRolePanelClicked();
+            });
+        }
+        
+        if (autoEquipFullCancelBtn != null) {
+            autoEquipFullCancelBtn.onClick.RemoveAllListeners();
+            autoEquipFullCancelBtn.onClick.AddListener(() => {
+                if (autoEquipFullPanel) autoEquipFullPanel.SetActive(false);
+                Debug.Log($"槽位已满，已放入仓库: {equip.equipName}");
+            });
         }
     }
 
-    private void TryAutoEquipSkill(SkillData skill, PlayerProfile profile)
+    private void TryAutoEquipSkill(SkillData skill, PlayerProfile profile, System.Action onEquipSuccess = null)
     {
-        bool equipped = false;
-        SkillSlot newSlot = new SkillSlot { skillData = skill, level = 1, quantity = 1 };
-
         if (skill.skillType == SkillType.Item)
         {
-            int maxCap = profile.GetMaxItemCapacity();
-            // 道具：先尝试堆叠
+            bool isAlreadyEquipped = false;
             foreach (var s in profile.equippedItems)
             {
                 if (s != null && s.skillData == skill) 
                 { 
-                    if (s.quantity < maxCap) s.quantity++; 
-                    equipped = true; 
+                    isAlreadyEquipped = true;
                     break; 
                 }
             }
-            // 堆叠失败则看是否有空位
-            if (!equipped && profile.equippedItems.Count < 4)
-            {
-                profile.equippedItems.Add(newSlot);
-                equipped = true;
-            }
-        }
-        else
-        {
-            // 招式类
-            List<SkillSlot> targetList = null;
-            int limit = 0;
-            if (skill.skillType == SkillType.Attack) { targetList = profile.equippedAttackSkills; limit = 4; }
-            else if (skill.skillType == SkillType.Defend || skill.skillType == SkillType.Dodge) { targetList = profile.equippedDefendSkills; limit = 2; }
-            else if (skill.skillType == SkillType.Special) { targetList = profile.equippedSpecialSkills; limit = 1; }
 
-            if (targetList != null && targetList.Count < limit)
+            if (isAlreadyEquipped)
             {
-                targetList.Add(newSlot);
-                equipped = true;
+                AddOrStackItem(skill, profile);
+                onEquipSuccess?.Invoke();
+                return;
             }
         }
 
-        if (!equipped)
-        {
-            // 放入仓库
-            AddOrStackItem(skill, profile);
-            Debug.Log($"已放入仓库: {skill.skillName}");
+        AddOrStackItem(skill, profile);
+
+        if (autoEquipConfirmPanel) autoEquipConfirmPanel.SetActive(true);
+
+        if (autoEquipConfirmBtn != null) {
+            autoEquipConfirmBtn.onClick.RemoveAllListeners();
+            autoEquipConfirmBtn.onClick.AddListener(() => {
+                if (autoEquipConfirmPanel) autoEquipConfirmPanel.SetActive(false);
+                
+                bool canEquip = false;
+                List<SkillSlot> targetList = null;
+                int limit = 0;
+                
+                if (skill.skillType == SkillType.Item) {
+                    targetList = profile.equippedItems; limit = 4;
+                } else {
+                    if (skill.skillType == SkillType.Attack) { targetList = profile.equippedAttackSkills; limit = 4; }
+                    else if (skill.skillType == SkillType.Defend || skill.skillType == SkillType.Dodge) { targetList = profile.equippedDefendSkills; limit = 4; }
+                    else if (skill.skillType == SkillType.Special) { targetList = profile.equippedSpecialSkills; limit = 4; }
+                }
+
+                int emptyIndex = -1;
+                if (targetList != null) {
+                    for(int i = 0; i < limit; i++) {
+                        if (i >= targetList.Count || targetList[i] == null) {
+                            emptyIndex = i;
+                            break;
+                        }
+                    }
+                    if (emptyIndex != -1) canEquip = true;
+                }
+
+                if (canEquip) {
+                    SkillSlot foundInStorage = profile.storageSkillsAndItems.Find(s => s != null && s.skillData == skill);
+                    if (foundInStorage != null) {
+                        if (foundInStorage.quantity > 1) {
+                            int maxCap = profile.GetMaxItemCapacity();
+                            int moveQty = Mathf.Min(foundInStorage.quantity, maxCap);
+                            foundInStorage.quantity -= moveQty;
+                            
+                            SkillSlot newSlot = new SkillSlot { skillData = skill, level = foundInStorage.level, quantity = moveQty };
+                            while(targetList.Count <= emptyIndex) targetList.Add(null);
+                            targetList[emptyIndex] = newSlot;
+
+                            if (foundInStorage.quantity <= 0) profile.storageSkillsAndItems.Remove(foundInStorage);
+                        } else {
+                            profile.storageSkillsAndItems.Remove(foundInStorage);
+                            while(targetList.Count <= emptyIndex) targetList.Add(null);
+                            targetList[emptyIndex] = foundInStorage;
+                        }
+                    }
+                    onEquipSuccess?.Invoke();
+                    Debug.Log($"已自动装备: {skill.skillName}");
+                } else {
+                    if (autoEquipFullPanel) autoEquipFullPanel.SetActive(true);
+                }
+            });
         }
-        else
-        {
-            Debug.Log($"已自动装备: {skill.skillName}");
+
+        if (autoEquipCancelBtn != null) {
+            autoEquipCancelBtn.onClick.RemoveAllListeners();
+            autoEquipCancelBtn.onClick.AddListener(() => {
+                if (autoEquipConfirmPanel) autoEquipConfirmPanel.SetActive(false);
+                Debug.Log($"已放入仓库: {skill.skillName}");
+            });
+        }
+
+        if (autoEquipFullConfirmBtn != null) {
+            autoEquipFullConfirmBtn.onClick.RemoveAllListeners();
+            autoEquipFullConfirmBtn.onClick.AddListener(() => {
+                if (autoEquipFullPanel) autoEquipFullPanel.SetActive(false);
+                CloseList();
+                restUIManager.OnOpenRolePanelClicked();
+            });
+        }
+
+        if (autoEquipFullCancelBtn != null) {
+            autoEquipFullCancelBtn.onClick.RemoveAllListeners();
+            autoEquipFullCancelBtn.onClick.AddListener(() => {
+                if (autoEquipFullPanel) autoEquipFullPanel.SetActive(false);
+                Debug.Log($"槽位已满，已放入仓库: {skill.skillName}");
+            });
         }
     }
 

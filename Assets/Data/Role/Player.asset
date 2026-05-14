@@ -18,21 +18,23 @@ MonoBehaviour:
   animatorController: {fileID: 9100000, guid: c7585f21c8cf4694fa2ea901d88545e7, type: 2}
   maxBasicLife: 10
   maxStamina: 5
-  vitality: 0
-  endurance: 0
-  strength: 0
-  mentality: 0
+  vitality: 1
+  endurance: 1
+  strength: 1
+  mentality: 1
   staminaRecoverPerTurn: 2
   equippedWeapon: {fileID: 0}
   equippedArmor: {fileID: 0}
   equippedAccessories: []
   aiReactionTolerance: 0.2
+  aiMaxBounces: 3
   npcSkills: []
   subSkillProbabilities:
   - 0.5
   - -1
   - -1
   - -1
+  difficultyLevel: 1
   isBoss: 0
   goldReward: 50
   expReward: 50

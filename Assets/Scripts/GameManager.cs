@@ -53,11 +53,11 @@ public class PlayerProfile
 
     public void AddExp(int amount)
     {
-        if (level >= 10) return;
+        if (level >= 12) return;
 
         currentExp += amount;
 
-        while (currentExp >= 100 && level < 10)
+        while (currentExp >= 100 && level < 12)
         {
             currentExp -= 100;
             level++;
@@ -65,7 +65,7 @@ public class PlayerProfile
             Debug.Log($"<color=lime>升级！当前等级 Lv.{level}，获得 4 点属性点！</color>");
         }
 
-        if (level >= 10) currentExp = 0;
+        if (level >= 12) currentExp = 0;
     }
 
     public int GetMaxLoad() => 10 + GetFinalEndurance() * 3;
@@ -131,6 +131,38 @@ public class PlayerProfile
         if (equippedArmor != null && currentExtraLife > 0) total += equippedArmor.bonusMentality;
         foreach (var acc in equippedAccessories) if (acc != null) total += acc.bonusMentality;
         return total;
+    }
+
+    public float GetFinalHitBarSpeed()
+    {
+        int mentality = GetFinalMentality();
+        float speedReduction = mentality * 0.03f;
+        float mentalMultiplier = Mathf.Max(0.2f, 1.0f - speedReduction);
+        return GlobalBattleRules.globalHitBarBaseSpeed * mentalMultiplier;
+    }
+
+    public float GetFinalHitBarSlowdown()
+    {
+        float loadMultiplier = 1.0f;
+        var loadState = GetLoadWeightState();
+        switch (loadState)
+        {
+            case GlobalBattleRules.LoadWeightState.Light: loadMultiplier = 1.3f; break;
+            case GlobalBattleRules.LoadWeightState.Medium: loadMultiplier = 1.0f; break;
+            case GlobalBattleRules.LoadWeightState.Heavy: loadMultiplier = 0.7f; break;
+            case GlobalBattleRules.LoadWeightState.Extreme: loadMultiplier = 0.4f; break;
+        }
+        return GlobalBattleRules.globalHitBarBaseSlowdown * loadMultiplier;
+    }
+
+    public float GetWeaponAtkFactor()
+    {
+        return equippedWeapon != null ? equippedWeapon.atkFactor : 1.0f;
+    }
+
+    public int GetArmorExtraLife()
+    {
+        return equippedArmor != null ? equippedArmor.durability : 0;
     }
 
     public int GetHpRecoverPerTurn()
@@ -234,6 +266,7 @@ public class GameManager : MonoBehaviour
     public LevelUIManager levelUIManager;
     public RestUIManager restUIManager;
     public BattleResultUI battleResultUI;
+    public GameObject intermediateResultUI; // 过渡节点
 
     [Header("运行进度 (Runtime Progress)")]
     public int currentMainLevelIndex = 0;
@@ -339,8 +372,9 @@ public class GameManager : MonoBehaviour
     {
         currentNodeIndex++;
 
-        if (currentNodeIndex >= 3) EndCurrentLevelGroup();
-        else StartCombatNode();
+        // 因为在 OnBattleResolution 里已经拦截了最后一场去调用 EndCurrentLevelGroup，
+        // 这里理论上只会是前两场继续
+        if (currentNodeIndex < 3) StartCombatNode();
     }
 
     public void AdvanceToNextMainLevel()
@@ -397,13 +431,45 @@ public class GameManager : MonoBehaviour
         {
             SavePlayerBattleState();
 
-            if (battleResultUI != null) battleResultUI.ShowResult();
-            else AdvanceToNextNode();
+            if (currentNodeIndex < 2)
+            {
+                // 还有下一场战斗，弹出过渡节点
+                if (intermediateResultUI != null)
+                {
+                    intermediateResultUI.SetActive(true);
+                }
+                else
+                {
+                    AdvanceToNextNode();
+                }
+            }
+            else
+            {
+                // 第3场打完，直接进入关卡结算
+                EndCurrentLevelGroup();
+            }
         }
         else
         {
             Debug.Log("Game Over! 玩家阵亡。");
         }
+    }
+
+    /// <summary>
+    /// 供中间过渡节点的“继续”按钮调用，隐藏节点并开始下一场战斗。
+    /// </summary>
+    public void ContinueFromIntermediateNode()
+    {
+        if (intermediateResultUI != null) intermediateResultUI.SetActive(false);
+        AdvanceToNextNode();
+    }
+
+    /// <summary>
+    /// 供大结算弹窗（BattleResultUI）动画播完点击继续时调用，正式回到休息区。
+    /// </summary>
+    public void EnterRestFromBattleResult()
+    {
+        EnterRestUI();
     }
 
     public void OnBattleRetreat()
@@ -614,13 +680,13 @@ public class GameManager : MonoBehaviour
                                      currentGroupAExtraReward, currentGroupBExtraReward);
     }
 
-    /// <summary>
-    /// 玩家通关选定组的3场战斗后调用：发放基础奖励 + 对应组额外奖励，然后进入休息界面。
-    /// </summary>
     private void EndCurrentLevelGroup()
     {
         LevelData currentLevel = allLevels[currentMainLevelIndex];
         string groupLabel = selectedGroupIsA ? "A" : "B";
+
+        int oldLevel = playerProfile.level;
+        int oldExp = playerProfile.currentExp;
 
         // ── 基础奖励 ──
         int finalGold = currentLevel.baseGoldReward;
@@ -704,7 +770,14 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        EnterRestUI();
+        if (battleResultUI != null)
+        {
+            battleResultUI.ShowResult(oldLevel, oldExp, finalExp, finalGold, extra);
+        }
+        else
+        {
+            EnterRestUI();
+        }
     }
 
     /// <summary>

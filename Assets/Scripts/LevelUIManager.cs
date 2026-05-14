@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 关卡选择界面：显示 A、B 两组共6个敌人，及基础奖励和各组额外奖励。
@@ -42,6 +44,13 @@ public class LevelUIManager : MonoBehaviour
     [Header("B 组额外奖励挂载节点")]
     public Transform groupBRewardParent;
 
+    [Header("奖励详情浮窗")]
+    public GameObject rewardTooltipPanel; // 背景挡板，点击关闭
+    public Transform tooltipRootA; // A组浮窗挂点
+    public Transform tooltipRootB; // B组浮窗挂点
+    public GameObject shopEquipPrefab; // 从商店复用的预制体
+    public GameObject shopSkillPrefab; // 从商店复用的预制体
+
     [Header("返回休息场景")]
     [Tooltip("第一关时置灰不可点击；第二关起可点击返回休息场景")]
     public Button returnToRestBtn;
@@ -49,6 +58,8 @@ public class LevelUIManager : MonoBehaviour
     [Header("角色面板")]
     public Button openRolePanelBtn;
     public RoleUIManager roleUIManager;
+
+    private bool canHideTooltipThisFrame = false;
 
     // ==========================================
     // Unity Lifecycle
@@ -67,6 +78,32 @@ public class LevelUIManager : MonoBehaviour
 
         if (returnToRestBtn != null)
             returnToRestBtn.onClick.AddListener(OnReturnToRestClicked);
+
+        if (rewardTooltipPanel != null)
+        {
+            // 移除旧的背景按钮逻辑，改为 Update 全局检测
+            rewardTooltipPanel.SetActive(false);
+        }
+    }
+
+    private void Update()
+    {
+        if (rewardTooltipPanel != null && rewardTooltipPanel.activeSelf)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (canHideTooltipThisFrame)
+                {
+                    if (!IsPointerOverTooltip())
+                    {
+                        rewardTooltipPanel.SetActive(false);
+                        if (tooltipRootA != null) { foreach (Transform child in tooltipRootA) Destroy(child.gameObject); }
+                        if (tooltipRootB != null) { foreach (Transform child in tooltipRootB) Destroy(child.gameObject); }
+                        canHideTooltipThisFrame = false;
+                    }
+                }
+            }
+        }
     }
 
     // ==========================================
@@ -95,8 +132,8 @@ public class LevelUIManager : MonoBehaviour
         if (baseExpText  != null) baseExpText.text  = $"{levelData.baseExpReward}";
 
         // ── A / B 组额外奖励（实例化预制体）──
-        SpawnRewardItem(groupARewardParent, rewardA);
-        SpawnRewardItem(groupBRewardParent, rewardB);
+        SpawnRewardItem(groupARewardParent, rewardA, true);
+        SpawnRewardItem(groupBRewardParent, rewardB, false);
 
         // ── 返回休息按钮：第一关置灰 ──
         if (returnToRestBtn != null)
@@ -135,7 +172,7 @@ public class LevelUIManager : MonoBehaviour
     /// <summary>
     /// 清空父节点下的旧预制体，然后实例化一个新的奖励 Item。
     /// </summary>
-    private void SpawnRewardItem(Transform parent, LevelExtraRewardEntry entry)
+    private void SpawnRewardItem(Transform parent, LevelExtraRewardEntry entry, bool isGroupA)
     {
         if (parent == null || rewardItemPrefab == null) return;
 
@@ -149,7 +186,73 @@ public class LevelUIManager : MonoBehaviour
         GameObject go = Instantiate(rewardItemPrefab, parent);
         LevelRewardItemUI ui = go.GetComponent<LevelRewardItemUI>();
         if (ui != null)
-            ui.Setup(entry);
+            ui.Setup(entry, isGroupA, OnRewardItemClicked);
+    }
+
+    private void OnRewardItemClicked(LevelExtraRewardEntry entry, bool isGroupA)
+    {
+        Debug.Log($"点击了额外奖励图标: isGroupA={isGroupA}, 物品名={entry?.GetDisplayName()}");
+        
+        if (entry == null) 
+        {
+            Debug.LogWarning("点击失败：entry 为空");
+            return;
+        }
+        
+        if (rewardTooltipPanel == null) 
+        {
+            Debug.LogWarning("点击失败：rewardTooltipPanel 未在面板赋值！");
+            return;
+        }
+
+        Transform targetRoot = isGroupA ? tooltipRootA : tooltipRootB;
+        if (targetRoot == null) 
+        {
+            Debug.LogWarning($"点击失败：{(isGroupA ? "tooltipRootA" : "tooltipRootB")} 未在面板赋值！");
+            return;
+        }
+
+        Debug.Log("正常弹出奖励浮窗");
+        canHideTooltipThisFrame = false;
+        rewardTooltipPanel.SetActive(true);
+        StartCoroutine(EnableHideTooltipNextFrame());
+
+        if (tooltipRootA != null) { foreach (Transform child in tooltipRootA) Destroy(child.gameObject); }
+        if (tooltipRootB != null) { foreach (Transform child in tooltipRootB) Destroy(child.gameObject); }
+
+        if (entry.rewardType == LevelExtraRewardEntry.RewardType.Equipment && entry.equipment != null)
+        {
+            if (shopEquipPrefab != null)
+            {
+                GameObject go = Instantiate(shopEquipPrefab, targetRoot);
+                EquipItemUI equipUI = go.GetComponent<EquipItemUI>();
+                if (equipUI != null)
+                {
+                    equipUI.Setup(entry.equipment, false, false, null, null);
+                    if (equipUI.selectBtn != null) equipUI.selectBtn.gameObject.SetActive(false);
+                    if (equipUI.unequipBtn != null) equipUI.unequipBtn.gameObject.SetActive(false);
+                    if (equipUI.buyBtn != null) equipUI.buyBtn.gameObject.SetActive(false);
+                    if (equipUI.ownedBadge != null) equipUI.ownedBadge.SetActive(false);
+                }
+            }
+        }
+        else if (entry.rewardType == LevelExtraRewardEntry.RewardType.Item && entry.item != null)
+        {
+            if (shopSkillPrefab != null)
+            {
+                GameObject go = Instantiate(shopSkillPrefab, targetRoot);
+                RoleSkillItemUI skillUI = go.GetComponent<RoleSkillItemUI>();
+                if (skillUI != null)
+                {
+                    SkillSlot fakeSlot = new SkillSlot { skillData = entry.item, level = 1, quantity = entry.quantity };
+                    skillUI.Setup(fakeSlot, false, false, null, null);
+                    if (skillUI.selectBtn != null) skillUI.selectBtn.gameObject.SetActive(false);
+                    if (skillUI.unequipBtn != null) skillUI.unequipBtn.gameObject.SetActive(false);
+                    if (skillUI.buyBtn != null) skillUI.buyBtn.gameObject.SetActive(false);
+                    if (skillUI.ownedBadge != null) skillUI.ownedBadge.SetActive(false);
+                }
+            }
+        }
     }
 
     private void OnStartBattleClicked(bool isGroupA)
@@ -161,5 +264,42 @@ public class LevelUIManager : MonoBehaviour
     {
         gameObject.SetActive(false);
         GameManager.Instance.EnterRestFromLevelUI();
+    }
+
+    // ==========================================
+    // Tooltip Helpers
+    // ==========================================
+
+    private IEnumerator EnableHideTooltipNextFrame()
+    {
+        yield return null;
+        canHideTooltipThisFrame = true;
+    }
+
+    private bool IsPointerOverTooltip()
+    {
+        if (tooltipRootA != null && tooltipRootA.childCount > 0 && IsPointerOverObject(tooltipRootA.gameObject)) return true;
+        if (tooltipRootB != null && tooltipRootB.childCount > 0 && IsPointerOverObject(tooltipRootB.gameObject)) return true;
+        return false;
+    }
+
+    private bool IsPointerOverObject(GameObject target)
+    {
+        if (target == null) return false;
+
+        PointerEventData eventData = new PointerEventData(EventSystem.current)
+        {
+            position = Input.mousePosition
+        };
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (var result in results)
+        {
+            Transform t = result.gameObject.transform;
+            if (t == target.transform || t.IsChildOf(target.transform))
+                return true;
+        }
+        return false;
     }
 }

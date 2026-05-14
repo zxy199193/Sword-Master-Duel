@@ -222,8 +222,12 @@ public class RestUIManager : MonoBehaviour
             GameManager.Instance.AdvanceToNextMainLevel();
     }
 
-    private void OnOpenRolePanelClicked()
+    public void OnOpenRolePanelClicked()
     {
+        CloseSubPanel();
+        if (continueConfirmPanel) continueConfirmPanel.SetActive(false);
+        if (shopListUI) shopListUI.CloseList();
+
         if (roleUIManager != null) roleUIManager.ShowPanel();
         else Debug.LogWarning("未绑定 RoleUIManager，无法打开角色面板！");
     }

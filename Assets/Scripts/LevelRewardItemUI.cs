@@ -12,10 +12,7 @@ public class LevelRewardItemUI : MonoBehaviour
     public Text   nameText;
     public Text   quantityText;
 
-    /// <summary>
-    /// 填充奖励显示数据。entry 为 null 时隐藏整个对象。
-    /// </summary>
-    public void Setup(LevelExtraRewardEntry entry)
+    public void Setup(LevelExtraRewardEntry entry, bool isGroupA = true, System.Action<LevelExtraRewardEntry, bool> onClick = null)
     {
         if (entry == null)
         {
@@ -24,6 +21,14 @@ public class LevelRewardItemUI : MonoBehaviour
         }
 
         gameObject.SetActive(true);
+
+        Button btn = GetComponent<Button>();
+        if (btn == null) btn = gameObject.AddComponent<Button>();
+        btn.onClick.RemoveAllListeners();
+        if (onClick != null)
+        {
+            btn.onClick.AddListener(() => onClick(entry, isGroupA));
+        }
 
         if (iconImage    != null) iconImage.sprite = entry.GetIcon();
         if (nameText     != null) nameText.text    = entry.GetDisplayName();

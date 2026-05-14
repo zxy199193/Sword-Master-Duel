@@ -9,8 +9,16 @@ public class RoleUIManager : MonoBehaviour
     public Text roleNameText;
     public Text levelText;
     public Text expText;
+    public Slider expSlider;
+    public Image expFill;
     public Text goldText;
     public System.Action OnCloseCallback;
+
+    [Header("UI 引用 - 追加基础信息")]
+    public Text hitBarSpeedText;
+    public Text hitBarSlowdownText;
+    public Text weaponAtkFactorText;
+    public Text armorExtraLifeText;
 
     [Header("UI 引用 - 属性面板")]
     public Text lifeText;
@@ -41,6 +49,7 @@ public class RoleUIManager : MonoBehaviour
 
     [Header("UI 引用 - 招式系统 (组件化)")]
     public SkillSlotUI[] skillSlots;
+    public int maxSkillSlots = 4;
     public Button attackTabBtn;
     public Button defendTabBtn;
     public Button specialTabBtn;
@@ -182,23 +191,60 @@ public class RoleUIManager : MonoBehaviour
 
         // Basic Info
         if (roleNameText) roleNameText.text = profile.playerRoleAsset.roleName;
-        if (levelText) levelText.text = $"{profile.level}";
+        if (levelText) 
+        {
+            if (profile.level >= 12) levelText.text = $"{profile.level} (Max)";
+            else levelText.text = $"{profile.level}";
+        }
         if (expText)
         {
-            if (profile.level >= 10) expText.text = "MAX";
+            if (profile.level >= 12) expText.text = "MAX";
             else expText.text = $"{profile.currentExp}/100";
         }
+        
+        float expRatio = profile.level >= 12 ? 1f : (profile.currentExp / 100f);
+        if (expSlider) expSlider.value = expRatio;
+        if (expFill) expFill.fillAmount = expRatio;
+
         if (goldText) goldText.text = profile.totalGold.ToString();
 
         // Attributes
         if (lifeText) lifeText.text = $"{profile.currentHp}/{profile.GetFinalMaxLife()}";
         if (staminaText) staminaText.text = $"{profile.currentStamina}/{profile.GetFinalMaxStamina()}";
-        if (vitalityText) vitalityText.text = profile.GetFinalVitality().ToString();
-        if (enduranceText) enduranceText.text = profile.GetFinalEndurance().ToString();
-        if (strengthText) strengthText.text = profile.GetFinalStrength().ToString();
-        if (mentalityText) mentalityText.text = profile.GetFinalMentality().ToString();
+        
+        if (vitalityText)
+        {
+            int finalVit = profile.GetFinalVitality();
+            int bonusVit = finalVit - profile.vitality;
+            vitalityText.text = bonusVit > 0 ? $"{finalVit} (+{bonusVit})" : finalVit.ToString();
+        }
+        if (enduranceText)
+        {
+            int finalEnd = profile.GetFinalEndurance();
+            int bonusEnd = finalEnd - profile.endurance;
+            enduranceText.text = bonusEnd > 0 ? $"{finalEnd} (+{bonusEnd})" : finalEnd.ToString();
+        }
+        if (strengthText)
+        {
+            int finalStr = profile.GetFinalStrength();
+            int bonusStr = finalStr - profile.baseStrength;
+            strengthText.text = bonusStr > 0 ? $"{finalStr} (+{bonusStr})" : finalStr.ToString();
+        }
+        if (mentalityText)
+        {
+            int finalMen = profile.GetFinalMentality();
+            int bonusMen = finalMen - profile.baseMentality;
+            mentalityText.text = bonusMen > 0 ? $"{finalMen} (+{bonusMen})" : finalMen.ToString();
+        }
+
         if (staminaRecoverText) staminaRecoverText.text = $"{profile.GetStaminaRecoverPerTurn()} 点/回合";
         if (hpRecoverText) hpRecoverText.text = $"{profile.GetHpRecoverPerTurn()} 点/回合";
+
+        // 追加基础信息
+        if (hitBarSpeedText) hitBarSpeedText.text = profile.GetFinalHitBarSpeed().ToString("F0");
+        if (hitBarSlowdownText) hitBarSlowdownText.text = profile.GetFinalHitBarSlowdown().ToString("F0") + "/秒";
+        if (weaponAtkFactorText) weaponAtkFactorText.text = profile.GetWeaponAtkFactor().ToString("F1");
+        if (armorExtraLifeText) armorExtraLifeText.text = profile.GetArmorExtraLife().ToString();
 
         // Allocate Points
         if (unallocatedPointsText) unallocatedPointsText.text = $"{profile.unallocatedPoints}";
@@ -236,8 +282,17 @@ public class RoleUIManager : MonoBehaviour
                 }
                 itemSlots[i].gameObject.SetActive(true);
                 SkillSlot itemData = null;
-                if (i < profile.equippedItems.Count) itemData = profile.equippedItems[i];
-                itemSlots[i].UpdateUI(itemData, maxCap);
+                int totalQuantity = 0;
+                if (i < profile.equippedItems.Count) 
+                {
+                    itemData = profile.equippedItems[i];
+                    if (itemData != null && itemData.skillData != null)
+                    {
+                        foreach (var s in profile.equippedItems) { if (s != null && s.skillData == itemData.skillData) totalQuantity += s.quantity; }
+                        foreach (var s in profile.storageSkillsAndItems) { if (s != null && s.skillData == itemData.skillData) totalQuantity += s.quantity; }
+                    }
+                }
+                itemSlots[i].UpdateUI(itemData, maxCap, totalQuantity);
             }
         }
 
@@ -425,6 +480,13 @@ public class RoleUIManager : MonoBehaviour
         {
             for (int i = 0; i < skillSlots.Length; i++)
             {
+                if (i >= maxSkillSlots)
+                {
+                    skillSlots[i].gameObject.SetActive(false);
+                    continue;
+                }
+                skillSlots[i].gameObject.SetActive(true);
+
                 SkillSlot slot = null;
                 if (targetList != null && i < targetList.Count) slot = targetList[i];
                 skillSlots[i].UpdateUI(slot);
