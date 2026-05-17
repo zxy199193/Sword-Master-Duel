@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 50, y: 50}
+  m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1063836224337057441
 MonoBehaviour:
@@ -89,7 +89,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 5, y: 5}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 25, y: 25}
   m_Pivot: {x: 1, y: 1}
 --- !u!1 &5141508965462491944
@@ -362,7 +362,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_FontData.m_FontSize
-      value: 18
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 3783748700626428312, guid: bd2de5de124e0324999e4fc9db214d75, type: 3}
       propertyPath: m_FontData.m_FontStyle

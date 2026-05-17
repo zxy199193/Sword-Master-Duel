@@ -39,12 +39,13 @@ MonoBehaviour:
     actionTime: 0
     sections: []
   castEffectPrefab: {fileID: 6244812657412057649, guid: 074f9a4a2dee2fe4894c4a734404e113, type: 3}
+  castSoundEffect: {fileID: 0}
   effects:
-  - rid: 2591120559595585544
+  - rid: 186583124293976066
   references:
     version: 2
     RefIds:
-    - rid: 2591120559595585544
-      type: {class: CounterAttackOnEvadeEffect, ns: , asm: Assembly-CSharp}
+    - rid: 186583124293976066
+      type: {class: CounterAttackOnDefendEffect, ns: , asm: Assembly-CSharp}
       data:
         counterDamages: 030000000500000008000000

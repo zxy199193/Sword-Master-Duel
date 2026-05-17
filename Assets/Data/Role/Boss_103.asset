@@ -30,50 +30,50 @@ MonoBehaviour:
   aiMaxBounces: 2
   npcSkills:
   - skillSlot:
-      skillData: {fileID: 11400000, guid: fea8bac6424aa4e46817ca90543e2adc, type: 2}
-      level: 1
+      skillData: {fileID: 11400000, guid: c3eb73b81c6754c4094bccdb6132482b, type: 2}
+      level: 2
+      quantity: 0
+    phaseWeights: 00000000000000001e000000ffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 5daf620929a442e4ab3f48622b19a29a, type: 2}
+      level: 3
       quantity: 0
     phaseWeights: 0f000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 4597856bd55ad134da929ecf55e0d3c4, type: 2}
-      level: 1
+      level: 3
       quantity: 0
     phaseWeights: 0f000000ffffffffffffffffffffffff
   - skillSlot:
-      skillData: {fileID: 11400000, guid: c3eb73b81c6754c4094bccdb6132482b, type: 2}
-      level: 0
-      quantity: 0
-    phaseWeights: 00000000000000001e000000ffffffff
-  - skillSlot:
       skillData: {fileID: 11400000, guid: 5ec93632a710c2d42943edb20a688c60, type: 2}
-      level: 1
+      level: 3
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
-      skillData: {fileID: 11400000, guid: 5119037d3db79624da70ac9e9ebca13a, type: 2}
-      level: 0
+      skillData: {fileID: 11400000, guid: f5438f747f60a5a4e996f148dc32d15c, type: 2}
+      level: 3
+      quantity: 2
+    phaseWeights: 0a000000ffffffffffffffffffffffff
+  - skillSlot:
+      skillData: {fileID: 11400000, guid: 5ac0a60a5cdb50544bd2cc6d2173cdb6, type: 2}
+      level: 3
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
-      level: 1
+      level: 3
       quantity: 0
     phaseWeights: 00000000ffffffff0a000000ffffffff
   - skillSlot:
       skillData: {fileID: 11400000, guid: 1a14096148fa5134bb20982c9ed3f8e3, type: 2}
-      level: 1
+      level: 3
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
   - skillSlot:
-      skillData: {fileID: 11400000, guid: f504015147a24fb4f9a49f1ba4e50ea6, type: 2}
+      skillData: {fileID: 11400000, guid: e87486545a0a4134885a881d837c3f1f, type: 2}
       level: 1
-      quantity: 2
-    phaseWeights: 00000000ffffffff0a000000ffffffff
-  - skillSlot:
-      skillData: {fileID: 11400000, guid: b3ef6168878aa1d40a5440411a586a15, type: 2}
-      level: 1
-      quantity: 2
-    phaseWeights: 000000000a000000ffffffffffffffff
+      quantity: 3
+    phaseWeights: 0a000000ffffffffffffffffffffffff
   subSkillProbabilities:
   - 0.5
   - -1

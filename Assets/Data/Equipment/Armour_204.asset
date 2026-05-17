@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Armour_204
   m_EditorClassIdentifier: 
   equipName: "\u5FCD\u8005\u5957\u88C5"
-  description: "\u9053\u5177\u643A\u5E26\u6570\u91CF\u4E0A\u9650+2"
+  description: "\u9053\u5177\u643A\u5E26\u6570\u91CF\u4E0A\u9650+2\uFF0C\u9053\u5177\u9020\u6210\u7684\u4F24\u5BB3+5"
   icon: {fileID: 21300000, guid: 3fb4fb2597dc9214aa3e92274107287c, type: 3}
   equipType: 1
   quality: 1
@@ -29,6 +29,7 @@ MonoBehaviour:
   durability: 16
   equipEffects:
   - rid: 186583002561642520
+  - rid: 186583124293976068
   references:
     version: 2
     RefIds:
@@ -37,3 +38,8 @@ MonoBehaviour:
       data:
         triggerTiming: 0
         extraCapacity: 2
+    - rid: 186583124293976068
+      type: {class: GlobalBattleRules/ItemDamageBoostEquipEffect, ns: , asm: Assembly-CSharp}
+      data:
+        triggerTiming: 0
+        damageBoost: 5

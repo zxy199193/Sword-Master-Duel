@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 608e1027dbec7dc4a8438b4248abfb17, type: 3}
   m_Name: SPE_222
   m_EditorClassIdentifier: 
-  skillName: "\u5FC3\u773C"
-  description: "\u6211\u65B9\u8FDB\u5165\u3010\u96C6\u4E2D\u3011\u72B6\u6001"
+  skillName: "\u6D1E\u5BDF"
+  description: "\u6211\u65B9\u8FDB\u5165\u3010\u770B\u7834\u3011\u72B6\u6001"
   skillIcon: {fileID: 21300000, guid: 5fcffea1084f4d14aa9340465fb5df31, type: 3}
   skillType: 3
   animationTriggerName: Attack
@@ -48,7 +48,7 @@ MonoBehaviour:
     - rid: 2591120357824135170
       type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        statusType: 1
+        statusType: 18
         baseDurations: 020000000300000003000000
         applyToSelf: 1
         ignoreMentalityBonus: 0

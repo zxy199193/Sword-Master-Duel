@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SPE_622
   m_EditorClassIdentifier: 
   skillName: "\u706B\u9041"
-  description: "\u5BF9\u65B9\u8FDB\u5165\u3010\u707C\u70E7\u3011\u72B6\u6001"
+  description: "\u5BF9\u65B9\u53D7\u5230\u4F24\u5BB3\uFF084/6/9\uFF09\u5E76\u8FDB\u5165\u3010\u707C\u70E7\u3011\u72B6\u6001\r"
   skillIcon: {fileID: 21300000, guid: 5fcffea1084f4d14aa9340465fb5df31, type: 3}
   skillType: 3
   animationTriggerName: Attack
@@ -41,10 +41,15 @@ MonoBehaviour:
   castEffectPrefab: {fileID: 6244812657412057649, guid: 1ad4ad32ec0191345959a077e68ebe96, type: 3}
   castSoundEffect: {fileID: 8300000, guid: bd625f9ce6539b9459e802b29315a884, type: 3}
   effects:
+  - rid: 186583124293976067
   - rid: 2591120357824135170
   references:
     version: 2
     RefIds:
+    - rid: 186583124293976067
+      type: {class: DirectDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmounts: 040000000600000009000000
     - rid: 2591120357824135170
       type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
       data:

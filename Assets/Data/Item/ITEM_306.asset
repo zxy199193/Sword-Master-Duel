@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ITEM_306
   m_EditorClassIdentifier: 
   skillName: "\u70DF\u96FE\u5F39"
-  description: "\u5BF9\u65B9\u653B\u51FB\u62DB\u5F0F\u547D\u4E2D\u533A\u95F4-10\uFF0C\u6301\u7EED3\u56DE\u5408"
+  description: "\u5BF9\u65B9\u653B\u51FB\u62DB\u5F0F\u547D\u4E2D\u533A\u95F4-10\uFF0C\u6253\u51FB\u6761\u6ED1\u5757\u96BE\u4EE5\u770B\u6E05\uFF0C\u6301\u7EED3\u56DE\u5408"
   skillIcon: {fileID: 21300000, guid: a8e241c2801359c4f8770af071d0dbca, type: 3}
   skillType: 4
   animationTriggerName: Attack
@@ -41,7 +41,6 @@ MonoBehaviour:
   castEffectPrefab: {fileID: 6244812657412057649, guid: 5cf42b890d749e943b8ee80ae3fc5037, type: 3}
   castSoundEffect: {fileID: 8300000, guid: bd625f9ce6539b9459e802b29315a884, type: 3}
   effects:
-  - rid: 2591120648514043911
   - rid: 2591120581170823173
   references:
     version: 2
@@ -53,7 +52,3 @@ MonoBehaviour:
         baseDurations: 030000000300000003000000
         applyToSelf: 0
         ignoreMentalityBonus: 0
-    - rid: 2591120648514043911
-      type: {class: DirectDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
-        damageAmounts: 000000000000000000000000

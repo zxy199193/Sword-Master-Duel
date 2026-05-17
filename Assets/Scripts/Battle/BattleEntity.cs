@@ -23,8 +23,11 @@ public class BattleEntity : MonoBehaviour
 
     [HideInInspector]
     public Dictionary<SkillSlot, int[]> runtimeSkillWeights = new Dictionary<SkillSlot, int[]>();
+    [HideInInspector]
+    public Dictionary<SkillSlot, int> skillConsecutiveUses = new Dictionary<SkillSlot, int>();
     [HideInInspector] public SkillData lastUsedAttackSkill; // 用于“看破”状态判定
     [HideInInspector] public SkillSlot lockedNextTurnSkill; // 用于蓄力等跨回合技能的动作锁定
+    [HideInInspector] public float currentAiReactionTolerance; // 动态 AI 精准度偏差
 
     [Header("Turn Temporary Data")]
     public float tempDamageReduction = 0;
@@ -82,6 +85,8 @@ public class BattleEntity : MonoBehaviour
             }
         }
 
+        currentAiReactionTolerance = (roleData != null) ? roleData.aiReactionTolerance : 0.2f;
+
         runtimeSkills.Clear();
         activeStatuses.Clear();  // 清除上一场战斗残留的所有状态
         lockedNextTurnSkill = null;
@@ -136,6 +141,7 @@ public class BattleEntity : MonoBehaviour
                 }
 
                 runtimeSkillWeights.Clear();
+                skillConsecutiveUses.Clear();
                 if (roleData.npcSkills != null)
                 {
                     foreach (var config in roleData.npcSkills)
@@ -357,7 +363,7 @@ public class BattleEntity : MonoBehaviour
 
     public int GetHpRecoverPerTurn()
     {
-        return (GetFinalVitality() / 4) * 2;  // 每4点活力 +2 生命恢复
+        return (GetFinalVitality() / 4);  // 每4点活力 +1 生命恢复
     }
 
     public float GetFinalActionTime(float baseTime)
@@ -380,7 +386,7 @@ public class BattleEntity : MonoBehaviour
 
         if (activeStatuses.ContainsKey(StatusType.Dizzy))
         {
-            float dizzyFluctuation = (Mathf.PerlinNoise(Time.time * 5f, 0f) - 0.5f) * 1f;
+            float dizzyFluctuation = (Mathf.PerlinNoise(Time.time * 12f, 0f) - 0.5f) * 2.0f;
             statusMultiplier += dizzyFluctuation;
         }
 
@@ -430,7 +436,13 @@ public class BattleEntity : MonoBehaviour
             case GlobalBattleRules.LoadWeightState.Heavy: loadMultiplier = 0.7f; break;
             case GlobalBattleRules.LoadWeightState.Extreme: loadMultiplier = 0.4f; break;
         }
-        return globalBaseSlowdown * loadMultiplier;
+        
+        float baseSlow = globalBaseSlowdown * loadMultiplier;
+        if (activeStatuses.ContainsKey(StatusType.UltInstinct))
+        {
+            baseSlow += 999f;
+        }
+        return baseSlow;
     }
 
     // ==========================================

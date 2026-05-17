@@ -178,7 +178,7 @@ public class SkillItemUI : MonoBehaviour
         {
             staminaCost = boundManager.GetActualSkillCost(boundCaster, boundSlot);
             float agileBonus = boundCaster.activeStatuses.ContainsKey(StatusType.Agile) ? 6f : 0f;
-            hitAmend = hitAmend - Mathf.FloorToInt(boundCaster.GetFinalMentality() / 4f) * 6f - agileBonus;
+            hitAmend = hitAmend - Mathf.FloorToInt(boundCaster.GetFinalMentality() / 4f) * 3f - agileBonus;
         }
 
         SetNodeText(staminaPureNode, staminaPureText, staminaCost.ToString());

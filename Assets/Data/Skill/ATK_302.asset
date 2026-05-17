@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ATK_302
   m_EditorClassIdentifier: 
   skillName: "\u51B2\u950B"
-  description: "\u5A01\u529B\u8F83\u9AD8\uFF0C\u547D\u4E2D\u7387\u4F4E"
+  description: "\u5A01\u529B\u8F83\u9AD8\uFF0C\u547D\u4E2D\u7387\u4F4E\uFF0C\u91CD\u91CF\u5927\u4E8E80%\u8D1F\u91CD\u65F6\u9020\u6210\u66F4\u9AD8\u4F24\u5BB3\uFF083/5/8\uFF09"
   skillIcon: {fileID: 21300000, guid: 38d513935403092408d114a995fcfa42, type: 3}
   skillType: 0
   animationTriggerName: Attack
@@ -46,7 +46,12 @@ MonoBehaviour:
       width: 10
   castEffectPrefab: {fileID: 0}
   castSoundEffect: {fileID: 0}
-  effects: []
+  effects:
+  - rid: 186583124293976064
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 186583124293976064
+      type: {class: HeavyLoadExtraDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        heavyLoadDamages: 030000000500000008000000

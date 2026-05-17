@@ -42,6 +42,7 @@ MonoBehaviour:
       axisPosition: 50
       width: 30
   castEffectPrefab: {fileID: 0}
+  castSoundEffect: {fileID: 0}
   effects:
   - rid: 2591120559595585545
   references:

@@ -227,7 +227,7 @@ public class RestUIManager : MonoBehaviour
         if (GameManager.Instance.isReturnedFromLevelSelect)
             GameManager.Instance.ReturnToLevelUIFromRest();
         else
-            GameManager.Instance.AdvanceToNextMainLevel();
+            GameManager.Instance.EnterLevelNodeUIFromRest();
     }
 
     public void OnOpenRolePanelClicked()

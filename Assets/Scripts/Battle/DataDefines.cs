@@ -8,7 +8,7 @@ using System.Linq;
 // ==========================================
 public enum SkillType { Attack, Defend, Dodge, Special, Item }
 public enum SectionLevel { Level0, Level1, Level2, Level3, Level4, Level5, Level6, Level99 }
-public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked, Burn, Clone, FireEnchant, Recover, Paralyzed, Frozen, Insight, Sharpened, Lightweight, Charging, Exhausted, Enraged, Overclock, Bloodlust, Protection, Cursed, Poisoned }
+public enum StatusType { Tension, Focus, Agile, Gathering, Dizzy, Impatient, Excited, Tenacious, Overdrawn, Obscured, Spikes, Smoked, Burn, Clone, FireEnchant, Recover, Paralyzed, Frozen, Insight, Sharpened, Lightweight, Charging, Exhausted, Enraged, Overclock, Bloodlust, Protection, Cursed, Poisoned, UltInstinct }
 
 public enum ShopCategory { Weapon, Armor, Accessory, Item }
 public enum AttributeType { Vitality, Endurance, Strength, Mentality }
@@ -202,6 +202,18 @@ public class DirectDamageEffect : SkillEffect
     {
         int idx = Mathf.Clamp(skillLevel - 1, 0, damageAmounts.Length - 1);
         int finalDamage = damageAmounts.Length > 0 ? damageAmounts[idx] : 0;
+
+        if (manager != null && manager.currentExecutingSkill != null && manager.currentExecutingSkill.skillData != null)
+        {
+            if (manager.currentExecutingSkill.skillData.skillType == SkillType.Item)
+            {
+                if (caster.HasEquipEffect<GlobalBattleRules.ItemDamageBoostEquipEffect>(out var boostEffect))
+                {
+                    finalDamage += boostEffect.damageBoost;
+                }
+            }
+        }
+
         bool hitLanded = target.TakeDamage(finalDamage);
         if (hitLanded)
         {
@@ -293,6 +305,7 @@ public class ApplyStatusEffect : SkillEffect
             case StatusType.Insight: statusName = "看破"; break;
             case StatusType.Sharpened: statusName = "锐化"; break;
             case StatusType.Lightweight: statusName = "轻盈"; break;
+            case StatusType.UltInstinct: statusName = "极意"; break;
         }
 
         // 刷新 UI 与飘字
@@ -1025,6 +1038,15 @@ public static class GlobalBattleRules
     {
         [Tooltip("攻击前使用特殊招式时基础伤害增加量")]
         public int damageBoost = 3;
+
+        public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager) { return 0; }
+    }
+
+    [Serializable]
+    public class ItemDamageBoostEquipEffect : EquipEffect
+    {
+        [Tooltip("使用造成伤害的道具时伤害增加量")]
+        public int damageBoost = 5;
 
         public override int Execute(BattleEntity wearer, BattleEntity opponent, SectionLevel? hitLevel, BattleManager manager) { return 0; }
     }

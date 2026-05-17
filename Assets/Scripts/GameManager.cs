@@ -167,7 +167,7 @@ public class PlayerProfile
 
     public int GetHpRecoverPerTurn()
     {
-        return (GetFinalVitality() / 4) * 2;  // 每4点活力 +2 生命恢复
+        return (GetFinalVitality() / 4);  // 每4点活力 +1 生命恢复
     }
 
     public int GetStaminaRecoverPerTurn()
@@ -229,7 +229,7 @@ public class PlayerProfile
 
     public int GetMaxItemCapacity()
     {
-        int cap = 2; // 初始上限为2
+        int cap = 3; // 初始上限为3
         List<EquipmentData> equips = new List<EquipmentData>();
         if (equippedWeapon != null) equips.Add(equippedWeapon);
         if (equippedArmor != null && currentExtraLife > 0) equips.Add(equippedArmor);
@@ -253,6 +253,11 @@ public class PlayerProfile
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    [Header("主菜单 UI (Main Menu UI)")]
+    public GameObject mainMenuPanel;
+    public UnityEngine.UI.Button startNewGameBtn;
+    public UnityEngine.UI.Button continueGameBtn;
 
     [Header("全局数据 (Global Data)")]
     public PlayerProfile playerProfile;
@@ -327,7 +332,32 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        StartNewGame();
+        InitializeDataDictionaries();
+
+        if (startNewGameBtn != null)
+        {
+            startNewGameBtn.onClick.AddListener(() => {
+                if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+                StartNewGame();
+            });
+        }
+        if (continueGameBtn != null)
+        {
+            continueGameBtn.onClick.AddListener(() => {
+                if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+                LoadGame();
+            });
+        }
+
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(true);
+            RefreshMainMenuButtons();
+        }
+        else
+        {
+            StartNewGame();
+        }
     }
 
     // ==========================================
@@ -422,6 +452,23 @@ public class GameManager : MonoBehaviour
 
         RoleData currentEnemyData = currentLevelEnemies[currentNodeIndex];
 
+        // 保证体力规则：
+        if (playerProfile != null)
+        {
+            if (isDoingTask || currentNodeIndex == 0)
+            {
+                // 第一场战斗或任务战斗：体力直接全满
+                playerProfile.currentStamina = playerProfile.GetFinalMaxStamina();
+            }
+            else
+            {
+                // 连战中的后续场次：延续上一场剩余体力，并根据自身的被动恢复属性进行恢复
+                int recoverAmount = playerProfile.GetStaminaRecoverPerTurn();
+                playerProfile.currentStamina = Mathf.Min(playerProfile.GetFinalMaxStamina(), playerProfile.currentStamina + recoverAmount);
+                Debug.Log($"<color=cyan>[连战体力恢复] 延续上一场体力，加上被动恢复 {recoverAmount}，当前体力为：{playerProfile.currentStamina}/{playerProfile.GetFinalMaxStamina()}</color>");
+            }
+        }
+
         battleManager.gameObject.SetActive(true);
         battleManager.SetupNewBattle(playerProfile.playerRoleAsset, currentEnemyData);
     }
@@ -490,6 +537,16 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("Game Over! 玩家阵亡。");
+            ClearSave();
+            if (battleManager != null && battleManager.gameDefeatPanel != null)
+            {
+                battleManager.gameObject.SetActive(true);
+                battleManager.gameDefeatPanel.SetActive(true);
+            }
+            else
+            {
+                ReturnToMainMenu();
+            }
         }
     }
 
@@ -815,8 +872,63 @@ public class GameManager : MonoBehaviour
             AwardLevelReward(extra);
         }
 
+        // 推进大关卡索引
+        currentMainLevelIndex++;
+        currentNodeIndex = 0;
+
+        if (currentMainLevelIndex >= allLevels.Count)
+        {
+            // 通过所有关卡，游戏胜利！
+            ClearSave();
+            if (battleResultUI != null)
+            {
+                battleResultUI.continueBtn.onClick.RemoveAllListeners();
+                battleResultUI.continueBtn.onClick.AddListener(() => {
+                    battleResultUI.gameObject.SetActive(false);
+                    if (battleManager != null && battleManager.gameVictoryPanel != null)
+                    {
+                        battleManager.gameObject.SetActive(true);
+                        battleManager.gameVictoryPanel.SetActive(true);
+                    }
+                    else
+                    {
+                        ReturnToMainMenu();
+                    }
+                });
+                battleResultUI.ShowResult(oldLevel, oldExp, finalExp, finalGold, extra);
+            }
+            else
+            {
+                if (battleManager != null && battleManager.gameVictoryPanel != null)
+                {
+                    battleManager.gameVictoryPanel.SetActive(true);
+                }
+                else
+                {
+                    ReturnToMainMenu();
+                }
+            }
+            return;
+        }
+
+        // 否则进入下一个关卡的准备阶段（天数重置、敌人与商店预先生成）
+        playerProfile.currentStamina = playerProfile.GetFinalMaxStamina();
+        playerProfile.currentExtraLife = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.durability : 0;
+        playerProfile.currentRestDays = playerProfile.maxRestDays;
+
+        RollEnemiesForCurrentLevel();
+        RefreshShopAndDojo();
+
+        // 此时通关并准备好下一关环境，立刻存档！
+        SaveGame();
+
         if (battleResultUI != null)
         {
+            battleResultUI.continueBtn.onClick.RemoveAllListeners();
+            battleResultUI.continueBtn.onClick.AddListener(() => {
+                battleResultUI.gameObject.SetActive(false);
+                EnterRestFromBattleResult();
+            });
             battleResultUI.ShowResult(oldLevel, oldExp, finalExp, finalGold, extra);
         }
         else
@@ -950,4 +1062,651 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    public void EnterLevelNodeUIFromRest()
+    {
+        EnterLevelNodeUI();
+    }
+
+    // ==========================================
+    // Save / Load System & Dictionaries Registry
+    // ==========================================
+
+    private Dictionary<string, EquipmentData> allEquipsDict = new Dictionary<string, EquipmentData>();
+    private Dictionary<string, SkillData> allSkillsDict = new Dictionary<string, SkillData>();
+    private Dictionary<string, RoleData> allRolesDict = new Dictionary<string, RoleData>();
+
+    public void InitializeDataDictionaries()
+    {
+        allEquipsDict.Clear();
+        allSkillsDict.Clear();
+        allRolesDict.Clear();
+
+        if (playerProfile != null)
+        {
+            RegisterRole(playerProfile.playerRoleAsset);
+            RegisterEquip(playerProfile.equippedWeapon);
+            RegisterEquip(playerProfile.equippedArmor);
+            if (playerProfile.equippedAccessories != null)
+            {
+                foreach (var acc in playerProfile.equippedAccessories) RegisterEquip(acc);
+            }
+            if (playerProfile.storageEquipments != null)
+            {
+                foreach (var eq in playerProfile.storageEquipments) RegisterEquip(eq);
+            }
+            RegisterSkillSlotList(playerProfile.equippedAttackSkills);
+            RegisterSkillSlotList(playerProfile.equippedDefendSkills);
+            RegisterSkillSlotList(playerProfile.equippedSpecialSkills);
+            RegisterSkillSlotList(playerProfile.equippedItems);
+            RegisterSkillSlotList(playerProfile.storageSkillsAndItems);
+        }
+
+        if (allLevels != null)
+        {
+            foreach (var lvl in allLevels)
+            {
+                if (lvl == null) continue;
+                RegisterRewardList(lvl.extraRewardPool);
+            }
+        }
+
+        if (enemyDatabase != null && enemyDatabase.tiers != null)
+        {
+            foreach (var tier in enemyDatabase.tiers)
+            {
+                if (tier != null) RegisterRoleList(tier.enemies);
+            }
+        }
+
+        if (taskDatabase != null)
+        {
+            foreach (TaskDifficulty diff in System.Enum.GetValues(typeof(TaskDifficulty)))
+            {
+                var cfg = taskDatabase.GetConfig(diff);
+                if (cfg != null)
+                {
+                    RegisterRoleList(cfg.enemyPool);
+                    RegisterRewardList(cfg.rewardPool);
+                }
+            }
+        }
+
+        if (restUIManager != null && restUIManager.currentShopConfig != null)
+        {
+            var shop = restUIManager.currentShopConfig;
+            if (shop.weaponShop != null)
+            {
+                RegisterEquipList(shop.weaponShop.permanentEquips);
+                RegisterEquipList(shop.weaponShop.randomEquipsPool);
+            }
+            if (shop.armorShop != null)
+            {
+                RegisterEquipList(shop.armorShop.permanentEquips);
+                RegisterEquipList(shop.armorShop.randomEquipsPool);
+            }
+            if (shop.accessoryShop != null)
+            {
+                RegisterEquipList(shop.accessoryShop.permanentEquips);
+                RegisterEquipList(shop.accessoryShop.randomEquipsPool);
+            }
+            if (shop.itemShop != null)
+            {
+                RegisterSkillList(shop.itemShop.permanentItems);
+                RegisterSkillList(shop.itemShop.randomItemsPool);
+            }
+            if (shop.dojoSkillShop != null)
+            {
+                RegisterSkillList(shop.dojoSkillShop.permanentSkills);
+                RegisterSkillList(shop.dojoSkillShop.randomSkillsPool);
+            }
+        }
+    }
+
+    private void RegisterEquip(EquipmentData eq)
+    {
+        if (eq != null && !string.IsNullOrEmpty(eq.name) && !allEquipsDict.ContainsKey(eq.name))
+            allEquipsDict[eq.name] = eq;
+    }
+
+    private void RegisterSkill(SkillData sk)
+    {
+        if (sk != null && !string.IsNullOrEmpty(sk.name) && !allSkillsDict.ContainsKey(sk.name))
+            allSkillsDict[sk.name] = sk;
+    }
+
+    private void RegisterRole(RoleData rd)
+    {
+        if (rd != null && !string.IsNullOrEmpty(rd.name) && !allRolesDict.ContainsKey(rd.name))
+        {
+            allRolesDict[rd.name] = rd;
+            if (rd.npcSkills != null)
+            {
+                foreach (var skillCfg in rd.npcSkills)
+                {
+                    if (skillCfg != null && skillCfg.skillSlot != null) 
+                        RegisterSkill(skillCfg.skillSlot.skillData);
+                }
+            }
+        }
+    }
+
+    private void RegisterEquipList(List<EquipmentData> list)
+    {
+        if (list == null) return;
+        foreach (var eq in list) RegisterEquip(eq);
+    }
+
+    private void RegisterSkillList(List<SkillData> list)
+    {
+        if (list == null) return;
+        foreach (var sk in list) RegisterSkill(sk);
+    }
+
+    private void RegisterRoleList(List<RoleData> list)
+    {
+        if (list == null) return;
+        foreach (var rd in list) RegisterRole(rd);
+    }
+
+    private void RegisterSkillSlotList(List<SkillSlot> list)
+    {
+        if (list == null) return;
+        foreach (var slot in list)
+        {
+            if (slot != null) RegisterSkill(slot.skillData);
+        }
+    }
+
+    private void RegisterRewardList(List<LevelExtraRewardEntry> list)
+    {
+        if (list == null) return;
+        foreach (var entry in list)
+        {
+            if (entry == null) continue;
+            if (entry.rewardType == LevelExtraRewardEntry.RewardType.Equipment) RegisterEquip(entry.equipment);
+            else if (entry.rewardType == LevelExtraRewardEntry.RewardType.Item) RegisterSkill(entry.item);
+        }
+    }
+
+    private List<SkillSlotSaveData> ToSaveDataList(List<SkillSlot> slots)
+    {
+        var list = new List<SkillSlotSaveData>();
+        if (slots == null) return list;
+        foreach (var slot in slots)
+        {
+            if (slot == null)
+            {
+                list.Add(null);
+                continue;
+            }
+            list.Add(new SkillSlotSaveData
+            {
+                skillDataName = slot.skillData != null ? slot.skillData.name : "",
+                level = slot.level,
+                quantity = slot.quantity
+            });
+        }
+        return list;
+    }
+
+    private List<SkillSlot> FromSaveDataList(List<SkillSlotSaveData> saveDataList)
+    {
+        var list = new List<SkillSlot>();
+        if (saveDataList == null) return list;
+        foreach (var sd in saveDataList)
+        {
+            if (sd == null || string.IsNullOrEmpty(sd.skillDataName))
+            {
+                list.Add(null);
+                continue;
+            }
+            allSkillsDict.TryGetValue(sd.skillDataName, out var skill);
+            list.Add(new SkillSlot
+            {
+                skillData = skill,
+                level = sd.level,
+                quantity = sd.quantity
+            });
+        }
+        return list;
+    }
+
+    private LevelExtraRewardSaveData ToSaveData(LevelExtraRewardEntry entry)
+    {
+        if (entry == null) return null;
+        return new LevelExtraRewardSaveData
+        {
+            rewardType = (int)entry.rewardType,
+            assetName = entry.rewardType == LevelExtraRewardEntry.RewardType.Equipment 
+                ? (entry.equipment != null ? entry.equipment.name : "")
+                : (entry.item != null ? entry.item.name : ""),
+            quantity = entry.quantity
+        };
+    }
+
+    private LevelExtraRewardEntry FromSaveData(LevelExtraRewardSaveData sd)
+    {
+        if (sd == null || string.IsNullOrEmpty(sd.assetName)) return null;
+        var entry = new LevelExtraRewardEntry
+        {
+            rewardType = (LevelExtraRewardEntry.RewardType)sd.rewardType,
+            quantity = sd.quantity
+        };
+        if (entry.rewardType == LevelExtraRewardEntry.RewardType.Equipment)
+        {
+            allEquipsDict.TryGetValue(sd.assetName, out var eq);
+            entry.equipment = eq;
+        }
+        else
+        {
+            allSkillsDict.TryGetValue(sd.assetName, out var sk);
+            entry.item = sk;
+        }
+        return entry;
+    }
+
+    public void SaveGame()
+    {
+        SaveData data = new SaveData();
+
+        data.currentMainLevelIndex = currentMainLevelIndex;
+        data.currentNodeIndex = currentNodeIndex;
+        data.isReturnedFromLevelSelect = isReturnedFromLevelSelect;
+
+        data.level = playerProfile.level;
+        data.currentExp = playerProfile.currentExp;
+        data.unallocatedPoints = playerProfile.unallocatedPoints;
+        data.baseMaxLife = playerProfile.baseMaxLife;
+        data.baseMaxStamina = playerProfile.baseMaxStamina;
+        data.vitality = playerProfile.vitality;
+        data.endurance = playerProfile.endurance;
+        data.baseStrength = playerProfile.baseStrength;
+        data.baseMentality = playerProfile.baseMentality;
+        data.currentHp = playerProfile.currentHp;
+        data.currentStamina = playerProfile.currentStamina;
+        data.currentExtraLife = playerProfile.currentExtraLife;
+        data.totalGold = playerProfile.totalGold;
+        data.currentRestDays = playerProfile.currentRestDays;
+        data.maxRestDays = playerProfile.maxRestDays;
+        data.hasMassageBuff = playerProfile.hasMassageBuff;
+
+        data.playerRoleAssetName = playerProfile.playerRoleAsset != null ? playerProfile.playerRoleAsset.name : "";
+        data.equippedWeaponName = playerProfile.equippedWeapon != null ? playerProfile.equippedWeapon.name : "";
+        data.equippedArmorName = playerProfile.equippedArmor != null ? playerProfile.equippedArmor.name : "";
+
+        if (playerProfile.equippedAccessories != null)
+        {
+            foreach (var acc in playerProfile.equippedAccessories)
+                data.equippedAccessoriesNames.Add(acc != null ? acc.name : "");
+        }
+
+        data.equippedAttackSkills = ToSaveDataList(playerProfile.equippedAttackSkills);
+        data.equippedDefendSkills = ToSaveDataList(playerProfile.equippedDefendSkills);
+        data.equippedSpecialSkills = ToSaveDataList(playerProfile.equippedSpecialSkills);
+        data.equippedItems = ToSaveDataList(playerProfile.equippedItems);
+
+        if (playerProfile.storageEquipments != null)
+        {
+            foreach (var eq in playerProfile.storageEquipments)
+                data.storageEquipmentsNames.Add(eq != null ? eq.name : "");
+        }
+        data.storageSkillsAndItems = ToSaveDataList(playerProfile.storageSkillsAndItems);
+
+        if (currentGroupA != null)
+        {
+            foreach (var enemy in currentGroupA)
+                data.currentGroupANames.Add(enemy != null ? enemy.name : "");
+        }
+        if (currentGroupB != null)
+        {
+            foreach (var enemy in currentGroupB)
+                data.currentGroupBNames.Add(enemy != null ? enemy.name : "");
+        }
+        data.currentGroupAExtraReward = ToSaveData(currentGroupAExtraReward);
+        data.currentGroupBExtraReward = ToSaveData(currentGroupBExtraReward);
+
+        if (currentDojoSkills != null)
+        {
+            foreach (var sk in currentDojoSkills) data.currentDojoSkillsNames.Add(sk != null ? sk.name : "");
+        }
+        if (randDojoSkills != null)
+        {
+            foreach (var sk in randDojoSkills) data.randDojoSkillsNames.Add(sk != null ? sk.name : "");
+        }
+
+        if (permWeapons != null)
+        {
+            foreach (var eq in permWeapons) data.permWeaponsNames.Add(eq != null ? eq.name : "");
+        }
+        if (randWeapons != null)
+        {
+            foreach (var eq in randWeapons) data.randWeaponsNames.Add(eq != null ? eq.name : "");
+        }
+
+        if (permArmors != null)
+        {
+            foreach (var eq in permArmors) data.permArmorsNames.Add(eq != null ? eq.name : "");
+        }
+        if (randArmors != null)
+        {
+            foreach (var eq in randArmors) data.randArmorsNames.Add(eq != null ? eq.name : "");
+        }
+
+        if (permAccessories != null)
+        {
+            foreach (var eq in permAccessories) data.permAccessoriesNames.Add(eq != null ? eq.name : "");
+        }
+        if (randAccessories != null)
+        {
+            foreach (var eq in randAccessories) data.randAccessoriesNames.Add(eq != null ? eq.name : "");
+        }
+
+        if (permItems != null)
+        {
+            foreach (var sk in permItems) data.permItemsNames.Add(sk != null ? sk.name : "");
+        }
+        if (randItems != null)
+        {
+            foreach (var sk in randItems) data.randItemsNames.Add(sk != null ? sk.name : "");
+        }
+
+        string json = JsonUtility.ToJson(data);
+        PlayerPrefs.SetString("SwordMasterDuel_SaveData", json);
+        PlayerPrefs.Save();
+        Debug.Log("<color=lime>[GameManager] Game Saved Successfully!</color>");
+    }
+
+    public void LoadGame()
+    {
+        if (!PlayerPrefs.HasKey("SwordMasterDuel_SaveData"))
+        {
+            Debug.LogWarning("No save data found!");
+            return;
+        }
+
+        InitializeDataDictionaries();
+
+        string json = PlayerPrefs.GetString("SwordMasterDuel_SaveData");
+        SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+        currentMainLevelIndex = data.currentMainLevelIndex;
+        currentNodeIndex = data.currentNodeIndex;
+        isReturnedFromLevelSelect = data.isReturnedFromLevelSelect;
+
+        playerProfile.level = data.level;
+        playerProfile.currentExp = data.currentExp;
+        playerProfile.unallocatedPoints = data.unallocatedPoints;
+        playerProfile.baseMaxLife = data.baseMaxLife;
+        playerProfile.baseMaxStamina = data.baseMaxStamina;
+        playerProfile.vitality = data.vitality;
+        playerProfile.endurance = data.endurance;
+        playerProfile.baseStrength = data.baseStrength;
+        playerProfile.baseMentality = data.baseMentality;
+        playerProfile.currentHp = data.currentHp;
+        playerProfile.currentStamina = data.currentStamina;
+        playerProfile.currentExtraLife = data.currentExtraLife;
+        playerProfile.totalGold = data.totalGold;
+        playerProfile.currentRestDays = data.currentRestDays;
+        playerProfile.maxRestDays = data.maxRestDays;
+        playerProfile.hasMassageBuff = data.hasMassageBuff;
+
+        allRolesDict.TryGetValue(data.playerRoleAssetName, out var roleAsset);
+        playerProfile.playerRoleAsset = roleAsset;
+
+        allEquipsDict.TryGetValue(data.equippedWeaponName, out var weapon);
+        playerProfile.equippedWeapon = weapon;
+
+        allEquipsDict.TryGetValue(data.equippedArmorName, out var armor);
+        playerProfile.equippedArmor = armor;
+
+        playerProfile.equippedAccessories.Clear();
+        foreach (var accName in data.equippedAccessoriesNames)
+        {
+            if (string.IsNullOrEmpty(accName)) playerProfile.equippedAccessories.Add(null);
+            else
+            {
+                allEquipsDict.TryGetValue(accName, out var acc);
+                playerProfile.equippedAccessories.Add(acc);
+            }
+        }
+
+        playerProfile.equippedAttackSkills = FromSaveDataList(data.equippedAttackSkills);
+        playerProfile.equippedDefendSkills = FromSaveDataList(data.equippedDefendSkills);
+        playerProfile.equippedSpecialSkills = FromSaveDataList(data.equippedSpecialSkills);
+        playerProfile.equippedItems = FromSaveDataList(data.equippedItems);
+
+        playerProfile.storageEquipments.Clear();
+        foreach (var eqName in data.storageEquipmentsNames)
+        {
+            if (string.IsNullOrEmpty(eqName)) playerProfile.storageEquipments.Add(null);
+            else
+            {
+                allEquipsDict.TryGetValue(eqName, out var eq);
+                playerProfile.storageEquipments.Add(eq);
+            }
+        }
+        playerProfile.storageSkillsAndItems = FromSaveDataList(data.storageSkillsAndItems);
+
+        currentGroupA.Clear();
+        foreach (var name in data.currentGroupANames)
+        {
+            if (string.IsNullOrEmpty(name)) currentGroupA.Add(null);
+            else
+            {
+                allRolesDict.TryGetValue(name, out var role);
+                currentGroupA.Add(role);
+            }
+        }
+
+        currentGroupB.Clear();
+        foreach (var name in data.currentGroupBNames)
+        {
+            if (string.IsNullOrEmpty(name)) currentGroupB.Add(null);
+            else
+            {
+                allRolesDict.TryGetValue(name, out var role);
+                currentGroupB.Add(role);
+            }
+        }
+
+        currentGroupAExtraReward = FromSaveData(data.currentGroupAExtraReward);
+        currentGroupBExtraReward = FromSaveData(data.currentGroupBExtraReward);
+
+        currentDojoSkills.Clear();
+        foreach (var name in data.currentDojoSkillsNames)
+        {
+            allSkillsDict.TryGetValue(name, out var sk);
+            currentDojoSkills.Add(sk);
+        }
+
+        randDojoSkills.Clear();
+        foreach (var name in data.randDojoSkillsNames)
+        {
+            allSkillsDict.TryGetValue(name, out var sk);
+            randDojoSkills.Add(sk);
+        }
+
+        permWeapons.Clear();
+        foreach (var name in data.permWeaponsNames)
+        {
+            allEquipsDict.TryGetValue(name, out var eq);
+            permWeapons.Add(eq);
+        }
+
+        randWeapons.Clear();
+        foreach (var name in data.randWeaponsNames)
+        {
+            allEquipsDict.TryGetValue(name, out var eq);
+            randWeapons.Add(eq);
+        }
+
+        permArmors.Clear();
+        foreach (var name in data.permArmorsNames)
+        {
+            allEquipsDict.TryGetValue(name, out var eq);
+            permArmors.Add(eq);
+        }
+
+        randArmors.Clear();
+        foreach (var name in data.randArmorsNames)
+        {
+            allEquipsDict.TryGetValue(name, out var eq);
+            randArmors.Add(eq);
+        }
+
+        permAccessories.Clear();
+        foreach (var name in data.permAccessoriesNames)
+        {
+            allEquipsDict.TryGetValue(name, out var eq);
+            permAccessories.Add(eq);
+        }
+
+        randAccessories.Clear();
+        foreach (var name in data.randAccessoriesNames)
+        {
+            allEquipsDict.TryGetValue(name, out var eq);
+            randAccessories.Add(eq);
+        }
+
+        permItems.Clear();
+        foreach (var name in data.permItemsNames)
+        {
+            allSkillsDict.TryGetValue(name, out var sk);
+            permItems.Add(sk);
+        }
+
+        randItems.Clear();
+        foreach (var name in data.randItemsNames)
+        {
+            allSkillsDict.TryGetValue(name, out var sk);
+            randItems.Add(sk);
+        }
+
+        battleManager.gameObject.SetActive(false);
+        levelUIManager.gameObject.SetActive(false);
+        restUIManager.ShowPanel();
+
+        Debug.Log("<color=lime>[GameManager] Game Loaded Successfully!</color>");
+    }
+
+    public bool HasSave()
+    {
+        return PlayerPrefs.HasKey("SwordMasterDuel_SaveData");
+    }
+
+    public void ClearSave()
+    {
+        PlayerPrefs.DeleteKey("SwordMasterDuel_SaveData");
+        PlayerPrefs.Save();
+    }
+
+    public void RefreshMainMenuButtons()
+    {
+        if (continueGameBtn != null)
+        {
+            continueGameBtn.gameObject.SetActive(HasSave());
+        }
+    }
+
+    public void ReturnToMainMenu()
+    {
+        if (battleManager != null)
+        {
+            battleManager.gameObject.SetActive(false);
+            if (battleManager.gameVictoryPanel != null) battleManager.gameVictoryPanel.SetActive(false);
+            if (battleManager.gameDefeatPanel != null) battleManager.gameDefeatPanel.SetActive(false);
+        }
+        if (levelUIManager != null) levelUIManager.gameObject.SetActive(false);
+        if (restUIManager != null) restUIManager.gameObject.SetActive(false);
+        if (battleResultUI != null) battleResultUI.gameObject.SetActive(false);
+        if (intermediateResultUI != null) intermediateResultUI.SetActive(false);
+
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(true);
+            RefreshMainMenuButtons();
+        }
+    }
+
+#if UNITY_EDITOR
+    [UnityEditor.MenuItem("SwordMaster/Clear Save Data")]
+    public static void ClearSaveDataMenu()
+    {
+        PlayerPrefs.DeleteKey("SwordMasterDuel_SaveData");
+        PlayerPrefs.Save();
+        Debug.Log("<color=red>[Editor] Save data cleared successfully!</color>");
+    }
+#endif
+}
+
+[System.Serializable]
+public class SaveData
+{
+    public int currentMainLevelIndex;
+    public int currentNodeIndex;
+    public bool isReturnedFromLevelSelect;
+
+    public int level;
+    public int currentExp;
+    public int unallocatedPoints;
+    public int baseMaxLife;
+    public int baseMaxStamina;
+    public int vitality;
+    public int endurance;
+    public int baseStrength;
+    public int baseMentality;
+    public int currentHp;
+    public int currentStamina;
+    public int currentExtraLife;
+    public int totalGold;
+    public int currentRestDays;
+    public int maxRestDays;
+    public bool hasMassageBuff;
+
+    public string playerRoleAssetName;
+    public string equippedWeaponName;
+    public string equippedArmorName;
+    public List<string> equippedAccessoriesNames = new List<string>();
+
+    public List<SkillSlotSaveData> equippedAttackSkills = new List<SkillSlotSaveData>();
+    public List<SkillSlotSaveData> equippedDefendSkills = new List<SkillSlotSaveData>();
+    public List<SkillSlotSaveData> equippedSpecialSkills = new List<SkillSlotSaveData>();
+    public List<SkillSlotSaveData> equippedItems = new List<SkillSlotSaveData>();
+
+    public List<string> storageEquipmentsNames = new List<string>();
+    public List<SkillSlotSaveData> storageSkillsAndItems = new List<SkillSlotSaveData>();
+
+    public List<string> currentGroupANames = new List<string>();
+    public List<string> currentGroupBNames = new List<string>();
+    public LevelExtraRewardSaveData currentGroupAExtraReward;
+    public LevelExtraRewardSaveData currentGroupBExtraReward;
+
+    public List<string> currentDojoSkillsNames = new List<string>();
+    public List<string> randDojoSkillsNames = new List<string>();
+
+    public List<string> permWeaponsNames = new List<string>();
+    public List<string> randWeaponsNames = new List<string>();
+    public List<string> permArmorsNames = new List<string>();
+    public List<string> randArmorsNames = new List<string>();
+    public List<string> permAccessoriesNames = new List<string>();
+    public List<string> randAccessoriesNames = new List<string>();
+    public List<string> permItemsNames = new List<string>();
+    public List<string> randItemsNames = new List<string>();
+}
+
+[System.Serializable]
+public class SkillSlotSaveData
+{
+    public string skillDataName;
+    public int level;
+    public int quantity;
+}
+
+[System.Serializable]
+public class LevelExtraRewardSaveData
+{
+    public int rewardType;
+    public string assetName;
+    public int quantity;
 }

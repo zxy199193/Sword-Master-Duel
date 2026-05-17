@@ -49,11 +49,6 @@ MonoBehaviour:
       level: 1
       quantity: 0
     phaseWeights: 0a000000ffffffffffffffffffffffff
-  - skillSlot:
-      skillData: {fileID: 11400000, guid: 51b1e3bd2fa2f124d8992c3ea00232b5, type: 2}
-      level: 1
-      quantity: 0
-    phaseWeights: 0a000000ffffffffffffffffffffffff
   subSkillProbabilities:
   - 0.5
   - -1

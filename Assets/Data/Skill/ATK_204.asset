@@ -19,9 +19,9 @@ MonoBehaviour:
   animationTriggerName: Attack_204
   staminaCosts: 080000000800000007000000
   basicDamages:
-  - 1
+  - 2
   - 3
-  - 6
+  - 5
   basicDefends:
   - 0
   - 0
@@ -48,6 +48,7 @@ MonoBehaviour:
       axisPosition: 50
       width: 15
   castEffectPrefab: {fileID: 0}
+  castSoundEffect: {fileID: 0}
   effects: []
   references:
     version: 2

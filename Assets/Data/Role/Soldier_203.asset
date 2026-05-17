@@ -18,10 +18,10 @@ MonoBehaviour:
   animatorController: {fileID: 9100000, guid: 37ef1b5d491edd34ba52154a056db91e, type: 2}
   maxBasicLife: 5
   maxStamina: 5
-  vitality: 0
-  endurance: 4
-  strength: 10
-  mentality: 7
+  vitality: 4
+  endurance: 10
+  strength: 7
+  mentality: 4
   staminaRecoverPerTurn: 2
   equippedWeapon: {fileID: 11400000, guid: 61f6aa3af00742e49aa15c249ddec90e, type: 2}
   equippedArmor: {fileID: 11400000, guid: 1d3a758288231b744b00c42e569a3b75, type: 2}

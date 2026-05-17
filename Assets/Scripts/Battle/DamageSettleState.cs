@@ -111,6 +111,12 @@ public class DamageSettleState : BattleState
 
         if (hit.HasValue && skill != null && !isInsightDodged)
         {
+            if (!attacker.isPlayer)
+            {
+                attacker.currentAiReactionTolerance = (attacker.roleData != null) ? attacker.roleData.aiReactionTolerance : 0.2f;
+                Debug.Log($"<color=green>[AI 精准度恢复] {attacker.roleData.roleName} 命中目标，精准度偏差恢复至默认值：{attacker.currentAiReactionTolerance}</color>");
+            }
+
             float multiplier = GlobalBattleRules.GetHitMultiplier(hit.Value.level);
             if (hit.Value.level == SectionLevel.Level0 && hasMissDamageEffect)
             {
@@ -311,8 +317,10 @@ public class DamageSettleState : BattleState
                     {
                         if (effect != null)
                         {
+                            battleManager.currentExecutingSkill = attackSlot;
                             effect.Execute(attacker, defender, battleManager, level);
                             effect.OnAttackHit(attacker, defender, battleManager, level, hit.Value.level);
+                            battleManager.currentExecutingSkill = null;
                         }
                     }
                 }
@@ -336,6 +344,13 @@ public class DamageSettleState : BattleState
         }
         else
         {
+            if (!attacker.isPlayer)
+            {
+                float oldTolerance = attacker.currentAiReactionTolerance;
+                attacker.currentAiReactionTolerance = Mathf.Max(0f, attacker.currentAiReactionTolerance - 0.05f);
+                Debug.Log($"<color=orange>[AI 精准度提升] {attacker.roleData.roleName} 攻击落空，精准度偏差由 {oldTolerance:F2} 降低至 {attacker.currentAiReactionTolerance:F2} (偏差越小越精准)</color>");
+            }
+
             Debug.Log($"[DamageSettleState] {attacker.roleData.roleName} 的该段攻击 Miss！");
             defender.PlayMissAnim();
             battleManager.SpawnGeneralPopup(isPlayerTakingDamage, "MISS");

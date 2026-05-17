@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ITEM_206
   m_EditorClassIdentifier: 
   skillName: "\u5251\u6CB9"
-  description: "\u81EA\u8EAB\u8FDB\u5165\u3010\u706B\u7130\u9644\u52A0\u3011\u72B6\u6001\uFF0C\u6301\u7EED2\u56DE\u5408\r"
+  description: "\u81EA\u8EAB\u8FDB\u5165\u3010\u706B\u7130\u9644\u52A0\u3011\u72B6\u6001\uFF0C\u6301\u7EED3\u56DE\u5408\r"
   skillIcon: {fileID: 21300000, guid: a8e241c2801359c4f8770af071d0dbca, type: 3}
   skillType: 4
   animationTriggerName: Attack
@@ -49,6 +49,6 @@ MonoBehaviour:
       type: {class: ApplyStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         statusType: 14
-        baseDurations: 020000000200000002000000
+        baseDurations: 030000000300000003000000
         applyToSelf: 1
         ignoreMentalityBonus: 1

@@ -50,6 +50,9 @@ public class HitBarManager : MonoBehaviour
     private float aiTargetPosition;
     private BattleEntity currentCaster;
 
+    private float currentSmokeAlpha = 30f;
+    private bool smokeFadingDown = true;
+
     private void Awake()
     {
         if (slashButton != null)
@@ -100,6 +103,29 @@ public class HitBarManager : MonoBehaviour
                 currentSliderPos = 0f;
                 moveDirection = 1;
                 if (isAIPlay) aiCurrentBounces++;
+            }
+
+            if (currentCaster != null && currentCaster.activeStatuses.ContainsKey(StatusType.Smoked))
+            {
+                float speed = 15f;
+                if (smokeFadingDown)
+                {
+                    currentSmokeAlpha -= speed * Time.deltaTime;
+                    if (currentSmokeAlpha <= 0f)
+                    {
+                        currentSmokeAlpha = 0f;
+                        smokeFadingDown = false;
+                    }
+                }
+                else
+                {
+                    currentSmokeAlpha += speed * Time.deltaTime;
+                    if (currentSmokeAlpha >= 30f)
+                    {
+                        currentSmokeAlpha = 30f;
+                        smokeFadingDown = true;
+                    }
+                }
             }
         }
 
@@ -171,6 +197,9 @@ public class HitBarManager : MonoBehaviour
         CreateSectionsUI();
         ResetSliderForNextHit();
 
+        currentSmokeAlpha = 30f;
+        smokeFadingDown = true;
+
         timeRemaining = currentCaster != null ? currentCaster.GetFinalActionTime(config.actionTime) : config.actionTime;
         gameObject.SetActive(true);
     }
@@ -192,9 +221,9 @@ public class HitBarManager : MonoBehaviour
             aiPerfectTarget = bestSection.axisPosition;
 
             float tolerance = 0.2f;
-            if (currentCaster != null && currentCaster.roleData != null)
+            if (currentCaster != null)
             {
-                tolerance = currentCaster.roleData.aiReactionTolerance;
+                tolerance = currentCaster.currentAiReactionTolerance;
             }
 
             aiReactionTimeError = UnityEngine.Random.Range(-tolerance, tolerance);
@@ -295,6 +324,16 @@ public class HitBarManager : MonoBehaviour
 
         if (slashButton != null) slashButton.interactable = true;
 
+        if (sliderRect != null)
+        {
+            var img = sliderRect.GetComponent<Image>();
+            if (img == null) img = sliderRect.GetComponentInChildren<Image>();
+            if (img != null)
+            {
+                img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
+            }
+        }
+
         onHitComplete?.Invoke(accumulatedHits, isTimeout);
     }
 
@@ -311,6 +350,20 @@ public class HitBarManager : MonoBehaviour
         anchoredX = Mathf.Clamp(anchoredX, -width / 2f, width / 2f);
 
         sliderRect.anchoredPosition = new Vector2(anchoredX, sliderRect.anchoredPosition.y);
+
+        var img = sliderRect.GetComponent<Image>();
+        if (img == null) img = sliderRect.GetComponentInChildren<Image>();
+        if (img != null)
+        {
+            if (currentCaster != null && currentCaster.activeStatuses.ContainsKey(StatusType.Smoked))
+            {
+                img.color = new Color(img.color.r, img.color.g, img.color.b, currentSmokeAlpha / 255f);
+            }
+            else
+            {
+                img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
+            }
+        }
     }
 
     private void CreateSectionsUI()

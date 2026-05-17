@@ -15,6 +15,28 @@ public class BattleManager : MonoBehaviour
     public RoleInfoUI playerInfoUI;
     public RoleInfoUI enemyInfoUI;
 
+    [Header("End Game Popups")]
+    public GameObject gameVictoryPanel;
+    public GameObject gameDefeatPanel;
+    public UnityEngine.UI.Button victoryMainMenuBtn;
+    public UnityEngine.UI.Button defeatMainMenuBtn;
+
+    private void Start()
+    {
+        if (victoryMainMenuBtn != null)
+            victoryMainMenuBtn.onClick.AddListener(OnEndGameReturnToMainMenu);
+        if (defeatMainMenuBtn != null)
+            defeatMainMenuBtn.onClick.AddListener(OnEndGameReturnToMainMenu);
+    }
+
+    private void OnEndGameReturnToMainMenu()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ReturnToMainMenu();
+        }
+    }
+
     [Header("飘字挂点 (1) 通用 - Miss/Debuff等提示文字")]
     public Transform playerGeneralAnchor;
     public Transform enemyGeneralAnchor;
@@ -58,6 +80,7 @@ public class BattleManager : MonoBehaviour
     [HideInInspector] public SkillSlot currentPlayerSubSkill;
     [HideInInspector] public SkillSlot currentEnemySkill;
     [HideInInspector] public SkillSlot currentEnemySubSkill;
+    [HideInInspector] public SkillSlot currentExecutingSkill;
 
     // ==========================================
     // 战斗序列追踪 (Queue Tracking)
@@ -134,6 +157,26 @@ public class BattleManager : MonoBehaviour
                     }
                 }
 
+                // 连续使用惩罚：每连续使用一次，下回合权重减半
+                int consecutiveUses = 0;
+                if (enemyEntity.skillConsecutiveUses != null)
+                {
+                    enemyEntity.skillConsecutiveUses.TryGetValue(slot, out consecutiveUses);
+                }
+                if (consecutiveUses > 0 && weight > 0)
+                {
+                    int originalWeight = weight;
+                    for (int u = 0; u < consecutiveUses; u++)
+                    {
+                        weight /= 2;
+                    }
+                    if (weight < 1)
+                    {
+                        weight = 1; // 兜底最小权重为1，防止权重为0导致唯一可选技能无法释放
+                    }
+                    Debug.Log($"<color=orange>[AI 权重减损] 招式《{slot.skillData.skillName}》已连续使用 {consecutiveUses} 次，权重由 {originalWeight} 调整为 {weight}</color>");
+                }
+
                 // 只要权重 > 0 就放入候选池
                 if (weight > 0)
                 {
@@ -167,6 +210,25 @@ public class BattleManager : MonoBehaviour
                 // 最后再过滤一遍，确保加上主技能消耗后，体力还够放副技能
                 validSubSkills.RemoveAll(kvp => GetActualSkillCost(enemyEntity, kvp.Key) > remainingStamina);
                 currentEnemySubSkill = SelectSkillByWeight(validSubSkills);
+            }
+        }
+
+        // 更新敌人招式的连续使用次数
+        if (enemyEntity.runtimeSkills != null && enemyEntity.runtimeSkills.Count > 0)
+        {
+            foreach (var slot in enemyEntity.runtimeSkills)
+            {
+                if (slot != null && (slot == currentEnemySkill || slot == currentEnemySubSkill))
+                {
+                    if (enemyEntity.skillConsecutiveUses.ContainsKey(slot))
+                        enemyEntity.skillConsecutiveUses[slot]++;
+                    else
+                        enemyEntity.skillConsecutiveUses[slot] = 1;
+                }
+                else if (slot != null)
+                {
+                    enemyEntity.skillConsecutiveUses[slot] = 0;
+                }
             }
         }
 
@@ -255,7 +317,7 @@ public class BattleManager : MonoBehaviour
             // 如果有灵动状态，额外提供 6 点判定缩减！
             float agileBonus = entity.activeStatuses.ContainsKey(StatusType.Agile) ? 6f : 0f;
             float equipBonus = GetSkillTypeBonus(entity, SkillType.Dodge);
-            entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level) - Mathf.FloorToInt(entity.GetFinalMentality() / 4f) * 6f - agileBonus - equipBonus;
+            entity.tempHitWidthModifier = slot.skillData.GetHitAmend(slot.level) - Mathf.FloorToInt(entity.GetFinalMentality() / 4f) * 3f - agileBonus - equipBonus;
         }
 
         // 触发闪避/防御技能自带的特效 (比如启动免疫状态)
@@ -264,7 +326,12 @@ public class BattleManager : MonoBehaviour
             BattleEntity target = (entity == playerEntity) ? enemyEntity : playerEntity;
             foreach (var effect in slot.skillData.effects)
             {
-                if (effect != null) effect.Execute(entity, target, this, slot.level);
+                if (effect != null)
+                {
+                    currentExecutingSkill = slot;
+                    effect.Execute(entity, target, this, slot.level);
+                    currentExecutingSkill = null;
+                }
             }
         }
     }
@@ -301,7 +368,9 @@ public class BattleManager : MonoBehaviour
                     continue;
                 }
 
+                currentExecutingSkill = slot;
                 effect.Execute(user, target, this, slot.level);
+                currentExecutingSkill = null;
             }
         }
     }
@@ -480,6 +549,7 @@ public class BattleManager : MonoBehaviour
         bool hasAgile = entity.activeStatuses.ContainsKey(StatusType.Agile);
         bool hasExcited = entity.activeStatuses.ContainsKey(StatusType.Excited);
         bool hasOverdrawn = entity.activeStatuses.ContainsKey(StatusType.Overdrawn);
+        bool hasUltInstinct = entity.activeStatuses.ContainsKey(StatusType.UltInstinct);
 
         // 前瞻预测（看这回合是不是要立刻上状态）
         if (pairedSubSkill != null && pairedSubSkill.skillData != null && pairedSubSkill.skillData.effects != null)
@@ -491,6 +561,7 @@ public class BattleManager : MonoBehaviour
                     if (se.statusType == StatusType.Agile) hasAgile = true;
                     if (se.statusType == StatusType.Excited) hasExcited = true;
                     if (se.statusType == StatusType.Overdrawn) hasOverdrawn = true;
+                    if (se.statusType == StatusType.UltInstinct) hasUltInstinct = true;
                 }
             }
         }
@@ -503,6 +574,12 @@ public class BattleManager : MonoBehaviour
 
         // 灵动状态发威：如果是闪避技能，体力消耗 -1
         if (slot.skillData.skillType == SkillType.Dodge && hasAgile)
+        {
+            cost = Mathf.Max(0, cost - 1);
+        }
+
+        // 极意状态发威：如果是攻击技能，体力消耗 -1
+        if (slot.skillData.skillType == SkillType.Attack && hasUltInstinct)
         {
             cost = Mathf.Max(0, cost - 1);
         }

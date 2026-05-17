@@ -58,6 +58,7 @@ public class LevelUIManager : MonoBehaviour
     [Header("角色面板")]
     public Button openRolePanelBtn;
     public RoleUIManager roleUIManager;
+    public Text attrPointsText;
 
     private bool canHideTooltipThisFrame = false;
 
@@ -74,7 +75,10 @@ public class LevelUIManager : MonoBehaviour
             startBattleBtnB.onClick.AddListener(() => OnStartBattleClicked(false));
 
         if (openRolePanelBtn != null && roleUIManager != null)
+        {
             openRolePanelBtn.onClick.AddListener(() => roleUIManager.ShowPanel());
+            roleUIManager.OnCloseCallback += RefreshUnallocatedPoints;
+        }
 
         if (returnToRestBtn != null)
             returnToRestBtn.onClick.AddListener(OnReturnToRestClicked);
@@ -83,6 +87,14 @@ public class LevelUIManager : MonoBehaviour
         {
             // 移除旧的背景按钮逻辑，改为 Update 全局检测
             rewardTooltipPanel.SetActive(false);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (roleUIManager != null)
+        {
+            roleUIManager.OnCloseCallback -= RefreshUnallocatedPoints;
         }
     }
 
@@ -138,6 +150,9 @@ public class LevelUIManager : MonoBehaviour
         // ── 返回休息按钮：第一关置灰 ──
         if (returnToRestBtn != null)
             returnToRestBtn.interactable = GameManager.Instance.currentMainLevelIndex > 0;
+
+        // ── 刷新未分配属性点 ──
+        RefreshUnallocatedPoints();
     }
 
     // ==========================================
@@ -301,5 +316,13 @@ public class LevelUIManager : MonoBehaviour
                 return true;
         }
         return false;
+    }
+
+    public void RefreshUnallocatedPoints()
+    {
+        if (attrPointsText != null && GameManager.Instance != null && GameManager.Instance.playerProfile != null)
+        {
+            attrPointsText.text = $"{GameManager.Instance.playerProfile.unallocatedPoints}";
+        }
     }
 }
