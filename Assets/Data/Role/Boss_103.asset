@@ -16,8 +16,8 @@ MonoBehaviour:
   roleDescription: "\u6DF1\u9083\u9ED1\u6697\u7684\u72C2\u6218\u58EB\uFF0C\u6325\u821E\u5DE8\u5251\u653B\u52BF\u731B\u70C8\uFF0C\u4F7F\u7528\u72EE\u5B50\u65A9\u80FD\u9020\u6210\u6781\u4E3A\u6050\u6016\u7684\u4F24\u5BB3\r"
   roleModel: {fileID: -2068271942, guid: d46c074f625fb13448de5e33fe83a3b5, type: 3}
   animatorController: {fileID: 9100000, guid: 8be3e744fa6f9764aa0c1f98b53ac65b, type: 2}
-  maxBasicLife: 10
-  maxStamina: 8
+  maxBasicLife: 5
+  maxStamina: 5
   vitality: 12
   endurance: 8
   strength: 20
@@ -26,8 +26,8 @@ MonoBehaviour:
   equippedWeapon: {fileID: 11400000, guid: f3a96b5cbf244574d93308d711b5d408, type: 2}
   equippedArmor: {fileID: 11400000, guid: 006d3ef92ecf75047a5bba0fbedbf419, type: 2}
   equippedAccessories: []
-  aiReactionTolerance: 0.25
-  aiMaxBounces: 3
+  aiReactionTolerance: 0.2
+  aiMaxBounces: 2
   npcSkills:
   - skillSlot:
       skillData: {fileID: 11400000, guid: fea8bac6424aa4e46817ca90543e2adc, type: 2}

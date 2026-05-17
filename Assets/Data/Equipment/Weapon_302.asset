@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipName: "\u6218\u9524"
   description: "\u5BF9\u65B9\u8FDB\u884C\u9632\u5FA1\u65F6\u547D\u4E2D\uFF0C\u62DB\u5F0F\u4F24\u5BB3x2\r"
-  icon: {fileID: 21300000, guid: bf1a2218e1fa87344ad66d7603b66637, type: 3}
+  icon: {fileID: 21300000, guid: 874f9e23d56154b4fb50ad3a421c9046, type: 3}
   equipType: 0
   quality: 2
   weight: 14

@@ -16,7 +16,7 @@ MonoBehaviour:
   roleDescription: 
   roleModel: {fileID: 0}
   animatorController: {fileID: 9100000, guid: c7585f21c8cf4694fa2ea901d88545e7, type: 2}
-  maxBasicLife: 10
+  maxBasicLife: 5
   maxStamina: 5
   vitality: 1
   endurance: 1

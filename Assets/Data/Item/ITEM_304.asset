@@ -50,5 +50,5 @@ MonoBehaviour:
       data:
         statusType: 19
         baseDurations: 010000000100000001000000
-        applyToSelf: 0
+        applyToSelf: 1
         ignoreMentalityBonus: 0

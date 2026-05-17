@@ -89,11 +89,25 @@ public class ShopListUI : MonoBehaviour
             {
                 if (profile.currentRestDays >= 1 && profile.ConsumeGold(skill.price))
                 {
-                    profile.currentRestDays -= 1;
-                    TryAutoEquipSkill(skill, profile, () => restUIManager.RefreshPlayerStatusUI());
-                    Debug.Log($"购买并尝试装备招式: {skill.skillName}");
-                    OpenLearnSkill();
-                    restUIManager.RefreshPlayerStatusUI();
+                    string desc = $"掌握了新招式: {skill.skillName}";
+                    if (restUIManager.transitionUI != null)
+                    {
+                        restUIManager.transitionUI.ShowTransition(desc, () =>
+                        {
+                            profile.currentRestDays -= 1;
+                            TryAutoEquipSkill(skill, profile, () => restUIManager.RefreshPlayerStatusUI());
+                            Debug.Log($"购买并尝试装备招式: {skill.skillName}");
+                            OpenLearnSkill();
+                            restUIManager.RefreshPlayerStatusUI();
+                        });
+                    }
+                    else
+                    {
+                        profile.currentRestDays -= 1;
+                        TryAutoEquipSkill(skill, profile, () => restUIManager.RefreshPlayerStatusUI());
+                        OpenLearnSkill();
+                        restUIManager.RefreshPlayerStatusUI();
+                    }
                 }
             });
         }
@@ -109,11 +123,25 @@ public class ShopListUI : MonoBehaviour
             {
                 if (profile.currentRestDays >= 1 && profile.ConsumeGold(skill.price))
                 {
-                    profile.currentRestDays -= 1;
-                    TryAutoEquipSkill(skill, profile, () => restUIManager.RefreshPlayerStatusUI());
-                    Debug.Log($"购买并尝试装备招式(随机): {skill.skillName}");
-                    OpenLearnSkill();
-                    restUIManager.RefreshPlayerStatusUI();
+                    string desc = $"掌握了新招式: {skill.skillName}";
+                    if (restUIManager.transitionUI != null)
+                    {
+                        restUIManager.transitionUI.ShowTransition(desc, () =>
+                        {
+                            profile.currentRestDays -= 1;
+                            TryAutoEquipSkill(skill, profile, () => restUIManager.RefreshPlayerStatusUI());
+                            Debug.Log($"购买并尝试装备招式(随机): {skill.skillName}");
+                            OpenLearnSkill();
+                            restUIManager.RefreshPlayerStatusUI();
+                        });
+                    }
+                    else
+                    {
+                        profile.currentRestDays -= 1;
+                        TryAutoEquipSkill(skill, profile, () => restUIManager.RefreshPlayerStatusUI());
+                        OpenLearnSkill();
+                        restUIManager.RefreshPlayerStatusUI();
+                    }
                 }
             });
         }
@@ -143,11 +171,25 @@ public class ShopListUI : MonoBehaviour
             {
                 if (profile.currentRestDays >= 1 && profile.ConsumeGold(cost))
                 {
-                    profile.currentRestDays -= 1;
-                    slot.level = 2;
-                    Debug.Log($"招式进阶成功: {slot.skillData.skillName}升至 Lv.2");
-                    OpenUpgradeSkill();
-                    restUIManager.RefreshPlayerStatusUI();
+                    string desc = $"招式进阶: {slot.skillData.skillName} Lv.2";
+                    if (restUIManager.transitionUI != null)
+                    {
+                        restUIManager.transitionUI.ShowTransition(desc, () =>
+                        {
+                            profile.currentRestDays -= 1;
+                            slot.level = 2;
+                            Debug.Log($"招式进阶成功: {slot.skillData.skillName}升至 Lv.2");
+                            OpenUpgradeSkill();
+                            restUIManager.RefreshPlayerStatusUI();
+                        });
+                    }
+                    else
+                    {
+                        profile.currentRestDays -= 1;
+                        slot.level = 2;
+                        OpenUpgradeSkill();
+                        restUIManager.RefreshPlayerStatusUI();
+                    }
                 }
             });
         }
@@ -177,11 +219,25 @@ public class ShopListUI : MonoBehaviour
             {
                 if (profile.currentRestDays >= 2 && profile.ConsumeGold(cost))
                 {
-                    profile.currentRestDays -= 2;
-                    slot.level = 3;
-                    Debug.Log($"招式精通成功: {slot.skillData.skillName}升至 Lv.3");
-                    OpenMasterSkill();
-                    restUIManager.RefreshPlayerStatusUI();
+                    string desc = $"招式精通: {slot.skillData.skillName} Lv.3";
+                    if (restUIManager.transitionUI != null)
+                    {
+                        restUIManager.transitionUI.ShowTransition(desc, () =>
+                        {
+                            profile.currentRestDays -= 2;
+                            slot.level = 3;
+                            Debug.Log($"招式精通成功: {slot.skillData.skillName}升至 Lv.3");
+                            OpenMasterSkill();
+                            restUIManager.RefreshPlayerStatusUI();
+                        });
+                    }
+                    else
+                    {
+                        profile.currentRestDays -= 2;
+                        slot.level = 3;
+                        OpenMasterSkill();
+                        restUIManager.RefreshPlayerStatusUI();
+                    }
                 }
             });
         }
@@ -275,6 +331,7 @@ public class ShopListUI : MonoBehaviour
 
     private void CreateEquipShopUI(EquipmentData equip, PlayerProfile profile, Transform targetRoot, ShopCategory category)
     {
+        if (equip == null) return;
         bool isOwned = HasEquipment(equip, profile);
         bool canAfford = !isOwned && profile.totalGold >= equip.price;
         CreateEquipUI(equip, canAfford, isOwned, targetRoot, () =>
@@ -290,6 +347,7 @@ public class ShopListUI : MonoBehaviour
 
     private void CreateSkillShopUI(SkillData skill, PlayerProfile profile, Transform targetRoot, ShopCategory category)
     {
+        if (skill == null) return;
         // 道具为消耗品可叠加购买，不判断「已拥有」，判断上限
         int currentCount = GetItemTotalQuantity(skill, profile);
         int maxCapacity = profile.GetMaxItemCapacity();
@@ -432,7 +490,8 @@ public class ShopListUI : MonoBehaviour
                 int emptyIndex = -1;
                 if (targetList != null) {
                     for(int i = 0; i < limit; i++) {
-                        if (i >= targetList.Count || targetList[i] == null) {
+                        // 如果索引超出范围，或者该位置为 null，或者该位置的 skillData 为空，说明是空位
+                        if (i >= targetList.Count || targetList[i] == null || targetList[i].skillData == null) {
                             emptyIndex = i;
                             break;
                         }

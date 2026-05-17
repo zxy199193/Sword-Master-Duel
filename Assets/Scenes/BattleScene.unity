@@ -8564,6 +8564,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 88081a2770dae75478158ffb82a2b38c, type: 2}
   - {fileID: 11400000, guid: fd200c1e2da26d44fb294c90a85afe4a, type: 2}
   - {fileID: 11400000, guid: 53ee4e8e7f14c3649bfb62733283bc78, type: 2}
+  taskDatabase: {fileID: 11400000, guid: 21f415986d2fb1a45a97a60adf0e292a, type: 2}
   enemyDatabase: {fileID: 11400000, guid: 59f561719d39b6448ad3bd5f3a4195f3, type: 2}
   battleManager: {fileID: 165439695}
   levelUIManager: {fileID: 2058722475}
@@ -8586,6 +8587,8 @@ MonoBehaviour:
     equipment: {fileID: 0}
     item: {fileID: 0}
     quantity: 1
+  isDoingTask: 0
+  currentTaskDifficulty: 0
   isReturnedFromLevelSelect: 0
   currentDojoSkills: []
   randDojoSkills: []
@@ -8856,7 +8859,7 @@ Animator:
   m_GameObject: {fileID: 1139714222}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8be3e744fa6f9764aa0c1f98b53ac65b, type: 2}
+  m_Controller: {fileID: 9100000, guid: 692c85c070f93474c88acec72a498873, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -11511,6 +11514,8 @@ MonoBehaviour:
   bgmVolume: 1
   bgmClip: {fileID: 8300000, guid: 5161ee1050dfb2a4d892e5be953de8e5, type: 3}
   buttonClickClip: {fileID: 8300000, guid: d23f932723ecd6a42a6d7b7c4a1decdf, type: 3}
+  restActionClip: {fileID: 8300000, guid: 3f1ac7d3065eb324789b14e638bb6395, type: 3}
+  levelUpClip: {fileID: 8300000, guid: 3f1ac7d3065eb324789b14e638bb6395, type: 3}
   hitNormalClip: {fileID: 8300000, guid: 374f1e0654a997e49953bf2998d16c2b, type: 3}
   hitDefendClip: {fileID: 8300000, guid: a5720b319461be749b927a83bc5a079f, type: 3}
   hitMissClip: {fileID: 8300000, guid: b2db1a97de6b6e64e8ad33923920fb28, type: 3}

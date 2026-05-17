@@ -81,6 +81,9 @@ public class BattleResultUI : MonoBehaviour
                 targetExpSum -= 100f;
                 currentLevel++;
                 
+                // 播放升级音效
+                if (AudioManager.Instance != null) AudioManager.Instance.PlayLevelUpSound();
+
                 UpdateExpBar(currentLevel, 100f); // 瞬间满一下
                 UpdateLevelText(currentLevel);
                 

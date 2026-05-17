@@ -16,6 +16,10 @@ public class HitBarManager : MonoBehaviour
     public Text titleText;
     public SkillItemUI skillInfoUI;
 
+    [Header("Stats Texts")]
+    public Text speedText;
+    public Text slowdownText;
+
     [Header("Hit Section Generator")]
     public GameObject sectionPrefab;
     public Transform sectionsRoot;
@@ -111,6 +115,12 @@ public class HitBarManager : MonoBehaviour
                 EvaluateResult();
             }
         }
+
+        float displaySpeed = currentCaster != null ? currentCaster.GetFinalHitBarSpeed(GlobalBattleRules.globalHitBarBaseSpeed) : GlobalBattleRules.globalHitBarBaseSpeed;
+        if (speedText != null) speedText.text = $"速度: {Mathf.RoundToInt(displaySpeed)}";
+        
+        float currentSlowdown = currentCaster != null ? currentCaster.GetFinalHitBarSlowdown(GlobalBattleRules.globalHitBarBaseSlowdown) : GlobalBattleRules.globalHitBarBaseSlowdown;
+        if (slowdownText != null) slowdownText.text = $"刹车: {Mathf.RoundToInt(currentSlowdown)}";
 
         UpdateSliderUI();
     }

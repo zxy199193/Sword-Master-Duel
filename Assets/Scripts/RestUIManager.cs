@@ -59,13 +59,17 @@ public class RestUIManager : MonoBehaviour
 
     [Header("UI References - Tavern & Board")]
     public Button drinkBtn;
-    public Button taskBtn;
+    public Button taskEasyBtn;
+    public Button taskMediumBtn;
+    public Button taskHardBtn;
+    public Button taskExtremeBtn;
 
     [Header("UI References - Mountain Actions")]
     public Button waterfallBtn;
 
     [Header("UI References - Flow Control")]
     public Button continueBtn;
+    public RestTransitionUI transitionUI;
 
     // ==========================================
     // Unity Lifecycle
@@ -90,7 +94,11 @@ public class RestUIManager : MonoBehaviour
         if (workoutBtn) workoutBtn.onClick.AddListener(OnWorkoutClicked);
         if (waterfallBtn) waterfallBtn.onClick.AddListener(OnWaterfallClicked);
         if (drinkBtn) drinkBtn.onClick.AddListener(OnDrinkClicked);
-        if (taskBtn) taskBtn.onClick.AddListener(OnTaskClicked);
+        
+        if (taskEasyBtn) taskEasyBtn.onClick.AddListener(() => OnTaskDifficultyClicked(TaskDifficulty.Easy));
+        if (taskMediumBtn) taskMediumBtn.onClick.AddListener(() => OnTaskDifficultyClicked(TaskDifficulty.Medium));
+        if (taskHardBtn) taskHardBtn.onClick.AddListener(() => OnTaskDifficultyClicked(TaskDifficulty.Hard));
+        if (taskExtremeBtn) taskExtremeBtn.onClick.AddListener(() => OnTaskDifficultyClicked(TaskDifficulty.Extreme));
 
         if (bgMaskBtn) bgMaskBtn.onClick.AddListener(CloseSubPanel);
 
@@ -241,11 +249,25 @@ public class RestUIManager : MonoBehaviour
         var profile = GameManager.Instance.playerProfile;
         if (profile.currentRestDays >= 1)
         {
-            profile.currentRestDays -= 1;
             int healAmount = Mathf.FloorToInt(profile.baseMaxLife * 0.4f);
-            profile.currentHp = Mathf.Min(profile.currentHp + healAmount, profile.GetFinalMaxLife());
-            Debug.Log($"家里休息：消耗1天，恢复40%基础生命值 ({healAmount}点)。");
-            RefreshPlayerStatusUI();
+            string desc = $"恢复了 {healAmount} 点生命值";
+
+            if (transitionUI != null)
+            {
+                transitionUI.ShowTransition(desc, () =>
+                {
+                    profile.currentRestDays -= 1;
+                    profile.currentHp = Mathf.Min(profile.currentHp + healAmount, profile.GetFinalMaxLife());
+                    Debug.Log($"家里休息：消耗1天，恢复40%基础生命值 ({healAmount}点)。");
+                    RefreshPlayerStatusUI();
+                });
+            }
+            else
+            {
+                profile.currentRestDays -= 1;
+                profile.currentHp = Mathf.Min(profile.currentHp + healAmount, profile.GetFinalMaxLife());
+                RefreshPlayerStatusUI();
+            }
         }
         else Debug.Log("天数不足，无法休息！");
     }
@@ -255,10 +277,23 @@ public class RestUIManager : MonoBehaviour
         var profile = GameManager.Instance.playerProfile;
         if (profile.currentRestDays >= 2)
         {
-            profile.currentRestDays -= 2;
-            profile.unallocatedPoints += 1;
-            Debug.Log("家里锻炼：消耗2天，获得1点自由属性点。");
-            RefreshPlayerStatusUI();
+            string desc = "获得了 1 点自由属性点";
+            if (transitionUI != null)
+            {
+                transitionUI.ShowTransition(desc, () =>
+                {
+                    profile.currentRestDays -= 2;
+                    profile.unallocatedPoints += 1;
+                    Debug.Log("家里锻炼：消耗2天，获得1点自由属性点。");
+                    RefreshPlayerStatusUI();
+                });
+            }
+            else
+            {
+                profile.currentRestDays -= 2;
+                profile.unallocatedPoints += 1;
+                RefreshPlayerStatusUI();
+            }
         }
         else Debug.Log("天数不足，无法锻炼！");
     }
@@ -276,16 +311,35 @@ public class RestUIManager : MonoBehaviour
         else Debug.Log("天数或金币不足，无法饮酒！");
     }
 
-    private void OnTaskClicked()
+    private void OnTaskDifficultyClicked(TaskDifficulty difficulty)
     {
         var profile = GameManager.Instance.playerProfile;
-        if (profile.currentRestDays >= 1)
+        if (profile.currentRestDays < 1)
         {
-            profile.currentRestDays -= 1;
-            Debug.Log("告示牌任务：消耗1天。效果待定 TODO");
-            RefreshPlayerStatusUI();
+            Debug.Log("天数不足，无法接任务！");
+            return;
         }
-        else Debug.Log("天数不足，无法接任务！");
+
+        string diffName = "";
+        switch (difficulty)
+        {
+            case TaskDifficulty.Easy: diffName = "简单"; break;
+            case TaskDifficulty.Medium: diffName = "中等"; break;
+            case TaskDifficulty.Hard: diffName = "困难"; break;
+            case TaskDifficulty.Extreme: diffName = "极难"; break;
+        }
+
+        if (transitionUI != null)
+        {
+            transitionUI.ShowTransition($"准备进行【{diffName}】任务...", () =>
+            {
+                GameManager.Instance.StartTaskBattle(difficulty);
+            });
+        }
+        else
+        {
+            GameManager.Instance.StartTaskBattle(difficulty);
+        }
     }
 
     private void OnWaterfallClicked()
@@ -299,49 +353,122 @@ public class RestUIManager : MonoBehaviour
 
         if (profile.currentHp > 5)
         {
-            profile.currentRestDays -= 1;
-            profile.ConsumeHpSafely(5);
-            
-            int roll = Random.Range(0, 100);
-            if (roll < 30)
+            if (transitionUI != null)
             {
-                Debug.Log("瀑布冥想：消耗1天、5生命，什么也没发生...");
-            }
-            else if (roll < 70) // 40%
-            {
-                int attr = Random.Range(0, 4);
-                switch (attr)
-                {
-                    case 0: profile.baseStrength += 1; Debug.Log($"瀑布冥想：力量 +1"); break;
-                    case 1: profile.vitality += 1; Debug.Log($"瀑布冥想：活力 +1"); break;
-                    case 2: profile.endurance += 1; Debug.Log($"瀑布冥想：耐力 +1"); break;
-                    case 3: profile.baseMentality += 1; Debug.Log($"瀑布冥想：精神 +1"); break;
-                }
-            }
-            else if (roll < 90) // 20%
-            {
-                var lv1Skills = GetUpgradableSkills(profile, 1);
-                if (lv1Skills.Count > 0)
-                {
-                    var target = lv1Skills[Random.Range(0, lv1Skills.Count)];
-                    target.level++;
-                    Debug.Log($"瀑布冥想：1级招式 [{target.skillData.skillName}] 升到了Lv.2");
-                }
-                else Debug.Log("瀑布冥想：本该升级1级招式，但没有符合条件的招式。");
-            }
-            else // 10%
-            {
-                var lv2Skills = GetUpgradableSkills(profile, 2);
-                if (lv2Skills.Count > 0)
-                {
-                    var target = lv2Skills[Random.Range(0, lv2Skills.Count)];
-                    target.level++;
-                    Debug.Log($"瀑布冥想：2级招式 [{target.skillData.skillName}] 升到了Lv.3");
-                }
-                else Debug.Log("瀑布冥想：本该升级2级招式，但没有符合条件的招式。");
-            }
+                // 预先随机结果，以便在遮罩显示时告知玩家
+                string resultDesc = "";
+                System.Action effectCallback = null;
 
-            RefreshPlayerStatusUI();
+                int roll = Random.Range(0, 100);
+                if (roll < 30)
+                {
+                    resultDesc = "瀑布冥想：什么也没发生...";
+                    effectCallback = () => {
+                        profile.currentRestDays -= 1;
+                        profile.ConsumeHpSafely(5);
+                    };
+                }
+                else if (roll < 70) // 40%
+                {
+                    int attr = Random.Range(0, 4);
+                    string attrName = "";
+                    System.Action attrAction = null;
+                    switch (attr)
+                    {
+                        case 0: attrName = "力量"; attrAction = () => profile.baseStrength += 1; break;
+                        case 1: attrName = "活力"; attrAction = () => profile.vitality += 1; break;
+                        case 2: attrName = "耐力"; attrAction = () => profile.endurance += 1; break;
+                        case 3: attrName = "精神"; attrAction = () => profile.baseMentality += 1; break;
+                    }
+                    resultDesc = $"瀑布冥想：{attrName} +1";
+                    effectCallback = () => {
+                        profile.currentRestDays -= 1;
+                        profile.ConsumeHpSafely(5);
+                        attrAction?.Invoke();
+                    };
+                }
+                else if (roll < 90) // 20%
+                {
+                    var lv1Skills = GetUpgradableSkills(profile, 1);
+                    if (lv1Skills.Count > 0)
+                    {
+                        var target = lv1Skills[Random.Range(0, lv1Skills.Count)];
+                        resultDesc = $"瀑布冥想：[{target.skillData.skillName}] 升到了 Lv.2";
+                        effectCallback = () => {
+                            profile.currentRestDays -= 1;
+                            profile.ConsumeHpSafely(5);
+                            target.level++;
+                        };
+                    }
+                    else
+                    {
+                        resultDesc = "瀑布冥想：什么也没发生...";
+                        effectCallback = () => {
+                            profile.currentRestDays -= 1;
+                            profile.ConsumeHpSafely(5);
+                        };
+                    }
+                }
+                else // 10%
+                {
+                    var lv2Skills = GetUpgradableSkills(profile, 2);
+                    if (lv2Skills.Count > 0)
+                    {
+                        var target = lv2Skills[Random.Range(0, lv2Skills.Count)];
+                        resultDesc = $"瀑布冥想：[{target.skillData.skillName}] 升到了 Lv.3";
+                        effectCallback = () => {
+                            profile.currentRestDays -= 1;
+                            profile.ConsumeHpSafely(5);
+                            target.level++;
+                        };
+                    }
+                    else
+                    {
+                        resultDesc = "瀑布冥想：什么也没发生...";
+                        effectCallback = () => {
+                            profile.currentRestDays -= 1;
+                            profile.ConsumeHpSafely(5);
+                        };
+                    }
+                }
+
+                transitionUI.ShowTransition(resultDesc, () =>
+                {
+                    effectCallback?.Invoke();
+                    RefreshPlayerStatusUI();
+                });
+            }
+            else
+            {
+                // 无过渡逻辑（原逻辑）
+                profile.currentRestDays -= 1;
+                profile.ConsumeHpSafely(5);
+                
+                int roll = Random.Range(0, 100);
+                if (roll < 30) Debug.Log("瀑布冥想：消耗1天、5生命，什么也没发生...");
+                else if (roll < 70) // 40%
+                {
+                    int attr = Random.Range(0, 4);
+                    switch (attr)
+                    {
+                        case 0: profile.baseStrength += 1; break;
+                        case 1: profile.vitality += 1; break;
+                        case 2: profile.endurance += 1; break;
+                        case 3: profile.baseMentality += 1; break;
+                    }
+                }
+                else if (roll < 90) // 20%
+                {
+                    var lv1Skills = GetUpgradableSkills(profile, 1);
+                    if (lv1Skills.Count > 0) lv1Skills[Random.Range(0, lv1Skills.Count)].level++;
+                }
+                else // 10%
+                {
+                    var lv2Skills = GetUpgradableSkills(profile, 2);
+                    if (lv2Skills.Count > 0) lv2Skills[Random.Range(0, lv2Skills.Count)].level++;
+                }
+                RefreshPlayerStatusUI();
+            }
         }
         else Debug.Log("生命体征过低，无法承受瀑布的冲击！");
     }

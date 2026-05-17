@@ -26,7 +26,8 @@ public class BattleInitState : BattleState
         if (battleManager.playerInfoUI != null) battleManager.playerInfoUI.BindEntity(battleManager.playerEntity);
         if (battleManager.enemyInfoUI != null) battleManager.enemyInfoUI.BindEntity(battleManager.enemyEntity);
 
-        battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnBattleStart, null);
+        battleManager.TriggerEquipEffects(battleManager.playerEntity, EquipTriggerTiming.OnBattleStart, null);
+        battleManager.TriggerEquipEffects(battleManager.enemyEntity, EquipTriggerTiming.OnBattleStart, null);
 
         // 状态流转
         battleManager.ChangeState(new PreparationState(battleManager));

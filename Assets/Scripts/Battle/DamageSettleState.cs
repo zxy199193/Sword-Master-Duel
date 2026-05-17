@@ -150,10 +150,8 @@ public class DamageSettleState : BattleState
             }
 
             int equipDamageModifier = 0;
-            if (battleManager.isPlayerAttacking) 
-                equipDamageModifier = battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnAttackHit, hit.Value.level);
-            else 
-                equipDamageModifier = battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnDefendHit, hit.Value.level);
+            equipDamageModifier += battleManager.TriggerEquipEffects(attacker, EquipTriggerTiming.OnAttackHit, hit.Value.level);
+            equipDamageModifier += battleManager.TriggerEquipEffects(defender, EquipTriggerTiming.OnDefendHit, hit.Value.level);
 
             // 1. 收集攻击方的特效增伤
             int skillEffectBaseDamageMod = 0;
@@ -257,9 +255,9 @@ public class DamageSettleState : BattleState
 
             if (hitLanded)
             {
-                if (defender.isPlayer && attackSlot != null && attackSlot.skillData.skillType == SkillType.Attack)
+                if (attackSlot != null && attackSlot.skillData.skillType == SkillType.Attack)
                 {
-                    battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnTakeAttackSkillDamage, hit.Value.level);
+                    battleManager.TriggerEquipEffects(defender, EquipTriggerTiming.OnTakeAttackSkillDamage, hit.Value.level);
                 }
 
                 // 火焰附加特效：命中时给对方上 1 回合灼烧
@@ -342,10 +340,7 @@ public class DamageSettleState : BattleState
             defender.PlayMissAnim();
             battleManager.SpawnGeneralPopup(isPlayerTakingDamage, "MISS");
 
-            if (defender.isPlayer)
-            {
-                battleManager.TriggerPlayerEquipEffects(EquipTriggerTiming.OnEvade, null);
-            }
+            battleManager.TriggerEquipEffects(defender, EquipTriggerTiming.OnEvade, null);
 
             if (AudioManager.Instance != null)
             {

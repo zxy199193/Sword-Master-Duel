@@ -17,6 +17,8 @@ public class AudioManager : MonoBehaviour
 
     [Header("UI Sounds")]
     public AudioClip buttonClickClip;   // 默认按钮点击音效
+    public AudioClip restActionClip;    // 休息场景动作音效（显示描述文字时播放）
+    public AudioClip levelUpClip;       // 玩家升级音效
 
     [Header("Battle Sounds")]
     public AudioClip hitNormalClip;     // 正常命中
@@ -109,5 +111,15 @@ public class AudioManager : MonoBehaviour
             case 1: PlaySFX(hitNormalClip); break;
             case 2: PlaySFX(hitDefendClip); break;
         }
+    }
+
+    public void PlayRestActionSound()
+    {
+        PlaySFX(restActionClip);
+    }
+
+    public void PlayLevelUpSound()
+    {
+        PlaySFX(levelUpClip);
     }
 }

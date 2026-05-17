@@ -257,6 +257,7 @@ public class GameManager : MonoBehaviour
     [Header("全局数据 (Global Data)")]
     public PlayerProfile playerProfile;
     public List<LevelData> allLevels;
+    public TaskDatabase taskDatabase;
 
     [Tooltip("按强度分级的全局敌人数据库")]
     public EnemyDifficultyDatabase enemyDatabase;
@@ -283,6 +284,10 @@ public class GameManager : MonoBehaviour
     // 本关 AB 组各自抽到的额外奖励词条
     [HideInInspector] public LevelExtraRewardEntry currentGroupAExtraReward;
     [HideInInspector] public LevelExtraRewardEntry currentGroupBExtraReward;
+
+    [Header("任务系统 (Task System)")]
+    [HideInInspector] public bool isDoingTask = false;
+    [HideInInspector] public TaskDifficulty currentTaskDifficulty;
 
     /// <summary>
     /// 玩家从关卡选择界面返回休息场景时为 true，
@@ -421,12 +426,45 @@ public class GameManager : MonoBehaviour
         battleManager.SetupNewBattle(playerProfile.playerRoleAsset, currentEnemyData);
     }
 
+    public void StartTaskBattle(TaskDifficulty difficulty)
+    {
+        if (taskDatabase == null) { Debug.LogError("TaskDatabase is null!"); return; }
+        if (playerProfile.currentRestDays < 1) { Debug.LogWarning("天数不足！"); return; }
+
+        var config = taskDatabase.GetConfig(difficulty);
+        if (config == null || config.enemyPool.Count == 0) { Debug.LogError($"Task config for {difficulty} is invalid!"); return; }
+
+        isDoingTask = true;
+        currentTaskDifficulty = difficulty;
+        playerProfile.currentRestDays -= 1;
+
+        // 随机选择一个敌人
+        RoleData enemyData = config.enemyPool[Random.Range(0, config.enemyPool.Count)];
+        
+        // 准备单场战斗环境
+        currentLevelEnemies = new List<RoleData> { enemyData };
+        currentNodeIndex = 0;
+
+        if (restUIManager != null)
+        {
+            if (restUIManager.transitionUI != null) restUIManager.transitionUI.ForceClear();
+            restUIManager.ClosePanel();
+        }
+        StartCombatNode();
+    }
+
     // ==========================================
     // Public Methods - Battle Callbacks
     // ==========================================
 
     public void OnBattleResolution(bool isWin)
     {
+        if (isDoingTask)
+        {
+            EndTaskBattle(isWin);
+            return;
+        }
+
         if (isWin)
         {
             SavePlayerBattleState();
@@ -475,7 +513,50 @@ public class GameManager : MonoBehaviour
     public void OnBattleRetreat()
     {
         SavePlayerBattleState();
-        AdvanceToNextNode();
+        if (isDoingTask) EndTaskBattle(false);
+        else AdvanceToNextNode();
+    }
+
+    private void EndTaskBattle(bool isWin)
+    {
+        isDoingTask = false;
+        
+        if (isWin)
+        {
+            SavePlayerBattleState();
+            
+            var config = taskDatabase.GetConfig(currentTaskDifficulty);
+            int oldLevel = playerProfile.level;
+            int oldExp = playerProfile.currentExp;
+
+            playerProfile.totalGold += config.goldReward;
+            playerProfile.AddExp(config.expReward);
+
+            // 抽取随机奖励
+            LevelExtraRewardEntry extra = null;
+            if (config.rewardPool != null && config.rewardPool.Count > 0)
+            {
+                extra = config.rewardPool[Random.Range(0, config.rewardPool.Count)];
+                AwardLevelReward(extra);
+            }
+
+            if (battleResultUI != null)
+            {
+                battleResultUI.ShowResult(oldLevel, oldExp, config.expReward, config.goldReward, extra);
+            }
+            else
+            {
+                EnterRestUI();
+            }
+        }
+        else
+        {
+            // 失败：保留1点生命回到休息区
+            playerProfile.currentHp = 1;
+            playerProfile.currentStamina = 0;
+            Debug.Log("任务失败：玩家重伤返回休息区。");
+            EnterRestUI();
+        }
     }
 
     // ==========================================
@@ -731,43 +812,7 @@ public class GameManager : MonoBehaviour
 
         if (extra != null)
         {
-            if (extra.rewardType == LevelExtraRewardEntry.RewardType.Equipment && extra.equipment != null)
-            {
-                playerProfile.storageEquipments.Add(extra.equipment);
-                Debug.Log($"<color=yellow>[关卡结算] {groupLabel}组额外装备: {extra.equipment.equipName} → 仓库</color>");
-            }
-            else if (extra.rewardType == LevelExtraRewardEntry.RewardType.Item && extra.item != null)
-            {
-                int maxCap = playerProfile.GetMaxItemCapacity();
-                SkillSlot existingEquip = playerProfile.equippedItems.Find(s => s != null && s.skillData == extra.item);
-                SkillSlot existingStorage = playerProfile.storageSkillsAndItems.Find(s => s != null && s.skillData == extra.item);
-
-                // 优先加到已装备的道具槽中
-                if (existingEquip != null)
-                {
-                    existingEquip.quantity += extra.quantity;
-                    if (existingEquip.quantity > maxCap) existingEquip.quantity = maxCap;
-                }
-                else if (existingStorage != null)
-                {
-                    existingStorage.quantity += extra.quantity;
-                    if (existingStorage.quantity > maxCap) existingStorage.quantity = maxCap;
-                }
-                else
-                {
-                    int addQty = Mathf.Min(extra.quantity, maxCap);
-                    // 如果装备栏未满则自动装备
-                    if (playerProfile.equippedItems.Count < 4)
-                    {
-                        playerProfile.equippedItems.Add(new SkillSlot { skillData = extra.item, level = 1, quantity = addQty });
-                    }
-                    else
-                    {
-                        playerProfile.storageSkillsAndItems.Add(new SkillSlot { skillData = extra.item, level = 1, quantity = addQty });
-                    }
-                }
-                Debug.Log($"<color=yellow>[关卡结算] {groupLabel}组额外道具: {extra.item.skillName} ×{extra.quantity}</color>");
-            }
+            AwardLevelReward(extra);
         }
 
         if (battleResultUI != null)
@@ -808,5 +853,101 @@ public class GameManager : MonoBehaviour
         battleManager.gameObject.SetActive(false);
         levelUIManager.gameObject.SetActive(false);
         restUIManager.ShowPanel();
+    }
+
+    private void AwardLevelReward(LevelExtraRewardEntry extra)
+    {
+        if (extra == null) return;
+
+        if (extra.rewardType == LevelExtraRewardEntry.RewardType.Equipment && extra.equipment != null)
+        {
+            EquipmentData equip = extra.equipment;
+            bool equipped = false;
+
+            if (equip.equipType == EquipmentType.Weapon && playerProfile.equippedWeapon == null)
+            {
+                playerProfile.equippedWeapon = equip;
+                equipped = true;
+            }
+            else if (equip.equipType == EquipmentType.Armor && playerProfile.equippedArmor == null)
+            {
+                playerProfile.equippedArmor = equip;
+                playerProfile.currentExtraLife = equip.durability;
+                equipped = true;
+            }
+            else if (equip.equipType == EquipmentType.Accessory)
+            {
+                int emptyIdx = -1;
+                for (int i = 0; i < 3; i++)
+                {
+                    if (i >= playerProfile.equippedAccessories.Count || playerProfile.equippedAccessories[i] == null)
+                    {
+                        emptyIdx = i;
+                        break;
+                    }
+                }
+                if (emptyIdx != -1)
+                {
+                    while (playerProfile.equippedAccessories.Count <= emptyIdx) playerProfile.equippedAccessories.Add(null);
+                    playerProfile.equippedAccessories[emptyIdx] = equip;
+                    equipped = true;
+                }
+            }
+
+            if (!equipped)
+            {
+                playerProfile.storageEquipments.Add(equip);
+                Debug.Log($"<color=yellow>[奖励结算] 槽位已满或不匹配，{equip.equipName} 放入仓库</color>");
+            }
+            else
+            {
+                Debug.Log($"<color=lime>[奖励结算] 自动装备：{equip.equipName}</color>");
+            }
+        }
+        else if (extra.rewardType == LevelExtraRewardEntry.RewardType.Item && extra.item != null)
+        {
+            SkillData item = extra.item;
+            int qty = extra.quantity;
+            int maxCap = playerProfile.GetMaxItemCapacity();
+
+            SkillSlot existingEquip = playerProfile.equippedItems.Find(s => s != null && s.skillData == item);
+            SkillSlot existingStorage = playerProfile.storageSkillsAndItems.Find(s => s != null && s.skillData == item);
+
+            if (existingEquip != null)
+            {
+                existingEquip.quantity = Mathf.Min(existingEquip.quantity + qty, maxCap);
+                Debug.Log($"<color=lime>[奖励结算] 已有装备道具叠加：{item.skillName} ×{qty}</color>");
+            }
+            else if (existingStorage != null)
+            {
+                existingStorage.quantity = Mathf.Min(existingStorage.quantity + qty, maxCap);
+                Debug.Log($"<color=lime>[奖励结算] 已有仓库道具叠加：{item.skillName} ×{qty}</color>");
+            }
+            else
+            {
+                int emptyIdx = -1;
+                for (int i = 0; i < 4; i++)
+                {
+                    // 检查 i 是否超出 Count，或者该位置为 null，或者该位置的 skillData 为空
+                    if (i >= playerProfile.equippedItems.Count || playerProfile.equippedItems[i] == null || playerProfile.equippedItems[i].skillData == null)
+                    {
+                        emptyIdx = i;
+                        break;
+                    }
+                }
+
+                if (emptyIdx != -1)
+                {
+                    while (playerProfile.equippedItems.Count <= emptyIdx) playerProfile.equippedItems.Add(null);
+                    playerProfile.equippedItems[emptyIdx] = new SkillSlot { skillData = item, level = 1, quantity = Mathf.Min(qty, maxCap) };
+                    Debug.Log($"<color=lime>[奖励结算] 自动装备道具到槽位{emptyIdx + 1}：{item.skillName}</color>");
+                }
+                else
+                {
+                    playerProfile.storageSkillsAndItems.Add(new SkillSlot { skillData = item, level = 1, quantity = Mathf.Min(qty, maxCap) });
+                    Debug.Log($"<color=yellow>[奖励结算] 道具槽已满，{item.skillName} 放入仓库</color>");
+                }
+            }
+        }
     }
 }

@@ -766,36 +766,30 @@ public class BattleManager : MonoBehaviour
         ChangeState(new BattleInitState(this));
     }
 
-    public int TriggerPlayerEquipEffects(EquipTriggerTiming timing, SectionLevel? hitLevel)
+    public int TriggerEquipEffects(BattleEntity entity, EquipTriggerTiming timing, SectionLevel? hitLevel)
     {
-        if (GameManager.Instance == null) return 0;
-        PlayerProfile profile = GameManager.Instance.playerProfile;
-
         int totalMod = 0;
-        totalMod += RunEquipEffect(profile.equippedWeapon, timing, hitLevel);
-        if (playerEntity.currentExtraLife > 0)
+        List<EquipmentData> equips = entity.GetAllActiveEquips();
+        
+        foreach (var eq in equips)
         {
-            totalMod += RunEquipEffect(profile.equippedArmor, timing, hitLevel);
-        }
-        if (profile.equippedAccessories != null)
-        {
-            foreach (var acc in profile.equippedAccessories)
-            {
-                totalMod += RunEquipEffect(acc, timing, hitLevel);
-            }
+            totalMod += RunEquipEffect(entity, eq, timing, hitLevel);
         }
         return totalMod;
     }
 
-    private int RunEquipEffect(EquipmentData equip, EquipTriggerTiming timing, SectionLevel? hitLevel)
+    private int RunEquipEffect(BattleEntity wearer, EquipmentData equip, EquipTriggerTiming timing, SectionLevel? hitLevel)
     {
         if (equip == null || equip.equipEffects == null) return 0;
         int mod = 0;
+        
+        BattleEntity opponent = (wearer == playerEntity) ? enemyEntity : playerEntity;
+
         foreach (var effect in equip.equipEffects)
         {
             if (effect.triggerTiming == timing)
             {
-                mod += effect.Execute(playerEntity, enemyEntity, hitLevel, this);
+                mod += effect.Execute(wearer, opponent, hitLevel, this);
             }
         }
         return mod;

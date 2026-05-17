@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f7ecdd0235af904390c493adb9767da, type: 3}
+  m_Name: TaskDatabase
+  m_EditorClassIdentifier: 
+  taskTiers:
+  - difficulty: 0
+    goldReward: 30
+    expReward: 40
+    rewardPool:
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 14f2cd337c8f2344ea10e2a517c12a90, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: f38db799145616248b13dd9eb1ea3e21, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: b4b541ebbbdae7242a3794e2e1eccfd2, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 61f6aa3af00742e49aa15c249ddec90e, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: d245855d05dd31b4ab8e7f69c2edd8f7, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: e9988f9777d2bda4eb95f52119f904b6, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 568f6511ca1932647b8584ffb2656a38, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 843637551ec7eaa499ad82d95434ec66, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: ecc9859868d87204b98b84f66c2924d4, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: f30acaabf5db4bf4abee9cfba545c88c, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ea04d3292e7c9ac428d376df84b14142, type: 2}
+    - {fileID: 11400000, guid: 2e8f4cc46c9a79e4bad35324ee04cb98, type: 2}
+    - {fileID: 11400000, guid: 887f5fef7ae2e734987787017561343e, type: 2}
+    - {fileID: 11400000, guid: 47a7205160363234185619d582e91ba8, type: 2}
+    - {fileID: 11400000, guid: 3e8e879283083424f8e91c4d49aeaba5, type: 2}
+  - difficulty: 1
+    goldReward: 50
+    expReward: 50
+    rewardPool:
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: b898d35908ddbc64d8aa16cb37a042c1, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 5cb53be31b0c94b40a9230dd1e8f8ec1, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: ac80da706577ceb4ebf2525f9ae72bf2, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 2b1029b27d05b1c4d9803d4b08d75ca0, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 875635307919c7142bed20cd1301325d, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 13fe9e8c5bce84f44a113832256341bd, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 56b4a904e2833544dac6243f5e18ccbd, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: c8703835a45bf03439fe0ed77e4287a6, type: 2}
+    - {fileID: 11400000, guid: 8736c81b331d2a24cb9b1cbe25eef021, type: 2}
+    - {fileID: 11400000, guid: a12e003a60a79f041b10ead9d859b690, type: 2}
+    - {fileID: 11400000, guid: 481450d9bacede542aec9e48d7fc9ff2, type: 2}
+    - {fileID: 11400000, guid: 174e26983294db645ae6f07581a049d1, type: 2}
+  - difficulty: 2
+    goldReward: 70
+    expReward: 60
+    rewardPool:
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: f54c73ed13acdbd488e479c0b6d300b0, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: a17d1176ef6c913448d13dd85aa25696, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 7c82af4ac0bcc46499bcd8d6ca318685, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 57d165447478e7d498401317640288a5, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 4c27b565eb0414d489ef7b9d99945433, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 1d3a758288231b744b00c42e569a3b75, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: a3fea4b0612c265479844132e8f5ea5d, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 9e58bf9a14dee1a4b8a0c069e41de7fb, type: 2}
+      item: {fileID: 0}
+      quantity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 81cc59650e1f4a546b38a8e4d987fb06, type: 2}
+    - {fileID: 11400000, guid: 9b8716427f6a67d4f911f1621043780b, type: 2}
+    - {fileID: 11400000, guid: 5cc26b3032928334d95f3596c3919082, type: 2}
+    - {fileID: 11400000, guid: 738b4e9bb2aa93842af478f4d5792c9f, type: 2}
+    - {fileID: 11400000, guid: 7702ed3e60cbd6f46aaa01566851b805, type: 2}
+  - difficulty: 3
+    goldReward: 100
+    expReward: 80
+    rewardPool:
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 95aa327f09142614583e81f13efddeb6, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 37cafa08047d60c44b7761c48a900bf0, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: f3a96b5cbf244574d93308d711b5d408, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 42063fb064d92fa428dd29ab7b629e7c, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: e3bef7720f8c0ba459cb3974701421e8, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    - rewardType: 0
+      equipment: {fileID: 11400000, guid: 006d3ef92ecf75047a5bba0fbedbf419, type: 2}
+      item: {fileID: 0}
+      quantity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 43728bb341f45374a9c14df38b0a0518, type: 2}
